@@ -1,13 +1,14 @@
 <script lang="ts">
 	import '../app.css';
 	import type { PageData } from './$types';
+	import { API_BASE } from '$lib/api';
 	import { setUserContext } from '$lib/user.svelte';
 
 	let { data, children }: { data: PageData, children: any } = $props();
 
 	// Initialize Svelte 5 User Context
 	// We check if data.user exists (since layout wraps public pages too)
-	let userState = $state(data.user ? setUserContext(data.user) : null);
+	let userState = $state<ReturnType<typeof setUserContext> | null>(null);
 
 	// Update the existing context if page data user changes (e.g. after login)
 	$effect(() => {
@@ -37,9 +38,10 @@
 	}
 
 	async function switchOrganization(orgId: string) {
-		const res = await fetch('/api/auth/switch-org', {
+		const res = await fetch(`${API_BASE}/api/auth/switch-org`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
+			credentials: 'include',
 			body: JSON.stringify({ org_id: orgId })
 		});
 		if (res.ok) {
@@ -53,7 +55,7 @@
 <div class="min-h-screen bg-gray-50 flex flex-col">
 	<header class="bg-white shadow relative z-40">
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
-			
+
 			<div class="flex items-center gap-2">
 				{#if userState && userState.current_organization}
 					{#if userState.organizations && userState.organizations.length > 1}
@@ -71,6 +73,8 @@
 							{#if showOrgMenu}
 								<div 
 									class="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 overflow-hidden text-sm z-50"
+									role="menu"
+									tabindex="-1"
 									onmouseleave={() => showOrgMenu = false}
 								>
 									<div class="px-4 py-2 border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -100,6 +104,13 @@
 				{/if}
 			</div>
 
+			<nav class="hidden md:flex items-center gap-2 text-sm">
+				<a href="/chat" class="rounded-full border border-gray-200 px-3 py-1.5 text-gray-600 hover:border-blue-300 hover:text-blue-700 transition-colors">Inbox</a>
+				<a href="/profile" class="rounded-full border border-gray-200 px-3 py-1.5 text-gray-600 hover:border-blue-300 hover:text-blue-700 transition-colors">Profile</a>
+				<a href="/settings" class="rounded-full border border-gray-200 px-3 py-1.5 text-gray-600 hover:border-blue-300 hover:text-blue-700 transition-colors">Settings</a>
+				<a href="/settings/instances" class="rounded-full border border-gray-200 px-3 py-1.5 text-gray-600 hover:border-blue-300 hover:text-blue-700 transition-colors">Accounts</a>
+			</nav>
+
 			{#if userState}
 				<div class="relative">
 					<button 
@@ -127,6 +138,8 @@
 					{#if showMenu}
 						<div 
 							class="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 overflow-hidden text-sm"
+							role="menu"
+							tabindex="-1"
 							onmouseleave={() => showMenu = false}
 						>
 							<div class="px-4 py-3 border-b border-gray-100 flex flex-col">

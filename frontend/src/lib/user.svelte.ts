@@ -1,5 +1,6 @@
 import { setContext, getContext } from 'svelte';
-import type { User } from '../app';
+
+type User = App.User;
 
 const USER_KEY = Symbol('USER');
 
@@ -29,8 +30,8 @@ export class UserState {
 		this.email = user.email;
 		this.name = user.name;
 		this.avatar = user.avatar;
-		this.status = user.status;
-		this.role = user.role;
+		this.status = user.status === 'online' || user.status === 'busy' ? user.status : 'offline';
+		this.role = user.role === 'admin' ? 'admin' : 'agent';
 		
 		this.settings.theme = user.settings.theme;
 		this.settings.language = user.settings.language;

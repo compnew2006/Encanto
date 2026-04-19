@@ -13,11 +13,19 @@ import (
 
 func main() {
 	r := chi.NewRouter()
+	server := api.NewServer()
 
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:5173", "http://127.0.0.1:5173"},
+		AllowedOrigins: []string{
+			"http://localhost:5173",
+			"http://127.0.0.1:5173",
+			"http://localhost:4173",
+			"http://127.0.0.1:4173",
+			"http://localhost:4174",
+			"http://127.0.0.1:4174",
+		},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
@@ -25,7 +33,8 @@ func main() {
 		MaxAge:           300,
 	}))
 
-	r.Mount("/api", api.Router())
+	r.Mount("/api", server.Router())
+	r.Get("/ws", server.HandleWS)
 
 	port := os.Getenv("PORT")
 	if port == "" {

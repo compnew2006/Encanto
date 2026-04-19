@@ -1,5 +1,8 @@
 import { fail, redirect, isRedirect } from '@sveltejs/kit';
+import { env } from '$env/dynamic/public';
 import type { Actions } from './$types';
+
+const API_BASE = (env.PUBLIC_API_BASE || 'http://127.0.0.1:8080').replace(/\/$/, '');
 
 export const actions = {
 	default: async ({ request, cookies }) => {
@@ -12,7 +15,7 @@ export const actions = {
 		}
 
 		try {
-			const res = await fetch('http://127.0.0.1:8080/api/auth/login', {
+			const res = await fetch(`${API_BASE}/api/auth/login`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -20,34 +23,44 @@ export const actions = {
 				body: JSON.stringify({ email, password })
 			});
 
+			const payload = await res.json().catch(() => null);
+
 			if (res.ok) {
-				const setCookie = res.headers.get('set-cookie');
-				console.log("LOGIN RESPONSE SET-COOKIE:", setCookie);
-				if (setCookie) {
-					const tokenMatch = setCookie.match(/session_token=([^;]+)/);
-					if (tokenMatch) {
-						console.log("Extracted session_token:", tokenMatch[1].substring(0, 10) + "...");
-						cookies.set('session_token', tokenMatch[1], {
-							path: '/',
-							httpOnly: true,
-							sameSite: 'lax',
-							secure: false,
-							maxAge: 60 * 60 * 24 // 24 hours
-						});
-					} else {
-						console.log("Failed to match session_token in cookie string");
-					}
+				const rawSetCookies = (res.headers as Headers & { getSetCookie?: () => string[] }).getSetCookie?.() ?? [];
+				const setCookieHeader = rawSetCookies.length ? rawSetCookies.join('; ') : (res.headers.get('set-cookie') ?? '');
+				const tokenMatch = setCookieHeader.match(/session_token=([^;]+)/);
+
+				if (!tokenMatch) {
+					return fail(500, { email, error: 'Missing session token from backend login response.' });
 				}
+
+				cookies.set('session_token', tokenMatch[1], {
+					path: '/',
+					httpOnly: true,
+					sameSite: 'lax',
+					secure: false,
+					maxAge: 60 * 60 * 24
+				});
+
+				const activeOrgId = payload?.user?.current_organization?.id;
+				if (activeOrgId) {
+					cookies.set('org_context', activeOrgId, {
+						path: '/',
+						httpOnly: true,
+						sameSite: 'lax',
+						secure: false,
+						maxAge: 60 * 60 * 24 * 365
+					});
+				}
+
 				throw redirect(303, '/chat');
-			} else {
-				const errorData = await res.json();
-				return fail(401, { email, incorrect: true, message: errorData.error });
 			}
+
+			return fail(401, { email, incorrect: true, message: payload?.error ?? 'Invalid email or password.' });
 		} catch (e) {
 			if (isRedirect(e)) {
 				throw e;
 			}
-			console.error("Login catch block:", e);
 			return fail(500, { email, error: 'Server error' });
 		}
 	}

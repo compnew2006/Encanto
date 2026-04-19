@@ -6,31 +6,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 // In a real application, this should be an environment variable.
 var jwtSecretKey = []byte("super-secret-encanto-key")
-
-type AuthHandler struct{}
-
-func Router() *chi.Mux {
-	r := chi.NewRouter()
-	h := &AuthHandler{}
-
-	r.Post("/auth/login", h.Login)
-	r.Post("/auth/logout", h.Logout)
-	
-	// Protected routes
-	r.Group(func(r chi.Router) {
-		r.Use(RequireAuth)
-		r.Get("/me", h.Me)
-		r.Post("/auth/switch-org", h.SwitchOrg)
-	})
-
-	return r
-}
 
 type LoginRequest struct {
 	Email    string `json:"email"`
@@ -74,57 +54,14 @@ type UserResponse struct {
 	CurrentOrganization Organization   `json:"current_organization"`
 }
 
-// Dummy credentials and data for testing
 const mockEmail = "admin@example.com"
 const mockPassword = "password123"
-
-func getMockOrganizations() []Organization {
-	return []Organization{
-		{ID: "org-1", Name: "Global Corp", Role: "admin"},
-		{ID: "org-2", Name: "Local Store", Role: "agent"},
-	}
-}
-
-func getMockUser(activeOrgID string) UserResponse {
-	orgs := getMockOrganizations()
-	
-	// Discover active org
-	var activeOrg Organization
-	found := false
-	for _, o := range orgs {
-		if o.ID == activeOrgID {
-			activeOrg = o
-			found = true
-			break
-		}
-	}
-	// Fallback to first org if invalid/missing
-	if !found && len(orgs) > 0 {
-		activeOrg = orgs[0]
-	}
-
-	return UserResponse{
-		ID:                  "1",
-		Email:               mockEmail,
-		Name:                "Admin Encanto",
-		Avatar:              "https://i.pravatar.cc/150?u=admin",
-		Status:              "online",
-		Role:                activeOrg.Role, // dynamic!
-		Settings: UserSettings{
-			Theme:         "light",
-			Language:      "ar",
-			SidebarPinned: true,
-		},
-		Organizations:       orgs,
-		CurrentOrganization: activeOrg,
-	}
-}
 
 type SwitchOrgRequest struct {
 	OrgID string `json:"org_id"`
 }
 
-func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
+func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 	var req LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, `{"error":"Invalid request payload"}`, http.StatusBadRequest)
@@ -142,7 +79,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	if cookie, err := r.Cookie("org_context"); err == nil {
 		activeOrgID = cookie.Value
 	}
-	user := getMockUser(activeOrgID)
+	user := s.store.GetUserResponse(activeOrgID)
 
 	// Refresh org context cookie to ensure canonical ID
 	http.SetCookie(w, &http.Cookie{
@@ -190,7 +127,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (h *AuthHandler) SwitchOrg(w http.ResponseWriter, r *http.Request) {
+func (s *Server) SwitchOrg(w http.ResponseWriter, r *http.Request) {
 	_, ok := r.Context().Value("user").(*Claims)
 	if !ok {
 		http.Error(w, `{"error":"Unauthorized"}`, http.StatusUnauthorized)
@@ -203,13 +140,11 @@ func (h *AuthHandler) SwitchOrg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	// Validate they have access to this org by producing a mock user and checking ID
-	// If getMockUser sets fallback instead of provided, they don't have access
-	user := getMockUser(req.OrgID)
-	if user.CurrentOrganization.ID != req.OrgID {
+	if !s.store.OrgAccessible(req.OrgID) {
 		http.Error(w, `{"error":"Organization access denied"}`, http.StatusForbidden)
 		return
 	}
+	user := s.store.GetUserResponse(req.OrgID)
 
 	http.SetCookie(w, &http.Cookie{
 		Name:     "org_context",
@@ -228,7 +163,7 @@ func (h *AuthHandler) SwitchOrg(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
+func (s *Server) Logout(w http.ResponseWriter, r *http.Request) {
 	// Erase cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_token",
@@ -255,7 +190,7 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(`{"message":"Logged out"}`))
 }
 
-func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
+func (s *Server) Me(w http.ResponseWriter, r *http.Request) {
 	claims, ok := r.Context().Value("user").(*Claims)
 	if !ok {
 		http.Error(w, `{"error":"Unauthorized"}`, http.StatusUnauthorized)
@@ -266,7 +201,7 @@ func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	if cookie, err := r.Cookie("org_context"); err == nil {
 		activeOrgID = cookie.Value
 	}
-	user := getMockUser(activeOrgID)
+	user := s.store.GetUserResponse(activeOrgID)
 	
 	// Replace with DB query based on claims.UserID later
 	if user.ID != claims.UserID {

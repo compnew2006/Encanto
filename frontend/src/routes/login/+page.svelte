@@ -3,6 +3,13 @@
 	import type { ActionData } from './$types';
 
 	let { form }: { form: ActionData } = $props();
+	let email = $state('');
+
+	$effect(() => {
+		if (typeof form?.email === 'string') {
+			email = form.email;
+		}
+	});
 </script>
 
 <svelte:head>
@@ -16,7 +23,7 @@
 		<form method="POST" use:enhance class="space-y-4">
 			<div>
 				<label for="email" class="block text-sm text-gray-600 mb-1">Email</label>
-				<input id="email" name="email" type="email" value={form?.email ?? ''} class="w-full border-gray-300 rounded px-3 py-2 border outline-none focus:ring-2 focus:ring-blue-500" required />
+				<input id="email" name="email" type="email" bind:value={email} class="w-full border-gray-300 rounded px-3 py-2 border outline-none focus:ring-2 focus:ring-blue-500" required />
 			</div>
 			<div>
 				<label for="password" class="block text-sm text-gray-600 mb-1">Password</label>
