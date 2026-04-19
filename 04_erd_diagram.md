@@ -1,6 +1,6 @@
 # Whatomate ERD Diagram
 
-هذا الـ ERD يعكس **الخطة بعد تدقيق الواجهة الحية** لشاشة `/chat`.
+هذا الـ ERD يعكس **الخطة بعد تدقيق الواجهة الحية وتحصينها تشغيلياً**.
 
 التركيز الحالي لا يقتصر على chat core فقط، بل يشمل أيضاً:
 
@@ -10,6 +10,9 @@
 - `custom_roles` + `permissions` بصيغة CRUD/read-only
 - `user_contact_visibility_rules` لحصر رؤية جهات الاتصال والأرقام
 - طبقة `quota/capacity` لحماية السيرفر من استنزاف slots أو التخزين أو الـ jobs
+- `contact_user_states` و`conversation_events` و`message_delivery_attempts` لسد فجوات التحليل والتشغيل
+- `outbox_events` و`webhook_deliveries` و`job_runs` و`audit_logs` لضمان الاعتمادية
+- `campaigns` كخط أساس لأن route الخاصة بها مؤكدة في التنقل
 
 مع بقاء `Meta Cloud API` و`templates/widgets` خارج النطاق المؤكد.
 
@@ -33,6 +36,8 @@ erDiagram
     ORGANIZATION ||--o{ USER_AVAILABILITY_LOG : "owns"
     USER ||--o{ USER_NOTIFICATION : "receives"
     ORGANIZATION ||--o{ USER_NOTIFICATION : "emits"
+    ORGANIZATION ||--o{ JOB_RUN : "executes"
+    ORGANIZATION ||--o{ AUDIT_LOG : "records"
 
     ORGANIZATION ||--o{ API_KEY : "owns"
     ORGANIZATION ||--o{ SSO_PROVIDER : "configures"
@@ -45,18 +50,21 @@ erDiagram
     ORGANIZATION ||--o{ CONTACT : "has"
     USER ||--o{ CONTACT : "assigned_to"
     WHATSAPP_INSTANCE ||--o{ CONTACT : "receives_through"
+    CONTACT ||--o{ CONTACT_USER_STATE : "personalized_for"
+    USER ||--o{ CONTACT_USER_STATE : "stores_inbox_state"
+    CONTACT ||--o{ CONVERSATION_EVENT : "produces"
+    USER ||--o{ CONVERSATION_EVENT : "acts_on"
 
     CONTACT ||--o{ MESSAGE : "contains"
     USER ||--o{ MESSAGE : "sends"
     MEDIA_ASSET ||--o{ MESSAGE : "attached_to"
     MESSAGE ||--o| MESSAGE : "replies_to"
+    MESSAGE ||--o{ MESSAGE_DELIVERY_ATTEMPT : "attempted_as"
     MEDIA_ASSET ||--o{ WHATSAPP_STATUS : "used_by"
 
     ORGANIZATION ||--o{ TAG : "defines"
     CONTACT ||--o{ CONTACT_COLLABORATOR : "shared_with"
     USER ||--o{ CONTACT_COLLABORATOR : "collaborates_on"
-    CONTACT ||--o{ CONTACT_USER_DELETION : "hidden_for"
-    USER ||--o{ CONTACT_USER_DELETION : "hides"
 
     CONTACT ||--o{ CONVERSATION_NOTE : "has"
     USER ||--o{ CONVERSATION_NOTE : "writes"
@@ -65,9 +73,14 @@ erDiagram
     ORGANIZATION ||--o{ CANNED_RESPONSE : "defines"
     ORGANIZATION ||--o{ CHATBOT_FLOW : "stores"
     ORGANIZATION ||--o{ WEBHOOK : "broadcasts_to"
+    ORGANIZATION ||--o{ OUTBOX_EVENT : "buffers"
+    WEBHOOK ||--o{ WEBHOOK_DELIVERY : "delivers"
+    OUTBOX_EVENT ||--o{ WEBHOOK_DELIVERY : "feeds"
     ORGANIZATION ||--o{ CUSTOM_ACTION : "executes"
-
-    LICENSE_RECORD ||--o{ LICENSE_EVENT : "logs"
+    ORGANIZATION ||--o{ CAMPAIGN : "owns"
+    CAMPAIGN ||--o{ CAMPAIGN_RUN : "executes"
+    CAMPAIGN_RUN ||--o{ CAMPAIGN_RECIPIENT : "targets"
+    CONTACT ||--o{ CAMPAIGN_RECIPIENT : "receives"
 
     ORGANIZATION {
         uuid id PK
@@ -104,7 +117,6 @@ erDiagram
     USER {
         uuid id PK
         text email
-        text availability_status
         jsonb settings
     }
 
@@ -148,12 +160,36 @@ erDiagram
         boolean is_public
     }
 
+    CONTACT_USER_STATE {
+        uuid id PK
+        uuid contact_id FK
+        uuid user_id FK
+        boolean is_hidden
+        boolean is_pinned
+    }
+
+    CONVERSATION_EVENT {
+        uuid id PK
+        uuid contact_id FK
+        uuid actor_user_id FK
+        text event_type
+        timestamptz occurred_at
+    }
+
     MESSAGE {
         uuid id PK
         uuid organization_id FK
         uuid contact_id FK
         text direction
         text status
+    }
+
+    MESSAGE_DELIVERY_ATTEMPT {
+        uuid id PK
+        uuid message_id FK
+        int attempt_no
+        text provider_status
+        int typed_for_ms
     }
 
     CHATBOT_FLOW {
@@ -168,8 +204,58 @@ erDiagram
         uuid id PK
         uuid organization_id FK
         text target_url
-        text subscribed_events
         jsonb custom_headers
+    }
+
+    OUTBOX_EVENT {
+        uuid id PK
+        uuid organization_id FK
+        text event_type
+        text status
+    }
+
+    WEBHOOK_DELIVERY {
+        uuid id PK
+        uuid webhook_id FK
+        uuid outbox_event_id FK
+        text status
+        int attempts
+    }
+
+    JOB_RUN {
+        uuid id PK
+        uuid organization_id FK
+        text job_type
+        text status
+    }
+
+    AUDIT_LOG {
+        uuid id PK
+        uuid organization_id FK
+        uuid actor_user_id FK
+        text action
+        text entity_type
+    }
+
+    CAMPAIGN {
+        uuid id PK
+        uuid organization_id FK
+        text name
+        text status
+    }
+
+    CAMPAIGN_RUN {
+        uuid id PK
+        uuid campaign_id FK
+        text status
+        timestamptz started_at
+    }
+
+    CAMPAIGN_RECIPIENT {
+        uuid id PK
+        uuid campaign_run_id FK
+        uuid contact_id FK
+        text status
     }
 ```
 
@@ -199,6 +285,8 @@ erDiagram
 
 لكن يجب أن يُقرأ الآن مع طبقات `notifications` و`statuses`.
 `media_assets` أصبحت أيضاً حدّ المحاسبة الرئيسي للتخزين على مستوى المنظمة.
+كما أن `contact_user_states` و`conversation_events` و`message_delivery_attempts`
+أصبحت ضرورية حتى لا تضيع معلومات pin/hide/retry/assignment history.
 
 ### Collaboration
 
@@ -230,3 +318,17 @@ erDiagram
 - `organization_configs` تخزن الحدود الأساسية مثل `max_users`, `max_whatsapp_instances`, `storage_quota_bytes`, و`tenant_status`.
 - `slot_inventory` و`organization_slot_allocations` يشكلان طبقة الحجز المركزية للموارد المحدودة مثل slots الخاصة بالـ WhatsApp.
 - حماية المنصة تعتمد على shared worker pool مع backpressure موجه لكل tenant بدل تخصيص worker مستقل لكل شركة.
+
+### Delivery Reliability
+
+- `outbox_events` تمنع ضياع الأحداث بعد commit.
+- `webhook_deliveries` تحفظ retry state ونتيجة كل محاولة.
+- `job_runs` و`audit_logs` يكملان صورة التشغيل والحوكمة.
+
+### Campaign Baseline
+
+- route `/campaigns` مؤكدة في التنقل، لذلك أضيفت:
+  - `campaigns`
+  - `campaign_runs`
+  - `campaign_recipients`
+- أما dashboard فيبقى مشتقاً من aggregates ولا يحتاج table مستقل في المرحلة الأولى.

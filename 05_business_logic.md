@@ -44,13 +44,16 @@
    - `chats.unclaimed.send`
 2. إذا لم يملك المستخدم حق الإرسال، ترفض العملية مع بقاء القراءة متاحة عند الحاجة.
 3. إنشاء رسالة بحالة `pending`.
-4. إذا كانت الرسالة نصية، يحسب backend مدة كتابة تقريبية متناسبة مع طول النص.
-5. يرسل backend `typing/presence` عبر `whatsmeow` قبل الإرسال.
-6. ينتظر المدة المحسوبة ضمن حدود دنيا وعليا معقولة ثم يرسل النص.
-7. إذا كانت الرسالة ملفاً أو وسائط من picker أو drag & drop، يتم تجاوز typing simulation بالكامل.
-8. تحديث الحالة إلى `sent` أو `failed`.
-9. عند الفشل، تخزين سبب الفشل لاستخدام `Retry sending`.
-10. بث `new_message` أو `status_update`.
+4. إذا كانت الرسالة نصية، يحسب backend مدة كتابة تقريبية من عدد المحارف:
+   - `typing_ms = clamp(char_count * 55, 900, 7000)`
+5. يتم أخذ lock قصير في Redis على `message_id` حتى لا يرسل أكثر من worker المحاولة نفسها.
+6. يرسل backend `typing/presence` عبر `whatsmeow` قبل الإرسال، ويجدد presence كل عدة ثوان إذا تجاوزت المدة حد keepalive.
+7. ينتظر المدة المحسوبة ثم يرسل النص.
+8. إذا كانت الرسالة ملفاً أو وسائط من picker أو drag & drop، يتم تجاوز typing simulation بالكامل.
+9. كل محاولة outbound تحفظ في `message_delivery_attempts` مع `typed_for_ms`, provider response, وfailure reason إن وجد.
+10. تحديث الحالة إلى `sent` أو `failed`.
+11. عند الفشل، تخزين سبب الفشل لاستخدام `Retry sending`.
+12. بث `new_message` أو `status_update` عبر outbox موثوق.
 
 ## 3. Direct Chat Bootstrap
 
@@ -491,3 +494,107 @@
 - agent transfer queue
 - SLA processor
 - keyword-rule automation
+
+## 30. Contact User State Flow
+
+**Path**: `Inbox Personalization -> Persist Per User -> Re-render`
+
+1. `pin`, `hide`, وآخر رسالة مقروءة ليست خصائص global على contact.
+2. تحفظ هذه البيانات في `contact_user_states` على مستوى `(contact_id, user_id)`.
+3. inbox query تدمج:
+   - حالة contact العامة
+   - visibility scope
+   - الحالة الشخصية للمستخدم
+4. بذلك يمكن لمستخدم أن يخفي أو يثبت محادثة من دون التأثير على بقية الفريق.
+
+## 31. Conversation Timeline & Analytics Basis
+
+**Path**: `Operational Action -> Conversation Event -> Analytics / Timeline`
+
+1. أي action مهم على المحادثة يسجل `conversation_event`.
+2. الأمثلة الأساسية:
+   - assign / unassign
+   - claim
+   - close / reopen
+   - public/private toggle
+   - collaborator invite/accept
+3. `Agent Analytics` و`Closed Chats` وchat timeline تعتمد على هذه الطبقة بدلاً من الاعتماد على الحالة النهائية فقط.
+4. `Avg Queue Time` تحسب من وقت إنشاء/استقبال المحادثة إلى claim أو assign الأول.
+5. `Avg Resolution Time` تحسب من أول claim/assign فعال إلى close النهائي.
+6. `Transfers Handled` تحسب من transitions بين assignees عبر نفس الجدول.
+
+## 32. Outbox, Webhooks & Realtime Fanout
+
+**Path**: `DB Commit -> Outbox -> WS / Webhooks`
+
+1. بعد حفظ الرسالة أو تغيير حالة المحادثة، يكتب النظام `outbox_event` داخل transaction نفسها.
+2. dispatcher مستقل يقرأ outbox بالترتيب وينشر إلى:
+   - WebSocket rooms
+   - webhook deliveries
+   - أي consumers تشغيلية إضافية
+3. `webhook_deliveries` تحفظ:
+   - HTTP status
+   - attempts
+   - next retry time
+   - response payload
+4. إذا فشل fanout لا تضيع البيانات الأصلية، بل يبقى الحدث قابلاً لإعادة المعالجة.
+
+## 33. Shared Jobs, Redis, and Operational Locks
+
+**Path**: `Schedule/Trigger -> Redis Coordination -> Job Run -> Result`
+
+1. `Redis` تستخدم من أجل:
+   - refresh tokens
+   - WS pub/sub
+   - presence
+   - rate limiting
+   - send/connect/cleanup locks
+   - delayed retry wakeups
+2. أما السجل الدائم لأي عمل background فيبقى في `job_runs`.
+3. jobs الأساسية تشمل:
+   - uploads cleanup
+   - contacts CSV import
+   - webhook replay
+   - campaign execution
+   - instance reconnect
+4. أي job قابلة للإعادة يجب أن تمتلك idempotency key أو scope lock واضحاً.
+
+## 34. Campaign Execution Baseline
+
+**Path**: `Campaign Definition -> Run -> Recipient Delivery`
+
+1. route `Campaigns` المؤكدة تحتاج baseline domain واضحاً:
+   - `campaigns`
+   - `campaign_runs`
+   - `campaign_recipients`
+2. `instance_auto_campaigns` لا تبقى معزولة؛ يجب أن تنشئ draft أو run فعلي داخل domain الحملات.
+3. كل تشغيل ينشئ `campaign_run`.
+4. كل جهة اتصال مستهدفة تسجل في `campaign_recipients` مع حالة مستقلة ورسالة أو failure reason عند الحاجة.
+5. نفس send restrictions والstorage/license limits تنطبق على الحملات كما تنطبق على الإرسال اليدوي.
+
+## 35. Audit & Admin Safety
+
+**Path**: `Sensitive Action -> Audit Log -> Review`
+
+1. الأفعال التالية يجب أن تُسجل في `audit_logs`:
+   - license activation
+   - role/permission edits
+   - API key create/delete
+   - instance delete/disconnect
+   - Run Cleanup Now
+   - campaign launch/pause/resume
+2. السجل يجب أن يحتوي actor, entity, action, IP, user-agent, وmetadata.
+3. `Uploads Cleanup` تبقى admin-only، ويجب أن يظهر ذلك في permission checks وفي audit معاً.
+
+## 36. Dashboard Derivation Flow
+
+**Path**: `Aggregate Existing Domains -> Cache Briefly -> Render Cards`
+
+1. dashboard في المرحلة الأولى لا تحتاج table مستقلة.
+2. تبنى من:
+   - chats and unread counts
+   - instance health snapshots
+   - job failures
+   - quota/usage state
+   - recent conversation events
+3. يمكن cache النتائج لفترة قصيرة في Redis لتقليل كلفة التجميع من دون إنشاء source of truth موازية.

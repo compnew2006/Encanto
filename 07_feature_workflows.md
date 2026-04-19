@@ -111,12 +111,15 @@
 
 1. التحقق من صلاحية المستخدم على المحادثة وعلى الإرسال (`read_only`, `messages.send`, `chats.unclaimed.send`).
 2. إنشاء سجل `pending`.
-3. إذا كانت الرسالة نصية، يطلق backend presence/typing عبر `whatsmeow` لمدة محسوبة حسب طول النص.
+3. إذا كانت الرسالة نصية، يطلق backend presence/typing عبر `whatsmeow` لمدة محسوبة من عدد المحارف:
+   - `typing_ms = clamp(char_count * 55, 900, 7000)`
 4. يتم تطبيق حدود دنيا وعليا حتى لا تصبح المحاكاة غير واقعية أو بطيئة جداً.
-5. إذا كانت الرسالة وسائط أو ملفات من picker أو drag & drop، لا يتم تشغيل typing simulation.
-6. الإرسال عبر `whatsmeow`.
-7. تحديث الحالة إلى `sent` أو `failed`.
-8. في الواجهة:
+5. يؤخذ lock قصير في Redis على `message_id` قبل الإرسال لتجنب التكرار عبر أكثر من worker.
+6. إذا كانت الرسالة وسائط أو ملفات من picker أو drag & drop، لا يتم تشغيل typing simulation.
+7. الإرسال عبر `whatsmeow`.
+8. كل محاولة تحفظ في `message_delivery_attempts`.
+9. تحديث الحالة إلى `sent` أو `failed`.
+10. في الواجهة:
    - print/download للوسائط
    - download-all عند وجود batch
    - retry عند الفشل
@@ -314,7 +317,9 @@
 
 **Endpoints**
 
-- `/api/dashboard/*`
+- `/api/dashboard/summary`
+- `/api/dashboard/inbox`
+- `/api/dashboard/instances`
 - `/api/analytics/agents*`
 - `/api/campaigns*`
 
@@ -323,7 +328,8 @@
 1. هذه الوحدات موجودة فعلياً في التنقل.
 2. يجب أن تبقى ضمن الخطة المعمارية.
 3. `Agent Analytics` أصبحت الآن مدققة بما يكفي لتثبيت KPIs وجدول ratings والتصدير.
-4. `Dashboard` و`Campaigns` ما زالتا تحتاجان تدقيقاً أوسع قبل تثبيت schema النهائي لهما.
+4. `Dashboard` تبنى من aggregates فوق chats, instances, jobs, quota state, وrecent conversation events مع cache قصير في Redis.
+5. `Campaigns` لم تعد تبقى route بلا domain؛ يجب أن تمتلك baseline data model واضحاً للحملات وruns والrecipients.
 
 ## 16. Contacts Management
 
@@ -437,3 +443,78 @@
 3. `Verify` يراجع token ويحدد tracked/untracked/invalid.
 4. `Registry` يعرض السجل المحلي مع filters وcopy/reissue/remove.
 5. guard layer تضيف customer metadata وaudit trail فوق backend الأصلي.
+
+## 22. Contact State & Timeline
+
+**Endpoints**
+
+- `PUT /api/contacts/{id}/state`
+- `GET /api/contacts/{id}/events`
+- `POST /api/contacts/{id}/unassign`
+
+**Flow**
+
+1. `pin`, `hide`, وآخر رسالة مقروءة تحفظ على مستوى المستخدم في `contact_user_states`.
+2. assign/unassign/claim/close/reopen تكتب `conversation_events`.
+3. هذه الطبقة تصبح المرجع للtimeline التشغيلي ولتحليلات النقل والانتظار والحل.
+
+## 23. Outbox & Delivery Reliability
+
+**Endpoints**
+
+- internal dispatcher over `outbox_events`
+- `GET /api/webhooks/{id}/deliveries`
+- `POST /api/webhooks/{id}/deliveries/{delivery_id}/retry`
+
+**Flow**
+
+1. كل mutation مهمة تكتب `outbox_event` داخل نفس transaction.
+2. dispatcher ينشر event إلى websocket rooms وwebhook deliveries.
+3. failures لا تضيع الحدث بل تنتج delivery record جديدة أو retry على السجل نفسه وفق السياسة.
+
+## 24. Jobs, Redis, and Locks
+
+**Endpoints**
+
+- `GET /api/jobs/{id}`
+
+**Flow**
+
+1. Redis تستخدم للـ:
+   - refresh tokens
+   - websocket pub/sub
+   - presence
+   - rate limits
+   - locks
+   - delayed retries
+2. أي job طويلة أو قابلة للإعادة تسجل في `job_runs`.
+3. `Uploads Cleanup`, imports, reconnects, webhook replay, وcampaign runs تعتمد على هذا المسار.
+
+## 25. Campaign Execution Baseline
+
+**Endpoints**
+
+- `GET /api/campaigns`
+- `POST /api/campaigns`
+- `POST /api/campaigns/{id}/launch`
+- `GET /api/campaigns/{id}/runs`
+- `GET /api/campaigns/{id}/recipients`
+
+**Flow**
+
+1. الحملة تحفظ كتعريف reusable.
+2. كل تشغيل فعلي ينتج `campaign_run`.
+3. كل جهة مستهدفة تنتج `campaign_recipient`.
+4. `instance_auto_campaigns` يمكنها إنشاء أو جدولة runs ضمن نفس الدومين بدلاً من منطق جانبي منفصل.
+
+## 26. Audit & Admin Safety
+
+**Endpoints**
+
+- `GET /api/audit-logs`
+
+**Flow**
+
+1. أي فعل حساس يكتب `audit_log`.
+2. `Uploads Cleanup` تبقى admin-only ويجب توثيق استخدامها في الـ audit.
+3. license activation, role edits, API keys, instance delete/disconnect, وcampaign control كلها تدخل في السجل نفسه.

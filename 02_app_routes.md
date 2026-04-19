@@ -29,12 +29,13 @@
 | `/register` | `src/routes/register/+page.svelte` | إنشاء حساب | `/api/auth/register` | ❌ |
 | `/auth/sso/callback` | `src/routes/auth/sso/callback/+page.svelte` | إكمال SSO | `/api/auth/sso/*/callback` | ❌ |
 | `/activate` | `src/routes/activate/+page.svelte` | صفحة عامة لإدخال security key عندما يكون التطبيق غير مفعّل أو مغلق | `/api/license/bootstrap`, `/api/license/activate` | ❌ |
-| `/dashboard` | `src/routes/(app)/dashboard/+page.svelte` | نظرة عامة تشغيلية | `/api/dashboard/*` | ✅ |
+| `/dashboard` | `src/routes/(app)/dashboard/+page.svelte` | نظرة عامة تشغيلية | `/api/dashboard/summary`, `/api/dashboard/inbox`, `/api/dashboard/instances` | ✅ |
 | `/chat` | `src/routes/(app)/chat/+page.svelte` | inbox المحادثات | `/api/chats`, `/api/contacts`, `/api/notifications`, `/api/statuses` | ✅ |
 | `/chat/[contactId]` | `src/routes/(app)/chat/[contactId]/+page.svelte` | محادثة محددة مع الأدوات الجانبية | `/api/contacts/{id}/messages`, `/api/contacts/{id}/notes`, `/api/contacts/{id}/collaborators` | ✅ |
 | `/chatbot` | `src/routes/(app)/chatbot/+page.svelte` | وحدة chatbot المؤكدة في التنقل | `/api/chatbot/*` | ❌ |
 | `/analytics/agents` | `src/routes/(app)/analytics/agents/+page.svelte` | تحليلات الوكلاء مع KPI cards وcharts وجدول ratings وتصدير CSV | `/api/analytics/agents/summary`, `/api/analytics/agents/transfers`, `/api/analytics/agents/sources`, `/api/analytics/agents/comparison`, `/api/analytics/agents/ratings`, `/api/analytics/agents/export` | ✅ |
-| `/campaigns` | `src/routes/(app)/campaigns/+page.svelte` | إدارة الحملات | `/api/campaigns*` | ✅ |
+| `/campaigns` | `src/routes/(app)/campaigns/+page.svelte` | قائمة الحملات مع الإنشاء، الفلاتر، وحالة آخر run | `/api/campaigns`, `/api/campaigns/{id}/launch`, `/api/campaigns/{id}/pause` | ✅ |
+| `/campaigns/[campaignId]` | `src/routes/(app)/campaigns/[campaignId]/+page.svelte` | تفاصيل الحملة مع runs وrecipients والمحتوى والجدولة | `/api/campaigns/{id}`, `/api/campaigns/{id}/runs`, `/api/campaigns/{id}/recipients` | ✅ |
 | `/profile` | `src/routes/(app)/profile/+page.svelte` | الملف الشخصي | `/api/me`, `/api/me/settings` | ❌ |
 | `/settings` | `src/routes/(app)/settings/+page.svelte` | إعدادات عامة + i18n locale bootstrap + Tailwind appearance presets + chat preferences + notifications preferences + summary للـ quotas والاستهلاك | `/api/settings/general`, `/api/settings/limits`, `/api/settings/appearance`, `/api/settings/chat`, `/api/settings/notifications`, `/api/settings/uploads-cleanup/run` | ❌ |
 | `/settings/chatbot` | `src/routes/(app)/settings/chatbot/+page.svelte` | إعدادات chatbot من داخل مركز الإعدادات | `/api/chatbot/*` | ❌ |
@@ -85,6 +86,13 @@
 
 - `Message composer dropzone`
   surface داخل مساحة المحادثة يدعم drag & drop للملفات مع معاينة أولية قبل الإرسال.
+
+- `Conversation timeline drawer`
+  surface إداري/تشغيلي يعرض lifecycle events مثل assign, unassign, close, reopen, collaborator changes,
+  ويقرأ من `/api/contacts/{id}/events`.
+
+- `Contact state memory`
+  ليست route مستقلة، لكنها طبقة per-user لحفظ `pin`, `hide`, وآخر رسالة مقروءة داخل inbox.
 
 ## عناصر مدمجة داخل `/settings`
 
@@ -364,3 +372,8 @@
 - `/license-cleanup` route خاص يفرضه النظام عند وجود overage عام على مستوى الترخيص.
 - `/analytics/agents` توفر drill-down إلى المحادثة من جدول التقييمات، من دون surface assign خاص بها.
 - لم تظهر أي خاصية assign داخل `/settings` نفسها؛ assignment بقيت في `/chat`.
+- اكتمال الخطة يحتاج أيضاً surfaces غير مرئية في التنقل الرئيسي مثل:
+  - webhook delivery log
+  - background job progress
+  - conversation timeline
+  وهذه يمكن أن تعيش كـ dialogs أو drawers داخل الصفحات المؤكدة بدلاً من routes جديدة كثيرة.

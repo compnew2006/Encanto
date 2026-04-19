@@ -136,7 +136,10 @@
 | GET | `/api/contacts/export` | Export contacts to CSV with selectable columns like phone, name, WhatsApp account, tags, assigned user, and timestamps |
 | POST | `/api/contacts/import` | Import contacts from CSV with optional update-on-duplicate behavior |
 | POST | `/api/contacts/{id}/soft-delete` | Hide contact for current user |
+| PUT | `/api/contacts/{id}/state` | Update current-user chat state such as `pin`, `hide`, `last_read_message_id`, and `last_opened_at` |
 | PUT | `/api/contacts/{id}/assign` | Assign contact to user/team |
+| POST | `/api/contacts/{id}/unassign` | Reset responsibility and return the chat to `pending` when allowed by role/policy |
+| GET | `/api/contacts/{id}/events` | Conversation timeline for assignment, claim, close, reopen, collaborator, visibility, and other lifecycle actions |
 | GET | `/api/contacts/{id}/collaborators` | List collaborators |
 | POST | `/api/contacts/{id}/collaborators` | Invite collaborator |
 | PUT | `/api/contacts/{id}/collaborators/{user_id}/accept` | Accept collaboration |
@@ -168,6 +171,7 @@
 | POST | `/api/contacts/{id}/messages/{message_id}/reaction` | Send reaction |
 | POST | `/api/contacts/{id}/messages/{message_id}/revoke` | Revoke message |
 | POST | `/api/messages/{id}/retry` | Retry failed outbound message |
+| GET | `/api/messages/{id}/attempts` | Delivery attempts with `typed_for_ms`, provider response, retry number, and failure reason |
 | PUT | `/api/messages/{id}/read` | Mark message as read |
 | GET | `/api/media/{message_id}` | Download or serve media from object storage or bounded disk cache |
 
@@ -244,11 +248,15 @@
 | PUT | `/api/webhooks/{id}` | Update subscribed events, target URL, secret, headers, or activation state |
 | DELETE | `/api/webhooks/{id}` | Delete webhook |
 | POST | `/api/webhooks/{id}/test` | Test webhook |
+| GET | `/api/webhooks/{id}/deliveries` | List webhook delivery attempts, HTTP responses, retry schedule, and final status |
+| POST | `/api/webhooks/{id}/deliveries/{delivery_id}/retry` | Force retry a failed delivery manually |
 | GET | `/api/custom-actions` | List custom actions |
 | POST | `/api/custom-actions` | Create custom action |
 | GET | `/api/custom-actions/{id}` | Get custom action |
 | PUT | `/api/custom-actions/{id}` | Update custom action |
 | DELETE | `/api/custom-actions/{id}` | Delete custom action |
+| GET | `/api/audit-logs` | Admin audit trail for settings, roles, instances, licenses, campaigns, and destructive actions |
+| GET | `/api/jobs/{id}` | Inspect a background job such as cleanup, CSV import, webhook replay, reconnect, or campaign run |
 | GET | `/api/settings/sso` | Get SSO settings |
 | PUT | `/api/settings/sso/{provider}` | Update SSO provider |
 | DELETE | `/api/settings/sso/{provider}` | Delete SSO provider |
@@ -285,10 +293,20 @@
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| GET | `/api/dashboard/*` | Dashboard summaries and cards |
+| GET | `/api/dashboard/summary` | Dashboard counters derived from chats, instances, jobs, and quotas |
+| GET | `/api/dashboard/inbox` | Operational inbox summary such as assigned/pending/unread and recent failures |
+| GET | `/api/dashboard/instances` | Instance-level overview cards for health, queue depth, and connection state |
 | GET | `/api/chatbot/*` | Chatbot management surface retained in product |
 | GET | `/api/analytics/agents*` | Agent analytics views |
-| GET | `/api/campaigns*` | Campaign listing and execution |
+| GET | `/api/campaigns` | Campaign listing with status, source, schedule, and last run summary |
+| POST | `/api/campaigns` | Create campaign draft or scheduled campaign |
+| GET | `/api/campaigns/{id}` | Get campaign definition |
+| PUT | `/api/campaigns/{id}` | Update campaign filters, content, or schedule |
+| POST | `/api/campaigns/{id}/launch` | Launch a manual campaign run |
+| POST | `/api/campaigns/{id}/pause` | Pause a scheduled or active campaign |
+| POST | `/api/campaigns/{id}/resume` | Resume a paused campaign |
+| GET | `/api/campaigns/{id}/runs` | List campaign runs and aggregate progress |
+| GET | `/api/campaigns/{id}/recipients` | Inspect recipient-level delivery state for the selected campaign or run |
 
 ## Removed Or Still Unverified
 

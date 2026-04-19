@@ -1,6 +1,6 @@
 # Whatomate Chat Workflow Guide
 
-Live-audited reference for the current chat workspace. This guide reflects what appeared on the real /chat screen on 2026-04-18, not the earlier reduced-scope assumption.
+Live-audited reference for the current chat workspace. This guide reflects what appeared on the real /chat screen on 2026-04-19, not the earlier reduced-scope assumption.
 
 ## Observed Live Scope
 
@@ -33,7 +33,7 @@ Live-audited reference for the current chat workspace. This guide reflects what 
 
 - **Assign**: user-plus opens Assign Contact with searchable user list.
 - **Pin**: pin icon exists in the header action cluster.
-- **Responsibility reset**: a user-x action exists and requires a dedicated backend action in the plan.
+- **Responsibility reset**: a user-x action exists and is now treated as a dedicated backend action (`unassign` / reset to pending) with timeline logging.
 - **Notes**: opens internal notes panel.
 - **Info**: opens Contact Info with tags, collaborators, and general fields.
 
@@ -50,6 +50,7 @@ Live-audited reference for the current chat workspace. This guide reflects what 
 - **Attachment**: paperclip.
 - **Print**: printer action.
 - **Send**: disabled until valid input exists.
+- **Typing simulation**: text sends should simulate provider typing based on message length; files and media must skip this path entirely.
 
 ## Message History Actions
 
@@ -65,3 +66,4 @@ Live-audited reference for the current chat workspace. This guide reflects what 
 - **Statuses drawer**: Add status plus list of status entries by contact and instance.
 - **Assign Contact dialog**: searchable assignee list.
 - **Invite Collaborator dialog**: searchable user list for shared chat access.
+- **Per-user inbox memory**: pin/hide/read state should be stored per-user, not as a global contact mutation.

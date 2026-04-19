@@ -111,11 +111,12 @@ CREATE TABLE IF NOT EXISTS users (
     full_name TEXT,
     role_id UUID REFERENCES custom_roles(id),
     is_active BOOLEAN NOT NULL DEFAULT true,
-    is_available BOOLEAN NOT NULL DEFAULT true,
+    availability_status TEXT NOT NULL DEFAULT 'available',
     is_super_admin BOOLEAN NOT NULL DEFAULT false,
     avatar_url TEXT,
     settings JSONB NOT NULL DEFAULT '{}'::jsonb,
-    last_login TIMESTAMPTZ
+    last_login TIMESTAMPTZ,
+    CHECK (availability_status IN ('available', 'unavailable', 'busy'))
 );
 CREATE INDEX IF NOT EXISTS idx_users_deleted_at ON users (deleted_at);
 CREATE INDEX IF NOT EXISTS idx_users_org_active
@@ -143,11 +144,15 @@ CREATE TABLE IF NOT EXISTS api_keys (
     name TEXT NOT NULL,
     key_prefix TEXT NOT NULL,
     key_hash TEXT NOT NULL,
+    scopes JSONB NOT NULL DEFAULT '[]'::jsonb,
     expires_at TIMESTAMPTZ,
     last_used TIMESTAMPTZ,
+    revoked_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now()
 );
+CREATE UNIQUE INDEX IF NOT EXISTS idx_api_keys_org_key_prefix
+    ON api_keys (organization_id, key_prefix);
 
 CREATE TABLE IF NOT EXISTS sso_providers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -188,10 +193,46 @@ CREATE TABLE IF NOT EXISTS user_availability_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    previous_state BOOLEAN,
-    new_state BOOLEAN NOT NULL,
+    changed_by_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    previous_status TEXT,
+    new_status TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    CHECK (new_status IN ('available', 'unavailable', 'busy'))
+);
+
+CREATE TABLE IF NOT EXISTS job_runs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    job_type TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'queued',
+    scope_type TEXT,
+    scope_id UUID,
+    payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+    attempts INTEGER NOT NULL DEFAULT 0,
+    scheduled_at TIMESTAMPTZ DEFAULT now(),
+    started_at TIMESTAMPTZ,
+    finished_at TIMESTAMPTZ,
+    error_message TEXT,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_job_runs_org_type_created
+    ON job_runs (organization_id, job_type, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
+    actor_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    entity_type TEXT NOT NULL,
+    entity_id UUID,
+    action TEXT NOT NULL,
+    ip_address INET,
+    user_agent TEXT,
+    metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
     created_at TIMESTAMPTZ DEFAULT now()
 );
+CREATE INDEX IF NOT EXISTS idx_audit_logs_org_created
+    ON audit_logs (organization_id, created_at DESC);
 
 CREATE TABLE IF NOT EXISTS user_notifications (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -423,11 +464,16 @@ CREATE TABLE IF NOT EXISTS messages (
     user_id UUID REFERENCES users(id) ON DELETE SET NULL,
     reply_to_message_id UUID REFERENCES messages(id) ON DELETE SET NULL,
     whatsapp_message_id TEXT,
+    provider TEXT NOT NULL DEFAULT 'whatsmeow',
     type TEXT NOT NULL DEFAULT 'text',
     body TEXT,
     status TEXT NOT NULL DEFAULT 'pending',
     direction TEXT NOT NULL,
     media_asset_id UUID REFERENCES media_assets(id) ON DELETE SET NULL,
+    failure_reason TEXT,
+    retry_count INTEGER NOT NULL DEFAULT 0,
+    last_attempt_at TIMESTAMPTZ,
+    revoked_at TIMESTAMPTZ,
     metadata JSONB NOT NULL DEFAULT '{}'::jsonb
 );
 CREATE INDEX IF NOT EXISTS idx_messages_contact_created_at
@@ -445,12 +491,18 @@ CREATE TABLE IF NOT EXISTS tags (
     UNIQUE (organization_id, name)
 );
 
-CREATE TABLE IF NOT EXISTS contact_user_deletions (
+CREATE TABLE IF NOT EXISTS contact_user_states (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     contact_id UUID NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    is_hidden BOOLEAN NOT NULL DEFAULT false,
+    is_pinned BOOLEAN NOT NULL DEFAULT false,
+    last_read_message_id UUID REFERENCES messages(id) ON DELETE SET NULL,
+    last_opened_at TIMESTAMPTZ,
+    last_seen_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now(),
     UNIQUE (contact_id, user_id)
 );
 
@@ -474,6 +526,37 @@ CREATE TABLE IF NOT EXISTS conversation_notes (
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now(),
     deleted_at TIMESTAMPTZ
+);
+
+CREATE TABLE IF NOT EXISTS conversation_events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    contact_id UUID NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
+    actor_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    event_type TEXT NOT NULL,
+    from_assigned_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    to_assigned_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    from_status TEXT,
+    to_status TEXT,
+    metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+    occurred_at TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_conversation_events_contact_occurred
+    ON conversation_events (contact_id, occurred_at DESC);
+
+CREATE TABLE IF NOT EXISTS message_delivery_attempts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    message_id UUID NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
+    attempt_no INTEGER NOT NULL,
+    typed_for_ms INTEGER NOT NULL DEFAULT 0,
+    provider_message_id TEXT,
+    provider_status TEXT,
+    failure_reason TEXT,
+    metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+    started_at TIMESTAMPTZ DEFAULT now(),
+    finished_at TIMESTAMPTZ,
+    UNIQUE (message_id, attempt_no)
 );
 
 CREATE TABLE IF NOT EXISTS chat_closure_ratings (
@@ -527,11 +610,16 @@ CREATE TABLE IF NOT EXISTS webhooks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
-    url TEXT NOT NULL,
-    secret TEXT,
+    target_url TEXT NOT NULL,
+    subscribed_events TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+    secret_encrypted TEXT,
+    custom_headers JSONB NOT NULL DEFAULT '{}'::jsonb,
     is_active BOOLEAN NOT NULL DEFAULT true,
+    last_test_at TIMESTAMPTZ,
+    last_delivery_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT now(),
-    updated_at TIMESTAMPTZ DEFAULT now()
+    updated_at TIMESTAMPTZ DEFAULT now(),
+    UNIQUE (organization_id, name)
 );
 
 CREATE TABLE IF NOT EXISTS custom_actions (
@@ -544,6 +632,93 @@ CREATE TABLE IF NOT EXISTS custom_actions (
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now(),
     UNIQUE (organization_id, slug)
+);
+
+CREATE TABLE IF NOT EXISTS outbox_events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    aggregate_type TEXT NOT NULL,
+    aggregate_id UUID,
+    event_type TEXT NOT NULL,
+    payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+    status TEXT NOT NULL DEFAULT 'pending',
+    attempts INTEGER NOT NULL DEFAULT 0,
+    last_error TEXT,
+    available_at TIMESTAMPTZ DEFAULT now(),
+    published_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_outbox_events_status_available
+    ON outbox_events (status, available_at);
+
+CREATE TABLE IF NOT EXISTS webhook_deliveries (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    webhook_id UUID NOT NULL REFERENCES webhooks(id) ON DELETE CASCADE,
+    outbox_event_id UUID NOT NULL REFERENCES outbox_events(id) ON DELETE CASCADE,
+    status TEXT NOT NULL DEFAULT 'pending',
+    attempts INTEGER NOT NULL DEFAULT 0,
+    last_http_status INTEGER,
+    next_retry_at TIMESTAMPTZ,
+    delivered_at TIMESTAMPTZ,
+    response_headers JSONB NOT NULL DEFAULT '{}'::jsonb,
+    response_body TEXT,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_webhook_deliveries_webhook_created
+    ON webhook_deliveries (webhook_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS campaigns (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    instance_id UUID REFERENCES whatsapp_instances(id) ON DELETE SET NULL,
+    created_by_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now(),
+    deleted_at TIMESTAMPTZ,
+    name TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'draft',
+    source TEXT NOT NULL DEFAULT 'manual',
+    message_body TEXT,
+    media_asset_id UUID REFERENCES media_assets(id) ON DELETE SET NULL,
+    filters JSONB NOT NULL DEFAULT '{}'::jsonb,
+    schedule JSONB NOT NULL DEFAULT '{}'::jsonb,
+    last_run_at TIMESTAMPTZ,
+    next_run_at TIMESTAMPTZ
+);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_campaigns_org_name
+    ON campaigns (organization_id, name) WHERE deleted_at IS NULL;
+
+CREATE TABLE IF NOT EXISTS campaign_runs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    campaign_id UUID NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+    triggered_by_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    trigger_source TEXT NOT NULL DEFAULT 'manual',
+    status TEXT NOT NULL DEFAULT 'queued',
+    summary JSONB NOT NULL DEFAULT '{}'::jsonb,
+    started_at TIMESTAMPTZ,
+    finished_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_campaign_runs_campaign_started
+    ON campaign_runs (campaign_id, started_at DESC);
+
+CREATE TABLE IF NOT EXISTS campaign_recipients (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    campaign_run_id UUID NOT NULL REFERENCES campaign_runs(id) ON DELETE CASCADE,
+    campaign_id UUID NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+    contact_id UUID NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
+    instance_id UUID REFERENCES whatsapp_instances(id) ON DELETE SET NULL,
+    message_id UUID REFERENCES messages(id) ON DELETE SET NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    failure_reason TEXT,
+    attempted_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    UNIQUE (campaign_run_id, contact_id)
 );
 
 CREATE TABLE IF NOT EXISTS license_records (

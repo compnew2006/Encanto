@@ -114,6 +114,17 @@ Updated from the live navigation observed on 2026-04-19 across `/chat`, `/analyt
 | Notes panel | Internal notes feed and create note box | `/api/contacts/{id}/notes*` |
 | Contact Info panel | Tags, collaborators, general data, chatbot-configured data panel | Tags + collaborators + chatbot flow config retention |
 
+## Planning Hardening Additions
+
+هذه ليست عناصر تنقل مؤكدة من الواجهة، لكنها أضيفت إلى الخطة لأن غيابها كان يترك فجوات تنفيذية واضحة:
+
+| Surface | Why It Must Exist | Suggested Placement |
+| :--- | :--- | :--- |
+| Conversation timeline | Required for assignment history, queue/resolution analytics, and support debugging | Drawer inside `/chat/[contactId]` |
+| Webhook delivery log | Required because plan already includes retries, tests, and failure handling | Modal or tab inside `/settings/webhooks` |
+| Background job progress | Required for cleanup/import/reconnect/campaign visibility | Modal or admin drawer from settings/actions |
+| Audit log view | Required for license, roles, cleanup, and destructive actions | Admin-only surface under settings or operations |
+
 ## Vendor License Studio
 
 | Surface | Observed Capability | Plan Impact |

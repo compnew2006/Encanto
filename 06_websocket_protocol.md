@@ -39,9 +39,13 @@
 ## 2. Message Schema
 
 ```ts
-interface WSMessage {
+interface WSMessage<T = unknown> {
   type: string;
-  payload: unknown;
+  event_id?: string;
+  sequence?: number;
+  occurred_at?: string;
+  organization_id?: string;
+  payload: T;
 }
 ```
 
@@ -51,6 +55,7 @@ interface WSMessage {
 | :--- | :--- | :--- |
 | `auth` | `{"token": string}` | Authenticate connection |
 | `set_contact` | `{"contact_id": "UUID"}` | Subscribe to a specific chat context |
+| `resume` | `{"last_sequence": number}` | Ask server to resume from the last acknowledged sequence when possible |
 | `ping` | `{}` | Keepalive heartbeat |
 | `set_dashboard_scope` | `{"organization_id": "UUID"}` | Optional dashboard subscription |
 
@@ -62,6 +67,7 @@ interface WSMessage {
 | `status_update` | Message status changed | Message ID + status |
 | `typing_state` | Optional chat typing/presence update for UI | Contact ID + actor + state |
 | `contact_update` | Contact assignment or state changed | Contact payload |
+| `conversation_event` | Lifecycle event such as assign, close, reopen, or unassign | Contact ID + event payload |
 | `instance_qr_code` | Pairing QR changed | Instance ID + QR string |
 | `instance_connected` | Instance connected successfully | Instance ID + phone/JID |
 | `instance_disconnected` | Instance disconnected | Instance ID + reason |
@@ -71,8 +77,18 @@ interface WSMessage {
 | `availability_update` | User availability changed | User ID + status (`available`, `unavailable`, `busy`) |
 | `status_feed_update` | Status drawer feed changed | Status summary payload |
 | `dashboard_update` | Dashboard counters/cards changed | Aggregate payload |
+| `job_update` | Background job status changed | Job ID + status + progress |
+| `snapshot_required` | Resume gap was too large or lost | Client should reload current route data |
 
-## 5. Room & Context Management
+## 5. Delivery Source & Ordering
+
+- كل حدث websocket يجب أن يخرج من `outbox_events` لا من handler مباشر بعد الحفظ.
+- كل channel يحصل على `sequence` متزايد يمكن للعميل تخزينه مؤقتاً.
+- عند reconnect، العميل يرسل `resume`.
+- إذا لم تعد events القديمة متاحة أو ظهرت فجوة في التسلسل، الخادم يرسل `snapshot_required`.
+- Redis تستخدم فقط كـ fanout layer بين العقد؛ source of truth للأحداث يبقى PostgreSQL + outbox.
+
+## 6. Room & Context Management
 
 ### Organization Room
 
@@ -93,17 +109,18 @@ interface WSMessage {
 - يفعّل عندما يرسل العميل `set_contact`.
 - يستخدم لتقليل الضوضاء في المحادثات غير المفتوحة حالياً.
 
-## 6. Frontend Resilience
+## 7. Frontend Resilience
 
 عميل `SvelteKit` يتعامل مع الانقطاع كالتالي:
 
 - `ping` كل 30 ثانية.
 - إعادة ربط بمحاولات متدرجة.
 - بعد نجاح إعادة الربط:
+  - إرسال `resume` بآخر `sequence` معروف
   - إعادة الاشتراك في contact الحالي
   - إعادة تحميل notifications وstatuses عند الحاجة
 
-## 7. Explicitly Removed Or Unverified Events
+## 8. Explicitly Removed Or Unverified Events
 
 ملاحظة:
 

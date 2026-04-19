@@ -31,6 +31,8 @@
 | **Operations** | `teams` | `Team` | Yes | Yes | Agent teams |
 | **Operations** | `team_members` | `TeamMember` | No | No | Team membership |
 | **Operations** | `user_availability_logs` | `UserAvailabilityLog` | Yes | No | Availability history |
+| **Operations** | `job_runs` | `JobRun` | Yes | No | Background jobs for cleanup, imports, reconnects, campaigns, and webhook replay |
+| **Operations** | `audit_logs` | `AuditLog` | Yes | No | Audit trail for admin and destructive actions |
 | **Operations** | `user_contact_visibility_rules` | `UserContactVisibilityRule` | Yes | No | Role/user scoped contact visibility and allowed-phone overrides |
 | **Operations** | `user_notifications` | `UserNotification` | Yes | No | Notification center and unread inbox |
 | **Channels** | `whatsapp_instances` | `WhatsAppInstance` | Yes | Yes | whatsmeow session instances |
@@ -46,14 +48,21 @@
 | **Messaging** | `messages` | `Message` | Yes | Yes | Chat history |
 | **Messaging** | `media_assets` | `MediaAsset` | Yes | No | Media metadata + storage accounting anchor |
 | **Messaging** | `tags` | `Tag` | Yes | No | Contact labels |
-| **Messaging** | `contact_user_deletions` | `ContactUserDeletion` | Yes | No | Per-user hide state |
+| **Messaging** | `contact_user_states` | `ContactUserState` | Yes | No | Per-user hide/pin/read state in the inbox |
 | **Messaging** | `contact_collaborators` | `ContactCollaborator` | Yes | No | Shared chat access |
 | **Messaging** | `conversation_notes` | `ConversationNote` | Yes | Yes | Internal notes |
+| **Messaging** | `conversation_events` | `ConversationEvent` | Yes | No | Assignment, claim, close, reopen, visibility, and other lifecycle events |
+| **Messaging** | `message_delivery_attempts` | `MessageDeliveryAttempt` | Yes | No | Outbound send attempts with typing delay and provider result |
 | **Messaging** | `chat_closure_ratings` | `ChatClosureRating` | Yes | No | Post-close ratings |
 | **Operations** | `canned_responses` | `CannedResponse` | Yes | Yes | Quick replies |
 | **Chatbot** | `chatbot_flows` | `ChatbotFlow` | Yes | Yes | Flow config retained because contact info panel references chatbot flow settings |
 | **Extensibility** | `webhooks` | `Webhook` | Yes | No | Outbound event delivery with optional secret and custom headers |
+| **Extensibility** | `outbox_events` | `OutboxEvent` | Yes | No | Durable post-commit event fanout |
+| **Extensibility** | `webhook_deliveries` | `WebhookDelivery` | Yes | No | Delivery log and retry state for webhooks |
 | **Extensibility** | `custom_actions` | `CustomAction` | Yes | No | UI-triggered integrations |
+| **Campaigns** | `campaigns` | `Campaign` | Yes | Yes | Campaign definition because `/campaigns` is confirmed in navigation |
+| **Campaigns** | `campaign_runs` | `CampaignRun` | Yes | No | Each manual or scheduled execution |
+| **Campaigns** | `campaign_recipients` | `CampaignRecipient` | Yes | No | Recipient-level delivery status per run |
 | **Licensing** | `license_records` | `LicenseRecord` | No | No | Installation entitlements |
 | **Licensing** | `license_events` | `LicenseEvent` | No | No | License audit trail |
 
@@ -159,7 +168,8 @@
   - `unavailable`
   - `busy`
 - الحقول المتوقعة:
-  - `status`
+  - `previous_status`
+  - `new_status`
   - `changed_at`
   - `changed_by_user_id` أو `session_id` عند الحاجة
 
@@ -319,6 +329,19 @@
   - صلاحيات الدور
   - `user_contact_visibility_rules.allowed_phone_numbers`
 
+### `contact_user_states`
+
+- هذه الطبقة تعالج فجوة مهمة في الخطة: `pin` و`hide` و`last read` هي حالات تخص المستخدم الحالي،
+  ولا يجب أن تخزن على contact globally.
+- الحقول المتوقعة:
+  - `contact_id`
+  - `user_id`
+  - `is_hidden`
+  - `is_pinned`
+  - `last_read_message_id`
+  - `last_opened_at`
+  - `last_seen_at`
+
 ### `messages`
 
 - السجل الكامل للمحادثة.
@@ -327,6 +350,22 @@
   - `revoke`
   - retry metadata
   - media references
+
+### `message_delivery_attempts`
+
+- وجود `Retry sending` في الواجهة مع رسالة خطأ واضحة يعني أن حفظ الحالة النهائية في `messages`
+  وحدها غير كافٍ.
+- الحقول المتوقعة:
+  - `message_id`
+  - `attempt_no`
+  - `typed_for_ms`
+  - `provider_message_id`
+  - `provider_status`
+  - `failure_reason`
+  - `started_at`
+  - `finished_at`
+  - `metadata JSONB`
+- هذه الطبقة هي المرجع الصحيح لشرح سبب الفشل، وكم استغرقت محاكاة الكتابة، وما إذا كان retry جديداً أو نفس المحاولة.
 
 ### `media_assets`
 
@@ -346,6 +385,25 @@
   - `invited`
   - `accepted`
   - `declined`
+
+### `conversation_events`
+
+- هذه الطبقة تسد فجوة تحليلية وتشغيلية كبيرة.
+- لا يكفي أن نعرف assignee الحالي أو closed_at الحالي فقط؛ نحتاج history صريحة لأحداث:
+  - `assigned`
+  - `unassigned`
+  - `claimed`
+  - `closed`
+  - `reopened`
+  - `public_changed`
+  - `collaborator_invited`
+  - `collaborator_accepted`
+  - `note_created`
+- منها تُشتق:
+  - `Transfers Handled`
+  - `Avg Queue Time`
+  - `Avg Resolution Time`
+  - drill-down timeline داخل chat
 
 ### `chat_closure_ratings`
 
@@ -378,6 +436,112 @@
   - `is_active`
   - `last_test_at`
   - `last_delivery_at`
+
+### `outbox_events`
+
+- هذه الطبقة تحل مشكلة شائعة في الأنظمة الفورية: commit تم بنجاح لكن event ضاع قبل الوصول إلى WebSocket أو webhook.
+- كل mutation مهم مثل:
+  - رسالة جديدة
+  - تغيير حالة message
+  - assign/close/reopen
+  - notification
+  - instance connectivity
+  يُسجل أولاً كـ outbox event داخل transaction نفسها.
+- بعد ذلك dispatcher مستقل ينقل الحدث إلى:
+  - WebSocket fanout
+  - webhook deliveries
+  - أي consumers تشغيلية أخرى
+
+### `webhook_deliveries`
+
+- `webhooks` وحدها لا تكفي لأن الخطة تتحدث عن retry policy, test webhook, وفشل delivery.
+- الحقول المتوقعة:
+  - `webhook_id`
+  - `outbox_event_id`
+  - `status`
+  - `attempts`
+  - `last_http_status`
+  - `next_retry_at`
+  - `delivered_at`
+  - `response_headers JSONB`
+  - `response_body`
+
+### `job_runs`
+
+- كل الأعمال الخلفية غير اللحظية يجب أن تمتلك سجلاً قابلاً للتتبع، خاصة:
+  - `uploads_cleanup`
+  - `contacts_import`
+  - `campaign_run`
+  - `instance_reconnect`
+  - `webhook_replay`
+- الحقول المتوقعة:
+  - `job_type`
+  - `status`
+  - `scope_type`
+  - `scope_id`
+  - `payload JSONB`
+  - `attempts`
+  - `scheduled_at`
+  - `started_at`
+  - `finished_at`
+  - `error_message`
+
+### `audit_logs`
+
+- الخطة الحالية تحتوي عدداً كبيراً من الأفعال الحساسة، لذلك audit عام أصبح ضرورياً لا خياراً:
+  - تفعيل الرخصة
+  - حذف organization أو instance
+  - تغيير roles/permissions
+  - تشغيل `Run Cleanup Now`
+  - إنشاء/حذف API key
+  - تشغيل campaign
+- الحقول المتوقعة:
+  - `actor_user_id`
+  - `entity_type`
+  - `entity_id`
+  - `action`
+  - `ip_address`
+  - `user_agent`
+  - `metadata JSONB`
+
+### `campaigns`
+
+- بما أن `/campaigns` route مؤكدة في المنتج، يجب أن تبقى على الأقل كطبقة domain واضحة.
+- الحقول المتوقعة:
+  - `name`
+  - `status`
+  - `source` = `manual` | `instance_auto`
+  - `instance_id` nullable
+  - `message_body`
+  - `media_asset_id`
+  - `filters JSONB`
+  - `schedule JSONB`
+  - `last_run_at`
+  - `next_run_at`
+
+### `campaign_runs`
+
+- تمثل كل تشغيل فعلي لحملة، سواء كان يدوياً أو مجدولاً.
+- الحقول المتوقعة:
+  - `campaign_id`
+  - `status`
+  - `trigger_source`
+  - `started_at`
+  - `finished_at`
+  - `summary JSONB`
+
+### `campaign_recipients`
+
+- تمثل نتيجة الحملة على مستوى كل جهة اتصال.
+- الحقول المتوقعة:
+  - `campaign_run_id`
+  - `campaign_id`
+  - `contact_id`
+  - `instance_id`
+  - `message_id`
+  - `status`
+  - `failure_reason`
+  - `attempted_at`
 
 ### `license_records`
 
@@ -451,7 +615,19 @@
     - `sessions`
 - لا يجب خلط هذه الجداول مع schema تطبيق Whatomate نفسه؛ هي تخص console الإصدار والإدارة لدى الـ vendor.
 
-## 3. Multi-tenancy & Soft Delete
+## 3. Redis Responsibilities
+
+- `Redis` يجب ألا تبقى كلمة عامة في الـ stack فقط؛ دورها في الخطة يجب أن يكون صريحاً:
+  - refresh tokens وsession revocation
+  - WebSocket pub/sub وpresence وresume cursors القصيرة
+  - distributed locks على send/retry/connect/cleanup حتى لا تتكرر العملية عبر أكثر من worker
+  - job queue wakeups وretry scheduling
+  - rate limiting buckets
+  - license invalidation وephemeral quota caches
+  - تخزين QR أو presence state القصير عند الحاجة
+- البيانات الحرجة تبقى في PostgreSQL، بينما Redis تبقى طبقة transient coordination وليست source of truth.
+
+## 4. Multi-tenancy & Soft Delete
 
 ### Multi-tenancy Strategy
 
@@ -476,6 +652,8 @@
 - `api_keys`
 - `sso_providers`
 - `teams`
+- `job_runs`
+- `audit_logs`
 - `user_notifications`
 - `user_contact_visibility_rules`
 - `whatsapp_instances`
@@ -491,14 +669,21 @@
 - `messages`
 - `media_assets`
 - `tags`
-- `contact_user_deletions`
+- `contact_user_states`
 - `contact_collaborators`
 - `conversation_notes`
+- `conversation_events`
+- `message_delivery_attempts`
 - `chat_closure_ratings`
 - `canned_responses`
 - `chatbot_flows`
 - `webhooks`
+- `outbox_events`
+- `webhook_deliveries`
 - `custom_actions`
+- `campaigns`
+- `campaign_runs`
+- `campaign_recipients`
 - `user_availability_logs`
 
 ### Tables Not Scoped By Organization
@@ -524,7 +709,7 @@
   - تأجيل jobs
   بدل استنزاف السيرفر أو إسقاط المنصة كاملة.
 
-## 4. Key Indexes & Constraints
+## 5. Key Indexes & Constraints
 
 - `organizations.slug` unique
 - `users.email` unique
@@ -538,6 +723,9 @@
 - `organization_slot_allocations (organization_id, slot_inventory_id)` unique
 - `organization_slot_allocations (slot_inventory_id, organization_id)` index
 - `contacts (organization_id, phone_number, instance_id)` unique
+- `contact_user_states (contact_id, user_id)` unique
+- `conversation_events (contact_id, occurred_at DESC)` index
+- `message_delivery_attempts (message_id, attempt_no)` unique
 - `user_contact_visibility_rules (organization_id, user_id)` unique
 - `user_notifications (user_id, is_read, created_at DESC)` index
 - `media_assets (organization_id, created_at DESC)` index
@@ -549,6 +737,13 @@
 - `whatsapp_instance_health_snapshots (instance_id, observed_at DESC)` index
 - `whatsapp_statuses (organization_id, published_at DESC)` index
 - `webhooks (organization_id, name)` unique
+- `outbox_events (status, available_at)` index
+- `webhook_deliveries (webhook_id, created_at DESC)` index
+- `job_runs (organization_id, job_type, created_at DESC)` index
+- `audit_logs (organization_id, created_at DESC)` index
+- `campaigns (organization_id, name)` unique when not deleted
+- `campaign_runs (campaign_id, started_at DESC)` index
+- `campaign_recipients (campaign_run_id, contact_id)` unique
 - فهارس `GIN` على `contacts.tags` وحقول `metadata JSONB` و`webhooks.custom_headers`
   و`user_contact_visibility_rules.allowed_phone_numbers` عند الحاجة
 
@@ -579,7 +774,7 @@
   - `webhooks.delete`
 - في الحد الأدنى، `settings.uploads_cleanup.manage` تبقى محصورة على org admin حتى لو لم تُعرض كمفتاح مستقل في الواجهة الأولى.
 
-## 5. Removed Or Still Unverified Domains
+## 6. Removed Or Still Unverified Domains
 
 هذه الجداول لا تزال خارج النطاق المؤكد أو غير مثبتة من تدقيق `/chat` الحالي:
 
@@ -597,4 +792,5 @@
 
 ملاحظة:
 
-- `campaigns` و`analytics` بقيتا ضمن الخطة لأنهما ظهرتا في الشريط الجانبي، لكن جداولهما الدقيقة مؤجلة إلى تدقيق مخصص ولا تُعامل هنا كجداول محذوفة.
+- `campaigns` لم تعد مؤجلة كلياً؛ تم تثبيت baseline tables لها لأن route نفسها مؤكدة في التنقل.
+- `analytics` ما زالت تعتمد أساساً على مشتقات `conversation_events`, `messages`, و`chat_closure_ratings` ولا تحتاج جداول خاصة في المرحلة الأولى.
