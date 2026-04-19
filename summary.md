@@ -1,20 +1,19 @@
 # Summary
 
-**Task:** صمّم نموذج صلاحيات قائم على الأفعال لا على أسماء الأدوار فقط، بمخرجات قابلة للربط المباشر مع الأزرار والشاشات والطلبات، مع تغطية حالات المشاهدة بدون كتابة.
+**Task:** وضع طبقة رؤية واضحة (Visibility Scope Layer) تحدد سياسات استعراض البيانات (من يرى كل العناصر، المحددة بنطاق، أو أرقام مختارة) لتعميمها بقوة على القوائم، التفاصيل، البحث، والتصدير.
 
 **Approach & Key Decisions:**
-- Created `Docs/15_permissions_action_model.md` to formally document the Action-Based Permissions model.
-- Analyzed existing UI surfaces from `10_screen_behavior_reference.md` and database structures from `03_database_schema.md` to ensure the mapping matches actual operational requirements.
-- Standardized the format `[Resource].[Action]` (e.g., `chats.view`, `messages.send`).
-- Addressed the specific requirement "حالات تسمح بالمشاهدة وتمنع الكتابة" by ensuring actions are de-coupled (granting `view` while withholding `send/create/edit`).
-- Provided implementation examples for Frontend UI (e.g., UI Conditional rendering buttons) and Backend Middleware (Endpoint method checks).
+- Created `Docs/16_visibility_scope_layer.md` to define unified database-enforced filtering for `user_contact_visibility_rules`.
+- Defined four main scopes: `all_contacts` (الرؤية الشاملة), `instances_only` (حسب الحسابات المرتبطة), `allowed_numbers_only` (أرقام مستثناة فردياً), and `instances_plus_allowed_numbers` (مدمجة).
+- Documented Enforcement Levels ensuring that a uniform SQL middleware dictates what comes out from `Lists/Inbox`, `Detail Queries (403/404 handling)`, `Deep Search`, and `CSV Exports`.
+- Included the concept of hierarchy resolution (Inherit from Roles vs. Direct Override) and Data Masking (`can_view_unmasked_phone = false`) which masks numbers equally across the UI and CSV chunks.
 
 **Files Modified/Created/Deleted:**
-- [NEW] `Docs/15_permissions_action_model.md` (Created action-based permission schema).
+- [NEW] `Docs/16_visibility_scope_layer.md` (Created visibility scoping blueprint).
 - [MODIFIED] `summary.md` (Overwritten with updated task output).
 
 **Tests Added:**
-- N/A (Documentation and Architecture design phase).
+- N/A (Architecture and Security scoping phase).
 
 **Results & Verification:**
-- An action-based capabilities model is ready, fulfilling requirements to separate roles from hardcoded UI logic and linking directly to API methods and interface actions.
+- A robust, query-level data isolation architecture is structurally documented, fulfilling the exact restrictions mapping required for multi-tier role implementations.
