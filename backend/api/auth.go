@@ -47,9 +47,43 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-// Dummy credentials for testing
+// Settings definition
+type UserSettings struct {
+	Theme         string `json:"theme"`
+	Language      string `json:"language"`
+	SidebarPinned bool   `json:"sidebar_pinned"`
+}
+
+// Rich User Model for Frontend Consumption
+type UserResponse struct {
+	ID       string       `json:"id"`
+	Email    string       `json:"email"`
+	Name     string       `json:"name"`
+	Avatar   string       `json:"avatar"`
+	Status   string       `json:"status"` // "online", "offline", "busy"
+	Role     string       `json:"role"`   // "admin", "agent"
+	Settings UserSettings `json:"settings"`
+}
+
+// Dummy credentials and data for testing
 const mockEmail = "admin@example.com"
 const mockPassword = "password123"
+
+func getMockUser() UserResponse {
+	return UserResponse{
+		ID:     "1",
+		Email:  mockEmail,
+		Name:   "Admin Encanto",
+		Avatar: "https://i.pravatar.cc/150?u=admin",
+		Status: "online",
+		Role:   "admin",
+		Settings: UserSettings{
+			Theme:         "light",
+			Language:      "ar",
+			SidebarPinned: true,
+		},
+	}
+}
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var req LoginRequest
@@ -64,11 +98,13 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := getMockUser()
+
 	// Generate JWT
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &Claims{
-		UserID: "1",
-		Email:  req.Email,
+		UserID: user.ID,
+		Email:  user.Email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
@@ -93,9 +129,9 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	})
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{
+	json.NewEncoder(w).Encode(map[string]interface{}{
 		"message": "Login successful",
-		"email": req.Email,
+		"user":    user,
 	})
 }
 
@@ -122,12 +158,16 @@ func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := getMockUser()
+	// Replace with DB query based on claims.UserID later
+	if user.ID != claims.UserID {
+		http.Error(w, `{"error":"User not found"}`, http.StatusNotFound)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"user": map[string]string{
-			"id": claims.UserID,
-			"email": claims.Email,
-		},
+		"user": user,
 	})
 }
 

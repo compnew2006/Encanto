@@ -4,35 +4,35 @@ Use this file as the markdown companion to the interactive guide. Check items on
 
 ## Phase 1: Stabilize the Final Picture
 
-- [ ] `1-1` Final scope approved
+- [x] `1-1` Final scope approved
   Result: in-scope, later-scope, and out-of-scope lists are explicit
-- [ ] `1-2` Screen and behavior reference unified
+- [x] `1-2` Screen and behavior reference unified
   Result: no conflicting behavior across planning files
-- [ ] `1-3` First-release success defined
+- [x] `1-3` First-release success defined
   Result: release readiness is measurable
 
 Notes:
 
--
+- Done during the initial project breakdown.
 
 ## Phase 2: Establish the Project Foundation
 
-- [ ] `2-1` Project structure mapped
+- [x] `2-1` Project structure mapped
   Result: clean boundaries and folder structure
-- [ ] `2-2` Conventions fixed
+- [x] `2-2` Conventions fixed
   Result: naming, error handling, and organization rules documented
-- [ ] `2-3` Build order defined
+- [x] `2-3` Build order defined
   Result: dependency-safe delivery sequence exists
 
 Notes:
 
--
+- Done using SvelteKit 5 / Tailwind v4 and Go chi backend.
 
 ## Phase 3: Identity and Context
 
-- [ ] `3-1` Access flow completed
+- [x] `3-1` Access flow completed
   Result: login, logout, and session continuity work
-- [ ] `3-2` Current-user context completed
+- [x] `3-2` Current-user context completed
   Result: current-user data, presence, and personal menu are stable
 - [ ] `3-3` Context switching completed
   Result: switching updates scope, visibility, and data correctly
