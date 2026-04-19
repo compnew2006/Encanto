@@ -43,11 +43,11 @@ Notes:
 
 ## Phase 4: Permissions and Visibility
 
-- [ ] `4-1` Action-based permission model defined
+- [x] `4-1` Action-based permission model defined
   Result: actions are clear and reusable
-- [ ] `4-2` Visibility rules implemented
+- [x] `4-2` Visibility rules implemented
   Result: users see only what they should see
-- [ ] `4-3` UI aligned with enforcement
+- [x] `4-3` UI aligned with enforcement
   Result: buttons, screens, and backend decisions match
 
 Notes:
