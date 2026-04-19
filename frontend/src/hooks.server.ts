@@ -1,10 +1,9 @@
 import type { Handle } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
-import { env } from '$env/dynamic/public';
-
-const API_BASE = (env.PUBLIC_API_BASE || 'http://127.0.0.1:8080').replace(/\/$/, '');
+import { resolveApiBaseForHost } from '$lib/api-base';
 
 export const handle: Handle = async ({ event, resolve }) => {
+	const API_BASE = resolveApiBaseForHost(event.url.hostname, event.url.protocol);
 	const sessionCookie = event.cookies.get('session_token');
 	const orgContext = event.cookies.get('org_context');
 

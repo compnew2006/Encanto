@@ -88,3 +88,18 @@ Implement phases 5 through 10 from the project docs, using `Docs/` and the prior
 - Replaced the placeholder media composer fields with a real file picker/dropzone, preview metadata, optional caption support, and persisted media file-size labels.
 - Added editable uploads cleanup retention/hour controls, backend persistence, and admin-only cleanup schedule actions in the settings surface.
 - Added backend store tests and expanded Playwright coverage for the new flows.
+
+## 2026-04-20 Auth Host Fix
+
+**Issue**
+- Logging in through `http://localhost:5173` left the app in an unauthorized state because the frontend hardcoded backend calls to `127.0.0.1:8080`.
+- The login/session cookies were created for `localhost`, but browser-side API and websocket calls were targeting `127.0.0.1`, so the backend never received the session cookie.
+
+**Fix**
+- Added shared API-base resolution that derives the backend host from the current browser/request host unless `PUBLIC_API_BASE` is explicitly set.
+- Updated login action, request hooks, logout route, API client, and websocket client to use the resolved host instead of hardcoded `127.0.0.1`.
+- Added `autocomplete` attributes to the login form fields to remove the browser console warning.
+
+**Verification**
+- `npm run check` in `frontend`: passed
+- Manual browser verification on `http://localhost:5173/login`: login now redirects into `/chat/...` without the follow-up `401 Unauthorized` cascade

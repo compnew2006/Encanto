@@ -23,11 +23,11 @@
 		<form method="POST" use:enhance class="space-y-4">
 			<div>
 				<label for="email" class="block text-sm text-gray-600 mb-1">Email</label>
-				<input id="email" name="email" type="email" bind:value={email} class="w-full border-gray-300 rounded px-3 py-2 border outline-none focus:ring-2 focus:ring-blue-500" required />
+				<input id="email" name="email" type="email" autocomplete="email" bind:value={email} class="w-full border-gray-300 rounded px-3 py-2 border outline-none focus:ring-2 focus:ring-blue-500" required />
 			</div>
 			<div>
 				<label for="password" class="block text-sm text-gray-600 mb-1">Password</label>
-				<input id="password" name="password" type="password" class="w-full border-gray-300 rounded px-3 py-2 border outline-none focus:ring-2 focus:ring-blue-500" required />
+				<input id="password" name="password" type="password" autocomplete="current-password" class="w-full border-gray-300 rounded px-3 py-2 border outline-none focus:ring-2 focus:ring-blue-500" required />
 			</div>
 			
 			{#if form?.missing}

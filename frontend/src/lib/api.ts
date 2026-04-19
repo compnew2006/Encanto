@@ -1,8 +1,6 @@
-import { env } from '$env/dynamic/public';
+import { resolveApiBase } from '$lib/api-base';
 
-const DEFAULT_API_BASE = 'http://127.0.0.1:8080';
-
-export const API_BASE = (env.PUBLIC_API_BASE || DEFAULT_API_BASE).replace(/\/$/, '');
+export const API_BASE = resolveApiBase();
 
 type ApiInit = Omit<RequestInit, 'body'> & {
 	body?: BodyInit | object | null;
