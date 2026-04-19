@@ -7,10 +7,17 @@ import (
 )
 
 type SendMessageRequest struct {
-	Type     string `json:"type"`
-	Body     string `json:"body"`
-	FileName string `json:"file_name"`
-	MediaURL string `json:"media_url"`
+	Type          string `json:"type"`
+	Body          string `json:"body"`
+	FileName      string `json:"file_name"`
+	FileSizeLabel string `json:"file_size_label"`
+	MediaURL      string `json:"media_url"`
+}
+
+type StartDirectChatRequest struct {
+	PhoneNumber string `json:"phone_number"`
+	ProfileName string `json:"profile_name"`
+	InstanceID  string `json:"instance_id"`
 }
 
 type AssignRequest struct {
@@ -54,6 +61,32 @@ func (s *Server) GetWorkspace(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeJSON(w, http.StatusOK, snapshot)
+}
+
+func (s *Server) CreateDirectChat(w http.ResponseWriter, r *http.Request) {
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	var req StartDirectChatRequest
+	if err := decodeJSON(r, &req); err != nil {
+		errorJSON(w, http.StatusBadRequest, "invalid request payload")
+		return
+	}
+
+	contact, err := s.store.CreateDirectChat(currentOrgID(r), claims.UserID, req)
+	if err != nil {
+		errorJSON(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	s.hub.Publish(currentOrgID(r), "conversation_event", map[string]any{
+		"contact_id": contact.ID,
+		"contact":    contact,
+	})
+	writeJSON(w, http.StatusCreated, map[string]any{"contact": contact})
 }
 
 func (s *Server) SendMessage(w http.ResponseWriter, r *http.Request) {

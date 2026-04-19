@@ -126,6 +126,33 @@ func (s *Server) GetNotificationSettings(w http.ResponseWriter, r *http.Request)
 	writeJSON(w, http.StatusOK, settings.Notifications)
 }
 
+func (s *Server) UpdateCleanupSettings(w http.ResponseWriter, r *http.Request) {
+	if !s.isAdmin(currentOrgID(r)) {
+		errorJSON(w, http.StatusForbidden, "admin privileges required")
+		return
+	}
+
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	var req CleanupSettings
+	if err := decodeJSON(r, &req); err != nil {
+		errorJSON(w, http.StatusBadRequest, "invalid request payload")
+		return
+	}
+
+	settings, err := s.store.UpdateCleanupSettings(currentOrgID(r), claims.UserID, req)
+	if err != nil {
+		errorJSON(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	writeJSON(w, http.StatusOK, settings)
+}
+
 func (s *Server) UpdateNotificationSettings(w http.ResponseWriter, r *http.Request) {
 	var req NotificationSettings
 	if err := decodeJSON(r, &req); err != nil {

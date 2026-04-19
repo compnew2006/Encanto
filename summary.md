@@ -76,3 +76,15 @@ Implement phases 5 through 10 from the project docs, using `Docs/` and the prior
 **Known Limitations**
 - The backend remains an in-memory mock implementation; data resets on process restart.
 - Vite emits harmless local-dev noise during Playwright runs (`favicon.ico` 404 and transient WebKit HMR console warnings), but the full suite passes.
+
+## 2026-04-19 Follow-up Comparison Pass
+
+**Reference comparison**
+- Reviewed the local phase 5-10 surfaces against `https://ofuqalmadenah.com` with the provided admin account.
+- Focused the implementation pass on concrete scope gaps that were visible in the reference product and explicitly required by the docs: direct chat creation, media attachment picker/dropzone flow, and editable cleanup scheduling.
+
+**Implemented gaps**
+- Added `Start New Chat` to the inbox with backend-backed direct chat creation and navigation into the new conversation.
+- Replaced the placeholder media composer fields with a real file picker/dropzone, preview metadata, optional caption support, and persisted media file-size labels.
+- Added editable uploads cleanup retention/hour controls, backend persistence, and admin-only cleanup schedule actions in the settings surface.
+- Added backend store tests and expanded Playwright coverage for the new flows.

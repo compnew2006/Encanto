@@ -38,6 +38,7 @@ func (s *Server) Router() *chi.Mux {
 
 		r.Get("/chats", s.GetWorkspace)
 		r.Get("/chats/{contactID}", s.GetWorkspace)
+		r.Post("/chats/direct", s.CreateDirectChat)
 		r.Post("/chats/{contactID}/messages", s.SendMessage)
 		r.Post("/chats/{contactID}/messages/{messageID}/retry", s.RetryMessage)
 		r.Post("/chats/{contactID}/messages/{messageID}/revoke", s.RevokeMessage)
@@ -66,6 +67,7 @@ func (s *Server) Router() *chi.Mux {
 		r.Get("/settings/chat", s.GetChatSettings)
 		r.Put("/settings/chat", s.UpdateChatSettings)
 		r.Get("/settings/notifications", s.GetNotificationSettings)
+		r.Put("/settings/uploads-cleanup", s.UpdateCleanupSettings)
 		r.Put("/settings/notifications", s.UpdateNotificationSettings)
 		r.Post("/settings/uploads-cleanup/run", s.RunCleanup)
 

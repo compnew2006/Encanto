@@ -26,15 +26,24 @@
 	let composerMode = $state<'text' | 'media'>('text');
 	let composerText = $state('');
 	let attachmentName = $state('');
+	let attachmentFileSizeLabel = $state('');
 	let attachmentUrl = $state('');
+	let attachmentPreviewMime = $state('');
 	let showNotes = $state(true);
 	let showInfo = $state(true);
 	let showTimeline = $state(false);
 	let showNotifications = $state(false);
 	let showStatuses = $state(false);
 	let showQuickReplies = $state(false);
+	let showDirectChatDialog = $state(false);
+	let creatingDirectChat = $state(false);
+	let newContactPhone = $state('');
+	let newContactName = $state('');
+	let newContactInstanceId = $state('');
+	let isDragOver = $state(false);
 	let saving = $state(false);
 	let infoMessage = $state('');
+	let attachmentInput = $state<HTMLInputElement | null>(null);
 
 	let unsubscribePage: (() => void) | undefined;
 	let teardownRealtime: (() => void) | undefined;
@@ -63,6 +72,74 @@
 		}
 	}
 
+	function formatFileSize(size: number) {
+		if (size < 1024) return `${size} B`;
+		if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+		return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+	}
+
+	function clearAttachment() {
+		attachmentName = '';
+		attachmentFileSizeLabel = '';
+		attachmentUrl = '';
+		attachmentPreviewMime = '';
+		if (attachmentInput) {
+			attachmentInput.value = '';
+		}
+	}
+
+	function openDirectChatDialog() {
+		if (!newContactInstanceId) {
+			newContactInstanceId = workspace?.instances[0]?.id ?? '';
+		}
+		showDirectChatDialog = true;
+	}
+
+	function closeDirectChatDialog() {
+		showDirectChatDialog = false;
+		newContactPhone = '';
+		newContactName = '';
+	}
+
+	function readFileAsDataURL(file: File) {
+		return new Promise<string>((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : '');
+			reader.onerror = () => reject(new Error('Failed to read the selected file.'));
+			reader.readAsDataURL(file);
+		});
+	}
+
+	async function applyAttachmentFile(file: File) {
+		attachmentName = file.name;
+		attachmentFileSizeLabel = formatFileSize(file.size);
+		attachmentPreviewMime = file.type;
+		attachmentUrl = await readFileAsDataURL(file);
+	}
+
+	async function handleAttachmentChange(event: Event) {
+		const input = event.currentTarget as HTMLInputElement;
+		const file = input.files?.[0];
+		if (!file) return;
+		try {
+			await applyAttachmentFile(file);
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Failed to prepare the attachment.';
+		}
+	}
+
+	async function handleAttachmentDrop(event: DragEvent) {
+		event.preventDefault();
+		isDragOver = false;
+		const file = event.dataTransfer?.files?.[0];
+		if (!file) return;
+		try {
+			await applyAttachmentFile(file);
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Failed to prepare the attachment.';
+		}
+	}
+
 	async function loadWorkspace() {
 		if (!currentContactId) return;
 		loading = true;
@@ -77,6 +154,12 @@
 
 			workspace = await apiFetch<WorkspaceSnapshot>(`/api/chats/${currentContactId}?${params.toString()}`);
 			selectedAssignee = workspace.selected?.contact.assigned_user_id ?? '';
+			if (
+				workspace.instances.length > 0 &&
+				(!newContactInstanceId || !workspace.instances.some((instance) => instance.id === newContactInstanceId))
+			) {
+				newContactInstanceId = workspace.instances[0].id;
+			}
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to load the workspace.';
 		} finally {
@@ -142,12 +225,12 @@
 					type: composerMode,
 					body: composerText.trim(),
 					file_name: attachmentName.trim(),
+					file_size_label: attachmentFileSizeLabel,
 					media_url: attachmentUrl.trim()
 				}
 			});
 			composerText = '';
-			attachmentName = '';
-			attachmentUrl = '';
+			clearAttachment();
 			await refreshAndKeepMessage('Message queued.');
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to send.';
@@ -214,6 +297,39 @@
 
 	async function markNotificationsRead() {
 		await runAction('/api/notifications/read-all', undefined, 'Notifications cleared.');
+	}
+
+	async function createDirectChat() {
+		if (!newContactPhone.trim() || !newContactInstanceId) return;
+		creatingDirectChat = true;
+		error = '';
+		try {
+			const response = await apiFetch<{ contact: ChatContact }>('/api/chats/direct', {
+				method: 'POST',
+				body: {
+					phone_number: newContactPhone.trim(),
+					profile_name: newContactName.trim(),
+					instance_id: newContactInstanceId
+				}
+			});
+			const nextTab =
+				response.contact.status === 'closed'
+					? 'closed'
+					: response.contact.status === 'pending'
+						? 'pending'
+						: 'assigned';
+			currentTab = nextTab;
+			closeDirectChatDialog();
+			await goto(workspacePath(response.contact.id));
+			infoMessage = 'Direct chat created.';
+			window.setTimeout(() => {
+				if (infoMessage === 'Direct chat created.') infoMessage = '';
+			}, 2200);
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Failed to create the chat.';
+		} finally {
+			creatingDirectChat = false;
+		}
 	}
 
 	async function selectContact(contact: ChatContact) {
@@ -295,14 +411,19 @@
 
 	<div class="grid min-h-[78vh] grid-cols-12 gap-4">
 		<aside class="col-span-12 lg:col-span-3 rounded-[2rem] border border-gray-200 bg-white p-4 shadow-sm">
-			<div class="mb-4 flex items-center justify-between">
+			<div class="mb-4 flex items-center justify-between gap-3">
 				<div>
 					<p class="text-xs font-semibold uppercase tracking-[0.25em] text-blue-600">Conversation Workspace</p>
 					<h2 class="text-2xl font-semibold text-gray-900">Inbox</h2>
 				</div>
-				<button class="rounded-full border border-gray-200 px-3 py-2 text-sm text-gray-600 hover:border-blue-300 hover:text-blue-700" onclick={() => loadWorkspace()}>
-					Refresh
-				</button>
+				<div class="flex items-center gap-2">
+					<button data-testid="open-direct-chat" class="rounded-full bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700" onclick={openDirectChatDialog}>
+						Start New Chat
+					</button>
+					<button class="rounded-full border border-gray-200 px-3 py-2 text-sm text-gray-600 hover:border-blue-300 hover:text-blue-700" onclick={() => loadWorkspace()}>
+						Refresh
+					</button>
+				</div>
 			</div>
 
 			<div class="mb-3 grid grid-cols-3 gap-2">
@@ -365,6 +486,11 @@
 						</div>
 					</button>
 				{/each}
+				{#if (workspace?.conversations?.length ?? 0) === 0}
+					<div class="rounded-[1.5rem] border border-dashed border-gray-200 px-4 py-6 text-center text-sm text-gray-500">
+						No conversations match the current tab and filters.
+					</div>
+				{/if}
 			</div>
 		</aside>
 
@@ -438,6 +564,9 @@
 
 										{#if message.type === 'media'}
 											<div class={`rounded-2xl border px-3 py-3 ${message.direction === 'outbound' ? 'border-blue-300/40 bg-white/10' : 'border-gray-200 bg-gray-50'}`}>
+												{#if message.media_url && (message.media_url.startsWith('data:image/') || message.media_url.startsWith('http'))}
+													<img class="mb-3 max-h-56 w-full rounded-xl object-cover" src={message.media_url} alt={message.file_name || 'Attachment preview'} />
+												{/if}
 												<p class="font-medium">{message.file_name}</p>
 												<p class={`text-xs ${message.direction === 'outbound' ? 'text-blue-50' : 'text-gray-500'}`}>{message.file_size_label || 'Attachment preview'}</p>
 											</div>
@@ -503,9 +632,40 @@
 						{#if composerMode === 'text'}
 							<textarea data-testid="composer-textarea" bind:value={composerText} class="min-h-[120px] w-full rounded-[1.75rem] border border-gray-200 px-4 py-4 text-sm outline-none focus:border-blue-400" placeholder="Write a reply. Text sends use typing simulation based on message length."></textarea>
 						{:else}
-							<div class="grid gap-3 md:grid-cols-2">
-								<input data-testid="attachment-name" bind:value={attachmentName} class="rounded-[1.75rem] border border-gray-200 px-4 py-3 text-sm outline-none focus:border-blue-400" placeholder="Attachment name" />
-								<input bind:value={attachmentUrl} class="rounded-[1.75rem] border border-gray-200 px-4 py-3 text-sm outline-none focus:border-blue-400" placeholder="Optional preview URL" />
+							<div class="space-y-3">
+								<input bind:this={attachmentInput} data-testid="attachment-file-input" class="hidden" type="file" onchange={handleAttachmentChange} />
+								<div
+									data-testid="attachment-dropzone"
+									class={`rounded-[1.75rem] border-2 border-dashed px-4 py-5 text-sm transition ${isDragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-gray-50'}`}
+									role="button"
+									tabindex="0"
+									onclick={() => attachmentInput?.click()}
+									onkeydown={(event) => (event.key === 'Enter' || event.key === ' ') && attachmentInput?.click()}
+									ondragenter={() => isDragOver = true}
+									ondragleave={() => isDragOver = false}
+									ondragover={(event) => event.preventDefault()}
+									ondrop={handleAttachmentDrop}
+								>
+									<p class="font-medium text-gray-900">Drop a file here or click to choose one</p>
+									<p class="mt-1 text-gray-500">Media sends immediately without typing simulation, matching the confirmed workflow.</p>
+								</div>
+
+								{#if attachmentName}
+									<div class="rounded-[1.5rem] border border-gray-200 bg-white px-4 py-4">
+										<div class="flex items-start justify-between gap-3">
+											<div class="min-w-0">
+												<p data-testid="attachment-preview-name" class="truncate text-sm font-medium text-gray-900">{attachmentName}</p>
+												<p class="mt-1 text-xs text-gray-500">{attachmentFileSizeLabel}</p>
+											</div>
+											<button class="rounded-full border border-gray-200 px-3 py-1.5 text-xs text-gray-600" onclick={clearAttachment}>Remove</button>
+										</div>
+										{#if attachmentUrl && attachmentPreviewMime.startsWith('image/')}
+											<img class="mt-3 max-h-56 w-full rounded-xl object-cover" src={attachmentUrl} alt={attachmentName} />
+										{/if}
+									</div>
+								{/if}
+
+								<textarea data-testid="composer-caption" bind:value={composerText} class="min-h-[96px] w-full rounded-[1.75rem] border border-gray-200 px-4 py-4 text-sm outline-none focus:border-blue-400" placeholder="Optional caption for the attachment..."></textarea>
 							</div>
 						{/if}
 
@@ -608,6 +768,52 @@
 			{/if}
 		</aside>
 	</div>
+
+	{#if showDirectChatDialog}
+		<div
+			class="fixed inset-0 z-40 bg-gray-900/20 backdrop-blur-sm"
+			role="button"
+			tabindex="0"
+			aria-label="Close direct chat dialog"
+			onclick={closeDirectChatDialog}
+			onkeydown={(event) => event.key === 'Escape' && closeDirectChatDialog()}
+		></div>
+		<div class="fixed inset-x-4 top-[10vh] z-50 mx-auto max-w-lg rounded-[2rem] border border-gray-200 bg-white p-6 shadow-2xl">
+			<div class="flex items-start justify-between gap-4">
+				<div>
+					<p class="text-xs font-semibold uppercase tracking-[0.25em] text-blue-600">Start New Chat</p>
+					<h3 class="mt-2 text-2xl font-semibold text-gray-900">Create a direct conversation</h3>
+					<p class="mt-2 text-sm text-gray-500">Match the reference inbox flow by creating a phone-based chat directly from the workspace.</p>
+				</div>
+				<button class="rounded-full border border-gray-200 px-3 py-1.5 text-sm text-gray-600" onclick={closeDirectChatDialog}>Close</button>
+			</div>
+
+			<div class="mt-5 grid gap-4">
+				<label class="block">
+					<span class="mb-2 block text-sm font-medium text-gray-700">Phone Number</span>
+					<input data-testid="direct-chat-phone" bind:value={newContactPhone} class="w-full rounded-[1.5rem] border border-gray-200 px-4 py-3 text-sm outline-none focus:border-blue-400" placeholder="+201234567890" />
+				</label>
+				<label class="block">
+					<span class="mb-2 block text-sm font-medium text-gray-700">Profile Name</span>
+					<input data-testid="direct-chat-name" bind:value={newContactName} class="w-full rounded-[1.5rem] border border-gray-200 px-4 py-3 text-sm outline-none focus:border-blue-400" placeholder="Optional display name" />
+				</label>
+				<label class="block">
+					<span class="mb-2 block text-sm font-medium text-gray-700">Sending Account</span>
+					<select data-testid="direct-chat-instance" bind:value={newContactInstanceId} class="w-full rounded-[1.5rem] border border-gray-200 px-4 py-3 text-sm outline-none focus:border-blue-400">
+						<option value="">Select an account</option>
+						{#each workspace?.instances ?? [] as instance}
+							<option value={instance.id}>{instance.name}</option>
+						{/each}
+					</select>
+				</label>
+			</div>
+
+			<div class="mt-6 flex items-center justify-end gap-3">
+				<button class="rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700" onclick={closeDirectChatDialog}>Cancel</button>
+				<button data-testid="create-direct-chat" disabled={creatingDirectChat} class="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50" onclick={createDirectChat}>Create Chat</button>
+			</div>
+		</div>
+	{/if}
 
 	{#if showNotifications}
 		<div
