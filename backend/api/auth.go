@@ -26,6 +26,7 @@ func Router() *chi.Mux {
 	r.Group(func(r chi.Router) {
 		r.Use(RequireAuth)
 		r.Get("/me", h.Me)
+		r.Post("/auth/switch-org", h.SwitchOrg)
 	})
 
 	return r
@@ -54,35 +55,73 @@ type UserSettings struct {
 	SidebarPinned bool   `json:"sidebar_pinned"`
 }
 
+type Organization struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Role string `json:"role"` // user's role in this specific org
+}
+
 // Rich User Model for Frontend Consumption
 type UserResponse struct {
-	ID       string       `json:"id"`
-	Email    string       `json:"email"`
-	Name     string       `json:"name"`
-	Avatar   string       `json:"avatar"`
-	Status   string       `json:"status"` // "online", "offline", "busy"
-	Role     string       `json:"role"`   // "admin", "agent"
-	Settings UserSettings `json:"settings"`
+	ID                  string         `json:"id"`
+	Email               string         `json:"email"`
+	Name                string         `json:"name"`
+	Avatar              string         `json:"avatar"`
+	Status              string         `json:"status"`
+	Role                string         `json:"role"` // active role in current context
+	Settings            UserSettings   `json:"settings"`
+	Organizations       []Organization `json:"organizations"`
+	CurrentOrganization Organization   `json:"current_organization"`
 }
 
 // Dummy credentials and data for testing
 const mockEmail = "admin@example.com"
 const mockPassword = "password123"
 
-func getMockUser() UserResponse {
+func getMockOrganizations() []Organization {
+	return []Organization{
+		{ID: "org-1", Name: "Global Corp", Role: "admin"},
+		{ID: "org-2", Name: "Local Store", Role: "agent"},
+	}
+}
+
+func getMockUser(activeOrgID string) UserResponse {
+	orgs := getMockOrganizations()
+	
+	// Discover active org
+	var activeOrg Organization
+	found := false
+	for _, o := range orgs {
+		if o.ID == activeOrgID {
+			activeOrg = o
+			found = true
+			break
+		}
+	}
+	// Fallback to first org if invalid/missing
+	if !found && len(orgs) > 0 {
+		activeOrg = orgs[0]
+	}
+
 	return UserResponse{
-		ID:     "1",
-		Email:  mockEmail,
-		Name:   "Admin Encanto",
-		Avatar: "https://i.pravatar.cc/150?u=admin",
-		Status: "online",
-		Role:   "admin",
+		ID:                  "1",
+		Email:               mockEmail,
+		Name:                "Admin Encanto",
+		Avatar:              "https://i.pravatar.cc/150?u=admin",
+		Status:              "online",
+		Role:                activeOrg.Role, // dynamic!
 		Settings: UserSettings{
 			Theme:         "light",
 			Language:      "ar",
 			SidebarPinned: true,
 		},
+		Organizations:       orgs,
+		CurrentOrganization: activeOrg,
 	}
+}
+
+type SwitchOrgRequest struct {
+	OrgID string `json:"org_id"`
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
@@ -98,7 +137,23 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := getMockUser()
+	// If org_context exists, respect it, otherwise fallback
+	activeOrgID := ""
+	if cookie, err := r.Cookie("org_context"); err == nil {
+		activeOrgID = cookie.Value
+	}
+	user := getMockUser(activeOrgID)
+
+	// Refresh org context cookie to ensure canonical ID
+	http.SetCookie(w, &http.Cookie{
+		Name:     "org_context",
+		Value:    user.CurrentOrganization.ID,
+		Expires:  time.Now().Add(365 * 24 * time.Hour),
+		HttpOnly: true,
+		Secure:   false,
+		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
+	})
 
 	// Generate JWT
 	expirationTime := time.Now().Add(24 * time.Hour)
@@ -135,10 +190,59 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func (h *AuthHandler) SwitchOrg(w http.ResponseWriter, r *http.Request) {
+	_, ok := r.Context().Value("user").(*Claims)
+	if !ok {
+		http.Error(w, `{"error":"Unauthorized"}`, http.StatusUnauthorized)
+		return
+	}
+
+	var req SwitchOrgRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, `{"error":"Invalid request payload"}`, http.StatusBadRequest)
+		return
+	}
+	
+	// Validate they have access to this org by producing a mock user and checking ID
+	// If getMockUser sets fallback instead of provided, they don't have access
+	user := getMockUser(req.OrgID)
+	if user.CurrentOrganization.ID != req.OrgID {
+		http.Error(w, `{"error":"Organization access denied"}`, http.StatusForbidden)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "org_context",
+		Value:    user.CurrentOrganization.ID,
+		Expires:  time.Now().Add(365 * 24 * time.Hour),
+		HttpOnly: true,
+		Secure:   false,
+		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message": "Organization switched safely",
+		"user":    user,
+	})
+}
+
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	// Erase cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_token",
+		Value:    "",
+		Expires:  time.Now().Add(-1 * time.Hour),
+		HttpOnly: true,
+		Secure:   false,
+		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	// Erase org_context
+	http.SetCookie(w, &http.Cookie{
+		Name:     "org_context",
 		Value:    "",
 		Expires:  time.Now().Add(-1 * time.Hour),
 		HttpOnly: true,
@@ -158,7 +262,12 @@ func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := getMockUser()
+	activeOrgID := ""
+	if cookie, err := r.Cookie("org_context"); err == nil {
+		activeOrgID = cookie.Value
+	}
+	user := getMockUser(activeOrgID)
+	
 	// Replace with DB query based on claims.UserID later
 	if user.ID != claims.UserID {
 		http.Error(w, `{"error":"User not found"}`, http.StatusNotFound)

@@ -17,6 +17,9 @@ export class UserState {
 		sidebar_pinned: true
 	});
 
+	organizations = $state<any[]>([]);
+	current_organization = $state<any>({ id: '', name: '', role: '' });
+
 	constructor(user: User) {
 		this.update(user);
 	}
@@ -32,6 +35,9 @@ export class UserState {
 		this.settings.theme = user.settings.theme;
 		this.settings.language = user.settings.language;
 		this.settings.sidebar_pinned = user.settings.sidebar_pinned;
+
+		this.organizations = user.organizations || [];
+		this.current_organization = user.current_organization || { id: '', name: '', role: '' };
 	}
 }
 

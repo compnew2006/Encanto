@@ -8,14 +8,22 @@ declare global {
 			sidebar_pinned: boolean;
 		}
 
+		interface Organization {
+			id: string;
+			name: string;
+			role: string;
+		}
+
 		interface User {
 			id: string;
 			email: string;
 			name: string;
 			avatar: string;
-			status: 'online' | 'offline' | 'busy';
-			role: 'admin' | 'agent';
+			status: 'online' | 'offline' | 'busy' | string;
+			role: 'admin' | 'agent' | string;
 			settings: UserSettings;
+			organizations: Organization[];
+			current_organization: Organization;
 		}
 
 		interface Locals {

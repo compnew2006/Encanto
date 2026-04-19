@@ -34,7 +34,7 @@ Notes:
   Result: login, logout, and session continuity work
 - [x] `3-2` Current-user context completed
   Result: current-user data, presence, and personal menu are stable
-- [ ] `3-3` Context switching completed
+- [x] `3-3` Context switching completed
   Result: switching updates scope, visibility, and data correctly
 
 Notes:
