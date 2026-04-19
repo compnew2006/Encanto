@@ -1,0 +1,16 @@
+node_modules/
+frontend/node_modules/
+backend/.cache/
+backend/bin/
+backend/tmp/
+frontend/.svelte-kit/
+frontend/build/
+frontend/coverage/
+frontend/test-results/
+playwright-report/
+test-results/
+.env
+.DS_Store
+backend/server
+.playwright-cli/
+

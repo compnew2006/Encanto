@@ -1,0 +1,24 @@
+{
+  "name": "encanto",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "dev:backend": "cd backend && go run ./cmd/server --cmd serve",
+    "dev:frontend": "npm --workspace frontend run dev -- --host 127.0.0.1 --port 5173",
+    "check:frontend": "npm --workspace frontend run check",
+    "lint:frontend": "npm --workspace frontend run lint",
+    "test:frontend": "npm --workspace frontend run test",
+    "test:backend": "cd backend && go test ./...",
+    "infra:up": "docker compose -f deploy/docker-compose.yml up -d",
+    "infra:down": "docker compose -f deploy/docker-compose.yml down -v",
+    "playwright:test": "playwright test",
+    "playwright:test:chromium": "playwright test --project=chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.1"
+  }
+}
+

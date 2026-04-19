@@ -1,313 +1,207 @@
 package api
 
 import (
-	"context"
-	"encoding/json"
 	"net/http"
-	"time"
+
+	"encanto/audit"
+	"encanto/data/sqlc"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 )
 
-// In a real application, this should be an environment variable.
-var jwtSecretKey = []byte("super-secret-encanto-key")
-
-type AuthHandler struct{}
-
-func Router() *chi.Mux {
-	r := chi.NewRouter()
-	h := &AuthHandler{}
-
-	r.Post("/auth/login", h.Login)
-	r.Post("/auth/logout", h.Logout)
-	
-	// Protected routes
-	r.Group(func(r chi.Router) {
-		r.Use(RequireAuth)
-		r.Get("/me", h.Me)
-		r.Post("/auth/switch-org", h.SwitchOrg)
-	})
-
-	return r
-}
-
-type LoginRequest struct {
+type loginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-type ErrorResponse struct {
-	Error string `json:"error"`
+type switchOrgRequest struct {
+	OrganizationID string `json:"organizationId"`
 }
 
-// User context stored in JWT
-type Claims struct {
-	UserID string `json:"user_id"`
-	Email  string `json:"email"`
-	jwt.RegisteredClaims
-}
-
-// Settings definition
-type UserSettings struct {
-	Theme         string `json:"theme"`
-	Language      string `json:"language"`
-	SidebarPinned bool   `json:"sidebar_pinned"`
-}
-
-type Organization struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Role string `json:"role"` // user's role in this specific org
-}
-
-// Rich User Model for Frontend Consumption
-type UserResponse struct {
-	ID                  string         `json:"id"`
-	Email               string         `json:"email"`
-	Name                string         `json:"name"`
-	Avatar              string         `json:"avatar"`
-	Status              string         `json:"status"`
-	Role                string         `json:"role"` // active role in current context
-	Settings            UserSettings   `json:"settings"`
-	Organizations       []Organization `json:"organizations"`
-	CurrentOrganization Organization   `json:"current_organization"`
-}
-
-// Dummy credentials and data for testing
-const mockEmail = "admin@example.com"
-const mockPassword = "password123"
-
-func getMockOrganizations() []Organization {
-	return []Organization{
-		{ID: "org-1", Name: "Global Corp", Role: "admin"},
-		{ID: "org-2", Name: "Local Store", Role: "agent"},
-	}
-}
-
-func getMockUser(activeOrgID string) UserResponse {
-	orgs := getMockOrganizations()
-	
-	// Discover active org
-	var activeOrg Organization
-	found := false
-	for _, o := range orgs {
-		if o.ID == activeOrgID {
-			activeOrg = o
-			found = true
-			break
+func loginHandler(deps Dependencies) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var request loginRequest
+		if err := audit.DecodeJSON(r, &request); err != nil {
+			audit.WriteError(w, http.StatusBadRequest, "invalid_payload", "Invalid login payload.")
+			return
 		}
-	}
-	// Fallback to first org if invalid/missing
-	if !found && len(orgs) > 0 {
-		activeOrg = orgs[0]
-	}
 
-	return UserResponse{
-		ID:                  "1",
-		Email:               mockEmail,
-		Name:                "Admin Encanto",
-		Avatar:              "https://i.pravatar.cc/150?u=admin",
-		Status:              "online",
-		Role:                activeOrg.Role, // dynamic!
-		Settings: UserSettings{
-			Theme:         "light",
-			Language:      "ar",
-			SidebarPinned: true,
-		},
-		Organizations:       orgs,
-		CurrentOrganization: activeOrg,
-	}
-}
-
-type SwitchOrgRequest struct {
-	OrgID string `json:"org_id"`
-}
-
-func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
-	var req LoginRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, `{"error":"Invalid request payload"}`, http.StatusBadRequest)
-		return
-	}
-
-	// Validate credentials
-	if req.Email != mockEmail || req.Password != mockPassword {
-		http.Error(w, `{"error":"Invalid email or password"}`, http.StatusUnauthorized)
-		return
-	}
-
-	// If org_context exists, respect it, otherwise fallback
-	activeOrgID := ""
-	if cookie, err := r.Cookie("org_context"); err == nil {
-		activeOrgID = cookie.Value
-	}
-	user := getMockUser(activeOrgID)
-
-	// Refresh org context cookie to ensure canonical ID
-	http.SetCookie(w, &http.Cookie{
-		Name:     "org_context",
-		Value:    user.CurrentOrganization.ID,
-		Expires:  time.Now().Add(365 * 24 * time.Hour),
-		HttpOnly: true,
-		Secure:   false,
-		Path:     "/",
-		SameSite: http.SameSiteLaxMode,
-	})
-
-	// Generate JWT
-	expirationTime := time.Now().Add(24 * time.Hour)
-	claims := &Claims{
-		UserID: user.ID,
-		Email:  user.Email,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(expirationTime),
-		},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(jwtSecretKey)
-	if err != nil {
-		http.Error(w, `{"error":"Failed to generate token"}`, http.StatusInternalServerError)
-		return
-	}
-
-	// Set HttpOnly cookie
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session_token",
-		Value:    tokenString,
-		Expires:  expirationTime,
-		HttpOnly: true,
-		Secure:   false, // Set to true in production with HTTPS
-		Path:     "/",
-		SameSite: http.SameSiteLaxMode,
-	})
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"message": "Login successful",
-		"user":    user,
-	})
-}
-
-func (h *AuthHandler) SwitchOrg(w http.ResponseWriter, r *http.Request) {
-	_, ok := r.Context().Value("user").(*Claims)
-	if !ok {
-		http.Error(w, `{"error":"Unauthorized"}`, http.StatusUnauthorized)
-		return
-	}
-
-	var req SwitchOrgRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, `{"error":"Invalid request payload"}`, http.StatusBadRequest)
-		return
-	}
-	
-	// Validate they have access to this org by producing a mock user and checking ID
-	// If getMockUser sets fallback instead of provided, they don't have access
-	user := getMockUser(req.OrgID)
-	if user.CurrentOrganization.ID != req.OrgID {
-		http.Error(w, `{"error":"Organization access denied"}`, http.StatusForbidden)
-		return
-	}
-
-	http.SetCookie(w, &http.Cookie{
-		Name:     "org_context",
-		Value:    user.CurrentOrganization.ID,
-		Expires:  time.Now().Add(365 * 24 * time.Hour),
-		HttpOnly: true,
-		Secure:   false,
-		Path:     "/",
-		SameSite: http.SameSiteLaxMode,
-	})
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"message": "Organization switched safely",
-		"user":    user,
-	})
-}
-
-func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
-	// Erase cookie
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session_token",
-		Value:    "",
-		Expires:  time.Now().Add(-1 * time.Hour),
-		HttpOnly: true,
-		Secure:   false,
-		Path:     "/",
-		SameSite: http.SameSiteLaxMode,
-	})
-
-	// Erase org_context
-	http.SetCookie(w, &http.Cookie{
-		Name:     "org_context",
-		Value:    "",
-		Expires:  time.Now().Add(-1 * time.Hour),
-		HttpOnly: true,
-		Secure:   false,
-		Path:     "/",
-		SameSite: http.SameSiteLaxMode,
-	})
-
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"message":"Logged out"}`))
-}
-
-func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
-	claims, ok := r.Context().Value("user").(*Claims)
-	if !ok {
-		http.Error(w, `{"error":"Unauthorized"}`, http.StatusUnauthorized)
-		return
-	}
-
-	activeOrgID := ""
-	if cookie, err := r.Cookie("org_context"); err == nil {
-		activeOrgID = cookie.Value
-	}
-	user := getMockUser(activeOrgID)
-	
-	// Replace with DB query based on claims.UserID later
-	if user.ID != claims.UserID {
-		http.Error(w, `{"error":"User not found"}`, http.StatusNotFound)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"user": user,
-	})
-}
-
-func RequireAuth(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie("session_token")
+		user, err := deps.Store.Queries.GetUserByEmail(r.Context(), request.Email)
 		if err != nil {
-			if err == http.ErrNoCookie {
-				http.Error(w, `{"error":"Unauthorized"}`, http.StatusUnauthorized)
+			audit.WriteError(w, http.StatusUnauthorized, "invalid_credentials", "Invalid email or password.")
+			return
+		}
+		if !user.IsActive {
+			audit.WriteError(w, http.StatusForbidden, "inactive_user", "This user is inactive.")
+			return
+		}
+		if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(request.Password)); err != nil {
+			audit.WriteError(w, http.StatusUnauthorized, "invalid_credentials", "Invalid email or password.")
+			return
+		}
+
+		memberships, err := deps.Store.Queries.ListUserMemberships(r.Context(), user.ID)
+		if err != nil || len(memberships) == 0 {
+			audit.WriteError(w, http.StatusForbidden, "no_membership", "No active organization membership is available.")
+			return
+		}
+
+		activeMembership := memberships[0]
+		accessToken, refreshToken, expiresAt, err := deps.SessionManager.Issue(r.Context(), user.ID, activeMembership.OrganizationID, user.Email)
+		if err != nil {
+			audit.WriteError(w, http.StatusInternalServerError, "session_issue_failed", "Unable to start a new session.")
+			return
+		}
+		deps.SessionManager.SetCookies(w, accessToken, refreshToken, expiresAt)
+
+		session, err := deps.SessionManager.ParseAccessToken(accessToken)
+		if err != nil {
+			audit.WriteError(w, http.StatusInternalServerError, "session_parse_failed", "Unable to load the new session.")
+			return
+		}
+		_ = deps.Store.Queries.UpdateUserLastLogin(r.Context(), user.ID)
+
+		currentUser, err := deps.AccessService.ResolveCurrentUser(r.Context(), session)
+		if err != nil {
+			audit.WriteError(w, http.StatusInternalServerError, "user_context_failed", "Unable to load the user context.")
+			return
+		}
+
+		audit.WriteJSON(w, http.StatusOK, map[string]any{
+			"user": currentUser,
+		})
+	}
+}
+
+func refreshHandler(deps Dependencies) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		refreshCookie, err := r.Cookie(deps.Config.RefreshCookieName)
+		if err != nil {
+			audit.WriteError(w, http.StatusUnauthorized, "missing_refresh_cookie", "No refresh session is available.")
+			return
+		}
+
+		accessToken, refreshToken, expiresAt, session, err := deps.SessionManager.Rotate(r.Context(), refreshCookie.Value)
+		if err != nil {
+			audit.WriteError(w, http.StatusUnauthorized, "refresh_failed", "The session refresh failed.")
+			return
+		}
+		deps.SessionManager.SetCookies(w, accessToken, refreshToken, expiresAt)
+
+		currentUser, err := deps.AccessService.ResolveCurrentUser(r.Context(), session)
+		if err != nil {
+			audit.WriteError(w, http.StatusInternalServerError, "user_context_failed", "Unable to load the user context.")
+			return
+		}
+
+		audit.WriteJSON(w, http.StatusOK, map[string]any{
+			"user": currentUser,
+		})
+	}
+}
+
+func logoutHandler(deps Dependencies) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if refreshCookie, err := r.Cookie(deps.Config.RefreshCookieName); err == nil {
+			_ = deps.SessionManager.Invalidate(r.Context(), refreshCookie.Value)
+		}
+		deps.SessionManager.ClearCookies(w)
+		audit.WriteJSON(w, http.StatusOK, map[string]any{"loggedOut": true})
+	}
+}
+
+func switchOrgHandler(deps Dependencies) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		session, ok := sessionFromContext(r.Context())
+		if !ok {
+			audit.WriteError(w, http.StatusUnauthorized, "unauthorized", "A valid session is required.")
+			return
+		}
+
+		var request switchOrgRequest
+		if err := audit.DecodeJSON(r, &request); err != nil {
+			audit.WriteError(w, http.StatusBadRequest, "invalid_payload", "Invalid organization switch payload.")
+			return
+		}
+
+		organizationID, err := parseUUIDParam(request.OrganizationID)
+		if err != nil {
+			audit.WriteError(w, http.StatusBadRequest, "invalid_organization", "The target organization is invalid.")
+			return
+		}
+
+		if _, err := deps.Store.Queries.GetMembershipByUserAndOrg(r.Context(), sqlc.GetMembershipByUserAndOrgParams{
+			UserID:         session.UserID,
+			OrganizationID: organizationID,
+		}); err != nil {
+			audit.WriteError(w, http.StatusForbidden, "organization_denied", "You do not have access to that organization.")
+			return
+		}
+
+		accessToken, refreshToken, expiresAt, err := deps.SessionManager.RotateForOrganization(r.Context(), session, organizationID)
+		if err != nil {
+			audit.WriteError(w, http.StatusInternalServerError, "switch_failed", "Unable to switch the active organization.")
+			return
+		}
+		deps.SessionManager.SetCookies(w, accessToken, refreshToken, expiresAt)
+
+		newSession, err := deps.SessionManager.ParseAccessToken(accessToken)
+		if err != nil {
+			audit.WriteError(w, http.StatusInternalServerError, "session_parse_failed", "Unable to load the switched session.")
+			return
+		}
+
+		currentUser, err := deps.AccessService.ResolveCurrentUser(r.Context(), newSession)
+		if err != nil {
+			audit.WriteError(w, http.StatusInternalServerError, "user_context_failed", "Unable to load the switched user context.")
+			return
+		}
+
+		audit.WriteJSON(w, http.StatusOK, map[string]any{
+			"user": currentUser,
+		})
+	}
+}
+
+func requireAuth(deps Dependencies) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			cookie, err := r.Cookie(deps.Config.AccessCookieName)
+			if err != nil {
+				audit.WriteError(w, http.StatusUnauthorized, "unauthorized", "A valid session is required.")
 				return
 			}
-			http.Error(w, `{"error":"Bad request"}`, http.StatusBadRequest)
-			return
-		}
 
-		tokenStr := cookie.Value
-		claims := &Claims{}
-		
-		tkn, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
-			return jwtSecretKey, nil
+			session, err := deps.SessionManager.ParseAccessToken(cookie.Value)
+			if err != nil {
+				audit.WriteError(w, http.StatusUnauthorized, "invalid_session", "The current session is invalid.")
+				return
+			}
+
+			next.ServeHTTP(w, r.WithContext(withSession(r.Context(), session)))
 		})
-
-		if err != nil || !tkn.Valid {
-			http.Error(w, `{"error":"Unauthorized - Invalid session"}`, http.StatusUnauthorized)
-			return
-		}
-
-		// Attach user info to context
-		ctx := context.WithValue(r.Context(), "user", claims)
-		r = r.WithContext(ctx)
-		
-		next.ServeHTTP(w, r)
-	})
+	}
 }
+
+func loadCurrentUser(deps Dependencies) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			session, ok := sessionFromContext(r.Context())
+			if !ok {
+				audit.WriteError(w, http.StatusUnauthorized, "unauthorized", "A valid session is required.")
+				return
+			}
+
+			user, err := deps.AccessService.ResolveCurrentUser(r.Context(), session)
+			if err != nil {
+				audit.WriteError(w, http.StatusUnauthorized, "user_context_failed", "Unable to load the current user context.")
+				return
+			}
+
+			next.ServeHTTP(w, r.WithContext(withUser(r.Context(), user)))
+		})
+	}
+}
+
+func _routerGuard(_ chi.Router) {}
