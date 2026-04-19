@@ -1,0 +1,981 @@
+- generic [ref=e3]:
+  - generic [ref=e28]:
+    - link "Skip to main content" [ref=e29] [cursor=pointer]:
+      - /url: "#main-content"
+    - navigation "Main navigation" [ref=e30]:
+      - generic [ref=e31]:
+        - link "Whatomate" [ref=e32] [cursor=pointer]:
+          - /url: /
+          - img [ref=e34]
+          - generic: Whatomate
+        - button:
+          - img
+      - button "مكتبة الاركان المثالية" [ref=e1327] [cursor=pointer]:
+        - img
+      - menubar [ref=e42]:
+        - menuitem "Dashboard" [ref=e43] [cursor=pointer]:
+          - img [ref=e44]
+          - generic: Dashboard
+        - menuitem "Chat" [ref=e49] [cursor=pointer]:
+          - img [ref=e50]
+          - generic: Chat
+        - menuitem "Chatbot" [ref=e52] [cursor=pointer]:
+          - img [ref=e53]
+          - generic: Chatbot
+        - menuitem "Agent Analytics" [ref=e56] [cursor=pointer]:
+          - img [ref=e57]
+          - generic: Agent Analytics
+        - menuitem "Campaigns" [ref=e59] [cursor=pointer]:
+          - img [ref=e60]
+          - generic: Campaigns
+        - menuitem "Settings" [ref=e63] [cursor=pointer]:
+          - img [ref=e64]
+          - generic: Settings
+      - button "User menu" [ref=e68] [cursor=pointer]:
+        - generic [ref=e70]: ن
+        - generic:
+          - generic [ref=e71]: نعماني
+          - generic [ref=e72]: admin@whatomate.local
+    - main [ref=e73]:
+      - generic [ref=e1865]:
+        - generic [ref=e1867]:
+          - link [ref=e1868] [cursor=pointer]:
+            - /url: /settings
+            - button [ref=e1869]:
+              - img
+          - img [ref=e1871]
+          - generic [ref=e1873]:
+            - heading "WhatsApp Instances" [level=1] [ref=e1874]
+            - navigation "breadcrumb" [ref=e1875]:
+              - list [ref=e1876]:
+                - listitem [ref=e1877]:
+                  - link "Settings" [ref=e1878] [cursor=pointer]:
+                    - /url: /settings
+                - listitem [ref=e1879]:
+                  - img [ref=e1880]
+                - listitem [ref=e1882]:
+                  - link "WhatsApp Instances" [disabled] [ref=e1883]
+          - generic [ref=e1884]:
+            - link "Health Dashboard" [ref=e1885] [cursor=pointer]:
+              - /url: /settings/instances/health
+              - button "Health Dashboard" [ref=e1886]
+            - button "Add Account" [ref=e1887] [cursor=pointer]:
+              - img
+              - text: Add Account
+        - generic [ref=e1893]:
+          - generic [ref=e1894]:
+            - generic [ref=e1895]:
+              - generic [ref=e1896]:
+                - generic [ref=e1898]: Connected
+                - generic [ref=e1899]:
+                  - button "Edit instance name" [ref=e1900] [cursor=pointer]:
+                    - img
+                  - button "Delete instance" [ref=e1901] [cursor=pointer]:
+                    - img
+              - generic [ref=e1902]:
+                - heading "مؤيد-٤٣٤" [level=3] [ref=e1903]
+                - paragraph [ref=e1904]: "966506530434"
+              - generic [ref=e1905]:
+                - img [ref=e1906]
+                - generic [ref=e1908]: 966506530434:12@s.whatsapp.net
+              - generic [ref=e1909]:
+                - generic [ref=e1910]:
+                  - generic [ref=e1911]: Uptime
+                  - generic [ref=e1912]: 0m
+                - generic [ref=e1913]:
+                  - generic [ref=e1914]: Queue
+                  - generic [ref=e1915]: "0"
+                - generic [ref=e1916]:
+                  - generic [ref=e1917]: Sent / Received
+                  - generic [ref=e1918]: 0 / 0
+                - generic [ref=e1919]:
+                  - generic [ref=e1920]: Error Rate
+                  - generic [ref=e1921]: 0.0%
+            - generic [ref=e1922]:
+              - generic [ref=e1923]:
+                - generic [ref=e1925]:
+                  - generic [ref=e1926]:
+                    - paragraph [ref=e1927]: Auto-sync history
+                    - paragraph [ref=e1928]: Sync message history after connect
+                  - switch [checked] [ref=e1930] [cursor=pointer]
+                - generic [ref=e1932]:
+                  - generic [ref=e1933]:
+                    - paragraph [ref=e1934]: Auto-download incoming media
+                    - paragraph [ref=e1935]: Prefetch incoming files in the background to reduce open-chat wait time
+                  - switch [checked] [ref=e1937] [cursor=pointer]
+                - generic [ref=e1938]:
+                  - generic [ref=e1939]:
+                    - generic [ref=e1940]:
+                      - generic [ref=e1941]:
+                        - paragraph [ref=e1942]: Call auto-reject
+                        - generic [ref=e1943]: "On"
+                      - paragraph [ref=e1944]: Always on
+                    - switch [checked] [ref=e1946] [cursor=pointer]
+                  - button "Configure call auto-reject" [ref=e1948] [cursor=pointer]:
+                    - img
+                    - text: Configure call auto-reject
+                - generic [ref=e1949]:
+                  - generic [ref=e1950]:
+                    - generic [ref=e1951]:
+                      - paragraph [ref=e1953]: Auto campaign
+                      - paragraph [ref=e1954]: "Off"
+                    - switch [ref=e1956] [cursor=pointer]
+                  - button "Configure auto campaign" [ref=e1958] [cursor=pointer]:
+                    - img
+                    - text: Configure auto campaign
+                - generic [ref=e1959]:
+                  - generic [ref=e1960]:
+                    - generic [ref=e1961]:
+                      - generic [ref=e1962]:
+                        - paragraph [ref=e1963]: Chat Close Rating Settings
+                        - generic [ref=e1964]: "On"
+                      - paragraph [ref=e1965]: "Reply window: 15 min"
+                    - switch [checked] [ref=e1967] [cursor=pointer]
+                  - button "Configure rating message" [ref=e1969] [cursor=pointer]:
+                    - img
+                    - text: Configure rating message
+                - generic [ref=e1970]:
+                  - generic [ref=e1971]:
+                    - generic [ref=e1972]:
+                      - generic [ref=e1973]:
+                        - paragraph [ref=e1974]: Assigned Chat Reset
+                        - generic [ref=e1975]: "On"
+                      - paragraph [ref=e1976]: Daily at 00:00 (UTC)
+                    - switch [checked] [ref=e1978] [cursor=pointer]
+                  - button "Configure assigned chat reset" [ref=e1980] [cursor=pointer]:
+                    - img
+                    - text: Configure assigned chat reset
+              - generic [ref=e1981]:
+                - generic [ref=e1982]:
+                  - paragraph [ref=e1983]: Chat Source Tag
+                  - generic "مؤيد-٤٣٤" [ref=e1984]:
+                    - generic [ref=e1986]: مؤيد-٤٣٤
+                - generic [ref=e1987]:
+                  - generic [ref=e1988]:
+                    - generic [ref=e1989]: Custom Label
+                    - textbox "e.g. Sales +1 555..." [ref=e1990]
+                  - generic [ref=e1991]:
+                    - generic [ref=e1992]: Show as
+                    - combobox [ref=e1993] [cursor=pointer]:
+                      - generic: Instance name
+                      - img [ref=e1994]
+                - generic [ref=e1996]:
+                  - generic [ref=e1997]:
+                    - generic [ref=e1998]: Tag Color
+                    - generic [ref=e1999]:
+                      - button "Emerald" [ref=e2000] [cursor=pointer]:
+                        - img [ref=e2001]
+                      - button "Sky" [ref=e2003] [cursor=pointer]
+                      - button "Amber" [ref=e2004] [cursor=pointer]
+                      - button "Violet" [ref=e2005] [cursor=pointer]
+                      - button "Rose" [ref=e2006] [cursor=pointer]
+                      - button "Cyan" [ref=e2007] [cursor=pointer]
+                      - button "Orange" [ref=e2008] [cursor=pointer]
+                      - button "Indigo" [ref=e2009] [cursor=pointer]
+                      - button "Lime" [ref=e2010] [cursor=pointer]
+                      - button "Fuchsia" [ref=e2011] [cursor=pointer]
+                  - button "Save Tag Settings" [disabled]
+            - button "Disconnect" [ref=e2013] [cursor=pointer]:
+              - img
+              - text: Disconnect
+          - generic [ref=e2014]:
+            - generic [ref=e2015]:
+              - generic [ref=e2016]:
+                - generic [ref=e2018]: Connected
+                - generic [ref=e2019]:
+                  - button "Edit instance name" [ref=e2020] [cursor=pointer]:
+                    - img
+                  - button "Delete instance" [ref=e2021] [cursor=pointer]:
+                    - img
+              - generic [ref=e2022]:
+                - heading "Adv-6800" [level=3] [ref=e2023]
+                - paragraph [ref=e2024]: "966531536800"
+              - generic [ref=e2025]:
+                - img [ref=e2026]
+                - generic [ref=e2028]: 966531536800:29@s.whatsapp.net
+              - generic [ref=e2029]:
+                - generic [ref=e2030]:
+                  - generic [ref=e2031]: Uptime
+                  - generic [ref=e2032]: 5h 48m
+                - generic [ref=e2033]:
+                  - generic [ref=e2034]: Queue
+                  - generic [ref=e2035]: "0"
+                - generic [ref=e2036]:
+                  - generic [ref=e2037]: Sent / Received
+                  - generic [ref=e2038]: 1 / 0
+                - generic [ref=e2039]:
+                  - generic [ref=e2040]: Error Rate
+                  - generic [ref=e2041]: 0.0%
+            - generic [ref=e2042]:
+              - generic [ref=e2043]:
+                - generic [ref=e2045]:
+                  - generic [ref=e2046]:
+                    - paragraph [ref=e2047]: Auto-sync history
+                    - paragraph [ref=e2048]: Sync message history after connect
+                  - switch [checked] [ref=e2050] [cursor=pointer]
+                - generic [ref=e2052]:
+                  - generic [ref=e2053]:
+                    - paragraph [ref=e2054]: Auto-download incoming media
+                    - paragraph [ref=e2055]: Prefetch incoming files in the background to reduce open-chat wait time
+                  - switch [checked] [ref=e2057] [cursor=pointer]
+                - generic [ref=e2058]:
+                  - generic [ref=e2059]:
+                    - generic [ref=e2060]:
+                      - paragraph [ref=e2062]: Call auto-reject
+                      - paragraph [ref=e2063]: "Off"
+                    - switch [ref=e2065] [cursor=pointer]
+                  - button "Configure call auto-reject" [ref=e2067] [cursor=pointer]:
+                    - img
+                    - text: Configure call auto-reject
+                - generic [ref=e2068]:
+                  - generic [ref=e2069]:
+                    - generic [ref=e2070]:
+                      - paragraph [ref=e2072]: Auto campaign
+                      - paragraph [ref=e2073]: "Off"
+                    - switch [ref=e2075] [cursor=pointer]
+                  - button "Configure auto campaign" [ref=e2077] [cursor=pointer]:
+                    - img
+                    - text: Configure auto campaign
+                - generic [ref=e2078]:
+                  - generic [ref=e2079]:
+                    - generic [ref=e2080]:
+                      - generic [ref=e2081]:
+                        - paragraph [ref=e2082]: Chat Close Rating Settings
+                        - generic [ref=e2083]: "On"
+                      - paragraph [ref=e2084]: "Reply window: 15 min"
+                    - switch [checked] [ref=e2086] [cursor=pointer]
+                  - button "Configure rating message" [ref=e2088] [cursor=pointer]:
+                    - img
+                    - text: Configure rating message
+                - generic [ref=e2089]:
+                  - generic [ref=e2090]:
+                    - generic [ref=e2091]:
+                      - generic [ref=e2092]:
+                        - paragraph [ref=e2093]: Assigned Chat Reset
+                        - generic [ref=e2094]: "On"
+                      - paragraph [ref=e2095]: Daily at 00:00 (UTC)
+                    - switch [checked] [ref=e2097] [cursor=pointer]
+                  - button "Configure assigned chat reset" [ref=e2099] [cursor=pointer]:
+                    - img
+                    - text: Configure assigned chat reset
+              - generic [ref=e2100]:
+                - generic [ref=e2101]:
+                  - paragraph [ref=e2102]: Chat Source Tag
+                  - generic "Adv-6800" [ref=e2103]:
+                    - generic [ref=e2105]: Adv-6800
+                - generic [ref=e2106]:
+                  - generic [ref=e2107]:
+                    - generic [ref=e2108]: Custom Label
+                    - textbox "e.g. Sales +1 555..." [ref=e2109]
+                  - generic [ref=e2110]:
+                    - generic [ref=e2111]: Show as
+                    - combobox [ref=e2112] [cursor=pointer]:
+                      - generic: Instance name
+                      - img [ref=e2113]
+                - generic [ref=e2115]:
+                  - generic [ref=e2116]:
+                    - generic [ref=e2117]: Tag Color
+                    - generic [ref=e2118]:
+                      - button "Emerald" [ref=e2119] [cursor=pointer]
+                      - button "Sky" [ref=e2120] [cursor=pointer]:
+                        - img [ref=e2121]
+                      - button "Amber" [ref=e2123] [cursor=pointer]
+                      - button "Violet" [ref=e2124] [cursor=pointer]
+                      - button "Rose" [ref=e2125] [cursor=pointer]
+                      - button "Cyan" [ref=e2126] [cursor=pointer]
+                      - button "Orange" [ref=e2127] [cursor=pointer]
+                      - button "Indigo" [ref=e2128] [cursor=pointer]
+                      - button "Lime" [ref=e2129] [cursor=pointer]
+                      - button "Fuchsia" [ref=e2130] [cursor=pointer]
+                  - button "Save Tag Settings" [disabled]
+            - button "Disconnect" [ref=e2132] [cursor=pointer]:
+              - img
+              - text: Disconnect
+          - generic [ref=e2133]:
+            - generic [ref=e2134]:
+              - generic [ref=e2135]:
+                - generic [ref=e2137]: Connected
+                - generic [ref=e2138]:
+                  - button "Edit instance name" [ref=e2139] [cursor=pointer]:
+                    - img
+                  - button "Delete instance" [ref=e2140] [cursor=pointer]:
+                    - img
+              - generic [ref=e2141]:
+                - heading "Adv-1926" [level=3] [ref=e2142]
+                - paragraph [ref=e2143]: "966535551926"
+              - generic [ref=e2144]:
+                - img [ref=e2145]
+                - generic [ref=e2147]: 966535551926:95@s.whatsapp.net
+              - generic [ref=e2148]:
+                - generic [ref=e2149]:
+                  - generic [ref=e2150]: Uptime
+                  - generic [ref=e2151]: 2h 10m
+                - generic [ref=e2152]:
+                  - generic [ref=e2153]: Queue
+                  - generic [ref=e2154]: "0"
+                - generic [ref=e2155]:
+                  - generic [ref=e2156]: Sent / Received
+                  - generic [ref=e2157]: 5 / 0
+                - generic [ref=e2158]:
+                  - generic [ref=e2159]: Error Rate
+                  - generic [ref=e2160]: 16.7%
+            - generic [ref=e2161]:
+              - generic [ref=e2162]:
+                - generic [ref=e2164]:
+                  - generic [ref=e2165]:
+                    - paragraph [ref=e2166]: Auto-sync history
+                    - paragraph [ref=e2167]: Sync message history after connect
+                  - switch [checked] [ref=e2169] [cursor=pointer]
+                - generic [ref=e2171]:
+                  - generic [ref=e2172]:
+                    - paragraph [ref=e2173]: Auto-download incoming media
+                    - paragraph [ref=e2174]: Prefetch incoming files in the background to reduce open-chat wait time
+                  - switch [checked] [ref=e2176] [cursor=pointer]
+                - generic [ref=e2177]:
+                  - generic [ref=e2178]:
+                    - generic [ref=e2179]:
+                      - paragraph [ref=e2181]: Call auto-reject
+                      - paragraph [ref=e2182]: "Off"
+                    - switch [ref=e2184] [cursor=pointer]
+                  - button "Configure call auto-reject" [ref=e2186] [cursor=pointer]:
+                    - img
+                    - text: Configure call auto-reject
+                - generic [ref=e2187]:
+                  - generic [ref=e2188]:
+                    - generic [ref=e2189]:
+                      - paragraph [ref=e2191]: Auto campaign
+                      - paragraph [ref=e2192]: "Off"
+                    - switch [ref=e2194] [cursor=pointer]
+                  - button "Configure auto campaign" [ref=e2196] [cursor=pointer]:
+                    - img
+                    - text: Configure auto campaign
+                - generic [ref=e2197]:
+                  - generic [ref=e2198]:
+                    - generic [ref=e2199]:
+                      - generic [ref=e2200]:
+                        - paragraph [ref=e2201]: Chat Close Rating Settings
+                        - generic [ref=e2202]: "On"
+                      - paragraph [ref=e2203]: "Reply window: 15 min"
+                    - switch [checked] [ref=e2205] [cursor=pointer]
+                  - button "Configure rating message" [ref=e2207] [cursor=pointer]:
+                    - img
+                    - text: Configure rating message
+                - generic [ref=e2208]:
+                  - generic [ref=e2209]:
+                    - generic [ref=e2210]:
+                      - generic [ref=e2211]:
+                        - paragraph [ref=e2212]: Assigned Chat Reset
+                        - generic [ref=e2213]: "On"
+                      - paragraph [ref=e2214]: Daily at 00:00 (UTC)
+                    - switch [checked] [ref=e2216] [cursor=pointer]
+                  - button "Configure assigned chat reset" [ref=e2218] [cursor=pointer]:
+                    - img
+                    - text: Configure assigned chat reset
+              - generic [ref=e2219]:
+                - generic [ref=e2220]:
+                  - paragraph [ref=e2221]: Chat Source Tag
+                  - generic "Adv-1926" [ref=e2222]:
+                    - generic [ref=e2224]: Adv-1926
+                - generic [ref=e2225]:
+                  - generic [ref=e2226]:
+                    - generic [ref=e2227]: Custom Label
+                    - textbox "e.g. Sales +1 555..." [ref=e2228]
+                  - generic [ref=e2229]:
+                    - generic [ref=e2230]: Show as
+                    - combobox [ref=e2231] [cursor=pointer]:
+                      - generic: Instance name
+                      - img [ref=e2232]
+                - generic [ref=e2234]:
+                  - generic [ref=e2235]:
+                    - generic [ref=e2236]: Tag Color
+                    - generic [ref=e2237]:
+                      - button "Emerald" [ref=e2238] [cursor=pointer]
+                      - button "Sky" [ref=e2239] [cursor=pointer]
+                      - button "Amber" [ref=e2240] [cursor=pointer]:
+                        - img [ref=e2241]
+                      - button "Violet" [ref=e2243] [cursor=pointer]
+                      - button "Rose" [ref=e2244] [cursor=pointer]
+                      - button "Cyan" [ref=e2245] [cursor=pointer]
+                      - button "Orange" [ref=e2246] [cursor=pointer]
+                      - button "Indigo" [ref=e2247] [cursor=pointer]
+                      - button "Lime" [ref=e2248] [cursor=pointer]
+                      - button "Fuchsia" [ref=e2249] [cursor=pointer]
+                  - button "Save Tag Settings" [disabled]
+            - button "Disconnect" [ref=e2251] [cursor=pointer]:
+              - img
+              - text: Disconnect
+          - generic [ref=e2252]:
+            - generic [ref=e2253]:
+              - generic [ref=e2254]:
+                - generic [ref=e2256]: Connected
+                - generic [ref=e2257]:
+                  - button "Edit instance name" [ref=e2258] [cursor=pointer]:
+                    - img
+                  - button "Delete instance" [ref=e2259] [cursor=pointer]:
+                    - img
+              - generic [ref=e2260]:
+                - heading "العيينة-٠٠٢٦" [level=3] [ref=e2261]
+                - paragraph [ref=e2262]: "966554840026"
+              - generic [ref=e2263]:
+                - img [ref=e2264]
+                - generic [ref=e2266]: 966554840026:6@s.whatsapp.net
+              - generic [ref=e2267]:
+                - generic [ref=e2268]:
+                  - generic [ref=e2269]: Uptime
+                  - generic [ref=e2270]: 1h 55m
+                - generic [ref=e2271]:
+                  - generic [ref=e2272]: Queue
+                  - generic [ref=e2273]: "0"
+                - generic [ref=e2274]:
+                  - generic [ref=e2275]: Sent / Received
+                  - generic [ref=e2276]: 92 / 43
+                - generic [ref=e2277]:
+                  - generic [ref=e2278]: Error Rate
+                  - generic [ref=e2279]: 6.1%
+            - generic [ref=e2280]:
+              - generic [ref=e2281]:
+                - generic [ref=e2283]:
+                  - generic [ref=e2284]:
+                    - paragraph [ref=e2285]: Auto-sync history
+                    - paragraph [ref=e2286]: Sync message history after connect
+                  - switch [checked] [ref=e2288] [cursor=pointer]
+                - generic [ref=e2290]:
+                  - generic [ref=e2291]:
+                    - paragraph [ref=e2292]: Auto-download incoming media
+                    - paragraph [ref=e2293]: Prefetch incoming files in the background to reduce open-chat wait time
+                  - switch [checked] [ref=e2295] [cursor=pointer]
+                - generic [ref=e2296]:
+                  - generic [ref=e2297]:
+                    - generic [ref=e2298]:
+                      - paragraph [ref=e2300]: Call auto-reject
+                      - paragraph [ref=e2301]: "Off"
+                    - switch [ref=e2303] [cursor=pointer]
+                  - button "Configure call auto-reject" [ref=e2305] [cursor=pointer]:
+                    - img
+                    - text: Configure call auto-reject
+                - generic [ref=e2306]:
+                  - generic [ref=e2307]:
+                    - generic [ref=e2308]:
+                      - paragraph [ref=e2310]: Auto campaign
+                      - paragraph [ref=e2311]: "Off"
+                    - switch [ref=e2313] [cursor=pointer]
+                  - button "Configure auto campaign" [ref=e2315] [cursor=pointer]:
+                    - img
+                    - text: Configure auto campaign
+                - generic [ref=e2316]:
+                  - generic [ref=e2317]:
+                    - generic [ref=e2318]:
+                      - generic [ref=e2319]:
+                        - paragraph [ref=e2320]: Chat Close Rating Settings
+                        - generic [ref=e2321]: "On"
+                      - paragraph [ref=e2322]: "Reply window: 15 min"
+                    - switch [checked] [ref=e2324] [cursor=pointer]
+                  - button "Configure rating message" [ref=e2326] [cursor=pointer]:
+                    - img
+                    - text: Configure rating message
+                - generic [ref=e2327]:
+                  - generic [ref=e2328]:
+                    - generic [ref=e2329]:
+                      - generic [ref=e2330]:
+                        - paragraph [ref=e2331]: Assigned Chat Reset
+                        - generic [ref=e2332]: "On"
+                      - paragraph [ref=e2333]: Daily at 00:00 (UTC)
+                    - switch [checked] [ref=e2335] [cursor=pointer]
+                  - button "Configure assigned chat reset" [ref=e2337] [cursor=pointer]:
+                    - img
+                    - text: Configure assigned chat reset
+              - generic [ref=e2338]:
+                - generic [ref=e2339]:
+                  - paragraph [ref=e2340]: Chat Source Tag
+                  - generic "العيينة-٠٠٢٦" [ref=e2341]:
+                    - generic [ref=e2343]: العيينة-٠٠٢٦
+                - generic [ref=e2344]:
+                  - generic [ref=e2345]:
+                    - generic [ref=e2346]: Custom Label
+                    - textbox "e.g. Sales +1 555..." [ref=e2347]
+                  - generic [ref=e2348]:
+                    - generic [ref=e2349]: Show as
+                    - combobox [ref=e2350] [cursor=pointer]:
+                      - generic: Instance name
+                      - img [ref=e2351]
+                - generic [ref=e2353]:
+                  - generic [ref=e2354]:
+                    - generic [ref=e2355]: Tag Color
+                    - generic [ref=e2356]:
+                      - button "Emerald" [ref=e2357] [cursor=pointer]
+                      - button "Sky" [ref=e2358] [cursor=pointer]
+                      - button "Amber" [ref=e2359] [cursor=pointer]
+                      - button "Violet" [ref=e2360] [cursor=pointer]:
+                        - img [ref=e2361]
+                      - button "Rose" [ref=e2363] [cursor=pointer]
+                      - button "Cyan" [ref=e2364] [cursor=pointer]
+                      - button "Orange" [ref=e2365] [cursor=pointer]
+                      - button "Indigo" [ref=e2366] [cursor=pointer]
+                      - button "Lime" [ref=e2367] [cursor=pointer]
+                      - button "Fuchsia" [ref=e2368] [cursor=pointer]
+                  - button "Save Tag Settings" [disabled]
+            - button "Disconnect" [ref=e2370] [cursor=pointer]:
+              - img
+              - text: Disconnect
+          - generic [ref=e2371]:
+            - generic [ref=e2372]:
+              - generic [ref=e2373]:
+                - generic [ref=e2375]: Disconnected
+                - generic [ref=e2376]:
+                  - button "Edit instance name" [ref=e2377] [cursor=pointer]:
+                    - img
+                  - button "Delete instance" [ref=e2378] [cursor=pointer]:
+                    - img
+              - generic [ref=e2379]:
+                - heading "عادل-٠٣٥" [level=3] [ref=e2380]
+                - paragraph [ref=e2381]: No phone number
+              - generic [ref=e2382]:
+                - img [ref=e2383]
+                - generic [ref=e2385]: Not paired
+              - generic [ref=e2386]:
+                - generic [ref=e2387]:
+                  - generic [ref=e2388]: Uptime
+                  - generic [ref=e2389]: 0m
+                - generic [ref=e2390]:
+                  - generic [ref=e2391]: Queue
+                  - generic [ref=e2392]: "0"
+                - generic [ref=e2393]:
+                  - generic [ref=e2394]: Sent / Received
+                  - generic [ref=e2395]: 0 / 0
+                - generic [ref=e2396]:
+                  - generic [ref=e2397]: Error Rate
+                  - generic [ref=e2398]: 0.0%
+            - generic [ref=e2399]:
+              - generic [ref=e2400]:
+                - generic [ref=e2402]:
+                  - generic [ref=e2403]:
+                    - paragraph [ref=e2404]: Auto-sync history
+                    - paragraph [ref=e2405]: Sync message history after connect
+                  - switch [checked] [ref=e2407] [cursor=pointer]
+                - generic [ref=e2409]:
+                  - generic [ref=e2410]:
+                    - paragraph [ref=e2411]: Auto-download incoming media
+                    - paragraph [ref=e2412]: Prefetch incoming files in the background to reduce open-chat wait time
+                  - switch [checked] [ref=e2414] [cursor=pointer]
+                - generic [ref=e2415]:
+                  - generic [ref=e2416]:
+                    - generic [ref=e2417]:
+                      - paragraph [ref=e2419]: Call auto-reject
+                      - paragraph [ref=e2420]: "Off"
+                    - switch [ref=e2422] [cursor=pointer]
+                  - button "Configure call auto-reject" [ref=e2424] [cursor=pointer]:
+                    - img
+                    - text: Configure call auto-reject
+                - generic [ref=e2425]:
+                  - generic [ref=e2426]:
+                    - generic [ref=e2427]:
+                      - paragraph [ref=e2429]: Auto campaign
+                      - paragraph [ref=e2430]: "Off"
+                    - switch [ref=e2432] [cursor=pointer]
+                  - button "Configure auto campaign" [ref=e2434] [cursor=pointer]:
+                    - img
+                    - text: Configure auto campaign
+                - generic [ref=e2435]:
+                  - generic [ref=e2436]:
+                    - generic [ref=e2437]:
+                      - generic [ref=e2438]:
+                        - paragraph [ref=e2439]: Chat Close Rating Settings
+                        - generic [ref=e2440]: "On"
+                      - paragraph [ref=e2441]: "Reply window: 15 min"
+                    - switch [checked] [ref=e2443] [cursor=pointer]
+                  - button "Configure rating message" [ref=e2445] [cursor=pointer]:
+                    - img
+                    - text: Configure rating message
+                - generic [ref=e2446]:
+                  - generic [ref=e2447]:
+                    - generic [ref=e2448]:
+                      - generic [ref=e2449]:
+                        - paragraph [ref=e2450]: Assigned Chat Reset
+                        - generic [ref=e2451]: "On"
+                      - paragraph [ref=e2452]: Daily at 00:00 (UTC)
+                    - switch [checked] [ref=e2454] [cursor=pointer]
+                  - button "Configure assigned chat reset" [ref=e2456] [cursor=pointer]:
+                    - img
+                    - text: Configure assigned chat reset
+              - generic [ref=e2457]:
+                - generic [ref=e2458]:
+                  - paragraph [ref=e2459]: Chat Source Tag
+                  - generic "عادل-٠٣٥" [ref=e2460]:
+                    - generic [ref=e2462]: عادل-٠٣٥
+                - generic [ref=e2463]:
+                  - generic [ref=e2464]:
+                    - generic [ref=e2465]: Custom Label
+                    - textbox "e.g. Sales +1 555..." [ref=e2466]
+                  - generic [ref=e2467]:
+                    - generic [ref=e2468]: Show as
+                    - combobox [ref=e2469] [cursor=pointer]:
+                      - generic: Instance name
+                      - img [ref=e2470]
+                - generic [ref=e2472]:
+                  - generic [ref=e2473]:
+                    - generic [ref=e2474]: Tag Color
+                    - generic [ref=e2475]:
+                      - button "Emerald" [ref=e2476] [cursor=pointer]
+                      - button "Sky" [ref=e2477] [cursor=pointer]
+                      - button "Amber" [ref=e2478] [cursor=pointer]
+                      - button "Violet" [ref=e2479] [cursor=pointer]
+                      - button "Rose" [ref=e2480] [cursor=pointer]:
+                        - img [ref=e2481]
+                      - button "Cyan" [ref=e2483] [cursor=pointer]
+                      - button "Orange" [ref=e2484] [cursor=pointer]
+                      - button "Indigo" [ref=e2485] [cursor=pointer]
+                      - button "Lime" [ref=e2486] [cursor=pointer]
+                      - button "Fuchsia" [ref=e2487] [cursor=pointer]
+                  - button "Save Tag Settings" [disabled]
+            - button "Connect / Scan QR" [ref=e2489] [cursor=pointer]:
+              - img
+              - text: Connect / Scan QR
+          - generic [ref=e2490]:
+            - generic [ref=e2491]:
+              - generic [ref=e2492]:
+                - generic [ref=e2494]: Connected
+                - generic [ref=e2495]:
+                  - button "Edit instance name" [ref=e2496] [cursor=pointer]:
+                    - img
+                  - button "Delete instance" [ref=e2497] [cursor=pointer]:
+                    - img
+              - generic [ref=e2498]:
+                - heading "Print-Aser-208" [level=3] [ref=e2499]
+                - paragraph [ref=e2500]: "966506516208"
+              - generic [ref=e2501]:
+                - img [ref=e2502]
+                - generic [ref=e2504]: 966506516208:53@s.whatsapp.net
+              - generic [ref=e2505]:
+                - generic [ref=e2506]:
+                  - generic [ref=e2507]: Uptime
+                  - generic [ref=e2508]: 50m
+                - generic [ref=e2509]:
+                  - generic [ref=e2510]: Queue
+                  - generic [ref=e2511]: "0"
+                - generic [ref=e2512]:
+                  - generic [ref=e2513]: Sent / Received
+                  - generic [ref=e2514]: 58 / 17
+                - generic [ref=e2515]:
+                  - generic [ref=e2516]: Error Rate
+                  - generic [ref=e2517]: 9.4%
+            - generic [ref=e2518]:
+              - generic [ref=e2519]:
+                - generic [ref=e2521]:
+                  - generic [ref=e2522]:
+                    - paragraph [ref=e2523]: Auto-sync history
+                    - paragraph [ref=e2524]: Sync message history after connect
+                  - switch [checked] [ref=e2526] [cursor=pointer]
+                - generic [ref=e2528]:
+                  - generic [ref=e2529]:
+                    - paragraph [ref=e2530]: Auto-download incoming media
+                    - paragraph [ref=e2531]: Prefetch incoming files in the background to reduce open-chat wait time
+                  - switch [checked] [ref=e2533] [cursor=pointer]
+                - generic [ref=e2534]:
+                  - generic [ref=e2535]:
+                    - generic [ref=e2536]:
+                      - generic [ref=e2537]:
+                        - paragraph [ref=e2538]: Call auto-reject
+                        - generic [ref=e2539]: "On"
+                      - paragraph [ref=e2540]: Always on
+                    - switch [checked] [ref=e2542] [cursor=pointer]
+                  - button "Configure call auto-reject" [ref=e2544] [cursor=pointer]:
+                    - img
+                    - text: Configure call auto-reject
+                - generic [ref=e2545]:
+                  - generic [ref=e2546]:
+                    - generic [ref=e2547]:
+                      - paragraph [ref=e2549]: Auto campaign
+                      - paragraph [ref=e2550]: "Off"
+                    - switch [ref=e2552] [cursor=pointer]
+                  - button "Configure auto campaign" [ref=e2554] [cursor=pointer]:
+                    - img
+                    - text: Configure auto campaign
+                - generic [ref=e2555]:
+                  - generic [ref=e2556]:
+                    - generic [ref=e2557]:
+                      - generic [ref=e2558]:
+                        - paragraph [ref=e2559]: Chat Close Rating Settings
+                        - generic [ref=e2560]: "On"
+                      - paragraph [ref=e2561]: "Reply window: 15 min"
+                    - switch [checked] [ref=e2563] [cursor=pointer]
+                  - button "Configure rating message" [ref=e2565] [cursor=pointer]:
+                    - img
+                    - text: Configure rating message
+                - generic [ref=e2566]:
+                  - generic [ref=e2567]:
+                    - generic [ref=e2568]:
+                      - generic [ref=e2569]:
+                        - paragraph [ref=e2570]: Assigned Chat Reset
+                        - generic [ref=e2571]: "On"
+                      - paragraph [ref=e2572]: Daily at 00:00 (UTC)
+                    - switch [checked] [ref=e2574] [cursor=pointer]
+                  - button "Configure assigned chat reset" [ref=e2576] [cursor=pointer]:
+                    - img
+                    - text: Configure assigned chat reset
+              - generic [ref=e2577]:
+                - generic [ref=e2578]:
+                  - paragraph [ref=e2579]: Chat Source Tag
+                  - generic "Print-Aser-208" [ref=e2580]:
+                    - generic [ref=e2582]: Print-Aser-208
+                - generic [ref=e2583]:
+                  - generic [ref=e2584]:
+                    - generic [ref=e2585]: Custom Label
+                    - textbox "e.g. Sales +1 555..." [ref=e2586]
+                  - generic [ref=e2587]:
+                    - generic [ref=e2588]: Show as
+                    - combobox [ref=e2589] [cursor=pointer]:
+                      - generic: Instance name
+                      - img [ref=e2590]
+                - generic [ref=e2592]:
+                  - generic [ref=e2593]:
+                    - generic [ref=e2594]: Tag Color
+                    - generic [ref=e2595]:
+                      - button "Emerald" [ref=e2596] [cursor=pointer]
+                      - button "Sky" [ref=e2597] [cursor=pointer]
+                      - button "Amber" [ref=e2598] [cursor=pointer]
+                      - button "Violet" [ref=e2599] [cursor=pointer]
+                      - button "Rose" [ref=e2600] [cursor=pointer]
+                      - button "Cyan" [ref=e2601] [cursor=pointer]:
+                        - img [ref=e2602]
+                      - button "Orange" [ref=e2604] [cursor=pointer]
+                      - button "Indigo" [ref=e2605] [cursor=pointer]
+                      - button "Lime" [ref=e2606] [cursor=pointer]
+                      - button "Fuchsia" [ref=e2607] [cursor=pointer]
+                  - button "Save Tag Settings" [disabled]
+            - button "Disconnect" [ref=e2609] [cursor=pointer]:
+              - img
+              - text: Disconnect
+          - generic [ref=e2610]:
+            - generic [ref=e2611]:
+              - generic [ref=e2612]:
+                - generic [ref=e2614]: Connected
+                - generic [ref=e2615]:
+                  - button "Edit instance name" [ref=e2616] [cursor=pointer]:
+                    - img
+                  - button "Delete instance" [ref=e2617] [cursor=pointer]:
+                    - img
+              - generic [ref=e2618]:
+                - heading "emad-395" [level=3] [ref=e2619]
+                - paragraph [ref=e2620]: "966506524395"
+              - generic [ref=e2621]:
+                - img [ref=e2622]
+                - generic [ref=e2624]: 966506524395:26@s.whatsapp.net
+              - generic [ref=e2625]:
+                - generic [ref=e2626]:
+                  - generic [ref=e2627]: Uptime
+                  - generic [ref=e2628]: 0m
+                - generic [ref=e2629]:
+                  - generic [ref=e2630]: Queue
+                  - generic [ref=e2631]: "0"
+                - generic [ref=e2632]:
+                  - generic [ref=e2633]: Sent / Received
+                  - generic [ref=e2634]: 0 / 0
+                - generic [ref=e2635]:
+                  - generic [ref=e2636]: Error Rate
+                  - generic [ref=e2637]: 0.0%
+            - generic [ref=e2638]:
+              - generic [ref=e2639]:
+                - generic [ref=e2641]:
+                  - generic [ref=e2642]:
+                    - paragraph [ref=e2643]: Auto-sync history
+                    - paragraph [ref=e2644]: Sync message history after connect
+                  - switch [checked] [ref=e2646] [cursor=pointer]
+                - generic [ref=e2648]:
+                  - generic [ref=e2649]:
+                    - paragraph [ref=e2650]: Auto-download incoming media
+                    - paragraph [ref=e2651]: Prefetch incoming files in the background to reduce open-chat wait time
+                  - switch [checked] [ref=e2653] [cursor=pointer]
+                - generic [ref=e2654]:
+                  - generic [ref=e2655]:
+                    - generic [ref=e2656]:
+                      - generic [ref=e2657]:
+                        - paragraph [ref=e2658]: Call auto-reject
+                        - generic [ref=e2659]: "On"
+                      - paragraph [ref=e2660]: Always on
+                    - switch [checked] [ref=e2662] [cursor=pointer]
+                  - button "Configure call auto-reject" [ref=e2664] [cursor=pointer]:
+                    - img
+                    - text: Configure call auto-reject
+                - generic [ref=e2665]:
+                  - generic [ref=e2666]:
+                    - generic [ref=e2667]:
+                      - paragraph [ref=e2669]: Auto campaign
+                      - paragraph [ref=e2670]: "Off"
+                    - switch [ref=e2672] [cursor=pointer]
+                  - button "Configure auto campaign" [ref=e2674] [cursor=pointer]:
+                    - img
+                    - text: Configure auto campaign
+                - generic [ref=e2675]:
+                  - generic [ref=e2676]:
+                    - generic [ref=e2677]:
+                      - generic [ref=e2678]:
+                        - paragraph [ref=e2679]: Chat Close Rating Settings
+                        - generic [ref=e2680]: "On"
+                      - paragraph [ref=e2681]: "Reply window: 15 min"
+                    - switch [checked] [ref=e2683] [cursor=pointer]
+                  - button "Configure rating message" [ref=e2685] [cursor=pointer]:
+                    - img
+                    - text: Configure rating message
+                - generic [ref=e2686]:
+                  - generic [ref=e2687]:
+                    - generic [ref=e2688]:
+                      - generic [ref=e2689]:
+                        - paragraph [ref=e2690]: Assigned Chat Reset
+                        - generic [ref=e2691]: "On"
+                      - paragraph [ref=e2692]: Daily at 00:00 (UTC)
+                    - switch [checked] [ref=e2694] [cursor=pointer]
+                  - button "Configure assigned chat reset" [ref=e2696] [cursor=pointer]:
+                    - img
+                    - text: Configure assigned chat reset
+              - generic [ref=e2697]:
+                - generic [ref=e2698]:
+                  - paragraph [ref=e2699]: Chat Source Tag
+                  - generic "emad-395" [ref=e2700]:
+                    - generic [ref=e2702]: emad-395
+                - generic [ref=e2703]:
+                  - generic [ref=e2704]:
+                    - generic [ref=e2705]: Custom Label
+                    - textbox "e.g. Sales +1 555..." [ref=e2706]
+                  - generic [ref=e2707]:
+                    - generic [ref=e2708]: Show as
+                    - combobox [ref=e2709] [cursor=pointer]:
+                      - generic: Instance name
+                      - img [ref=e2710]
+                - generic [ref=e2712]:
+                  - generic [ref=e2713]:
+                    - generic [ref=e2714]: Tag Color
+                    - generic [ref=e2715]:
+                      - button "Emerald" [ref=e2716] [cursor=pointer]
+                      - button "Sky" [ref=e2717] [cursor=pointer]
+                      - button "Amber" [ref=e2718] [cursor=pointer]
+                      - button "Violet" [ref=e2719] [cursor=pointer]
+                      - button "Rose" [ref=e2720] [cursor=pointer]
+                      - button "Cyan" [ref=e2721] [cursor=pointer]
+                      - button "Orange" [ref=e2722] [cursor=pointer]:
+                        - img [ref=e2723]
+                      - button "Indigo" [ref=e2725] [cursor=pointer]
+                      - button "Lime" [ref=e2726] [cursor=pointer]
+                      - button "Fuchsia" [ref=e2727] [cursor=pointer]
+                  - button "Save Tag Settings" [disabled]
+            - button "Disconnect" [ref=e2729] [cursor=pointer]:
+              - img
+              - text: Disconnect
+          - generic [ref=e2730]:
+            - generic [ref=e2731]:
+              - generic [ref=e2732]:
+                - generic [ref=e2734]: Connected
+                - generic [ref=e2735]:
+                  - button "Edit instance name" [ref=e2736] [cursor=pointer]:
+                    - img
+                  - button "Delete instance" [ref=e2737] [cursor=pointer]:
+                    - img
+              - generic [ref=e2738]:
+                - heading "Print-Labn-614" [level=3] [ref=e2739]
+                - paragraph [ref=e2740]: "966553444614"
+              - generic [ref=e2741]:
+                - img [ref=e2742]
+                - generic [ref=e2744]: 966553444614:82@s.whatsapp.net
+              - generic [ref=e2745]:
+                - generic [ref=e2746]:
+                  - generic [ref=e2747]: Uptime
+                  - generic [ref=e2748]: 1h 10m
+                - generic [ref=e2749]:
+                  - generic [ref=e2750]: Queue
+                  - generic [ref=e2751]: "0"
+                - generic [ref=e2752]:
+                  - generic [ref=e2753]: Sent / Received
+                  - generic [ref=e2754]: 120 / 91
+                - generic [ref=e2755]:
+                  - generic [ref=e2756]: Error Rate
+                  - generic [ref=e2757]: 11.8%
+            - generic [ref=e2758]:
+              - generic [ref=e2759]:
+                - generic [ref=e2761]:
+                  - generic [ref=e2762]:
+                    - paragraph [ref=e2763]: Auto-sync history
+                    - paragraph [ref=e2764]: Sync message history after connect
+                  - switch [checked] [ref=e2766] [cursor=pointer]
+                - generic [ref=e2768]:
+                  - generic [ref=e2769]:
+                    - paragraph [ref=e2770]: Auto-download incoming media
+                    - paragraph [ref=e2771]: Prefetch incoming files in the background to reduce open-chat wait time
+                  - switch [checked] [ref=e2773] [cursor=pointer]
+                - generic [ref=e2774]:
+                  - generic [ref=e2775]:
+                    - generic [ref=e2776]:
+                      - generic [ref=e2777]:
+                        - paragraph [ref=e2778]: Call auto-reject
+                        - generic [ref=e2779]: "On"
+                      - paragraph [ref=e2780]: Always on
+                    - switch [checked] [ref=e2782] [cursor=pointer]
+                  - button "Configure call auto-reject" [ref=e2784] [cursor=pointer]:
+                    - img
+                    - text: Configure call auto-reject
+                - generic [ref=e2785]:
+                  - generic [ref=e2786]:
+                    - generic [ref=e2787]:
+                      - generic [ref=e2788]:
+                        - paragraph [ref=e2789]: Auto campaign
+                        - generic [ref=e2790]: "On"
+                      - paragraph [ref=e2791]: Every 7 day(s) • Draft
+                    - switch [checked] [ref=e2793] [cursor=pointer]
+                  - button "Configure auto campaign" [ref=e2795] [cursor=pointer]:
+                    - img
+                    - text: Configure auto campaign
+                - generic [ref=e2796]:
+                  - generic [ref=e2797]:
+                    - generic [ref=e2798]:
+                      - generic [ref=e2799]:
+                        - paragraph [ref=e2800]: Chat Close Rating Settings
+                        - generic [ref=e2801]: "On"
+                      - paragraph [ref=e2802]: "Reply window: 15 min"
+                    - switch [checked] [ref=e2804] [cursor=pointer]
+                  - button "Configure rating message" [ref=e2806] [cursor=pointer]:
+                    - img
+                    - text: Configure rating message
+                - generic [ref=e2807]:
+                  - generic [ref=e2808]:
+                    - generic [ref=e2809]:
+                      - generic [ref=e2810]:
+                        - paragraph [ref=e2811]: Assigned Chat Reset
+                        - generic [ref=e2812]: "On"
+                      - paragraph [ref=e2813]: Daily at 00:00 (UTC)
+                    - switch [checked] [ref=e2815] [cursor=pointer]
+                  - button "Configure assigned chat reset" [ref=e2817] [cursor=pointer]:
+                    - img
+                    - text: Configure assigned chat reset
+              - generic [ref=e2818]:
+                - generic [ref=e2819]:
+                  - paragraph [ref=e2820]: Chat Source Tag
+                  - generic "Print-Labn-614" [ref=e2821]:
+                    - generic [ref=e2823]: Print-Labn-614
+                - generic [ref=e2824]:
+                  - generic [ref=e2825]:
+                    - generic [ref=e2826]: Custom Label
+                    - textbox "e.g. Sales +1 555..." [ref=e2827]
+                  - generic [ref=e2828]:
+                    - generic [ref=e2829]: Show as
+                    - combobox [ref=e2830] [cursor=pointer]:
+                      - generic: Instance name
+                      - img [ref=e2831]
+                - generic [ref=e2833]:
+                  - generic [ref=e2834]:
+                    - generic [ref=e2835]: Tag Color
+                    - generic [ref=e2836]:
+                      - button "Emerald" [ref=e2837] [cursor=pointer]
+                      - button "Sky" [ref=e2838] [cursor=pointer]
+                      - button "Amber" [ref=e2839] [cursor=pointer]
+                      - button "Violet" [ref=e2840] [cursor=pointer]
+                      - button "Rose" [ref=e2841] [cursor=pointer]
+                      - button "Cyan" [ref=e2842] [cursor=pointer]
+                      - button "Orange" [ref=e2843] [cursor=pointer]
+                      - button "Indigo" [ref=e2844] [cursor=pointer]:
+                        - img [ref=e2845]
+                      - button "Lime" [ref=e2847] [cursor=pointer]
+                      - button "Fuchsia" [ref=e2848] [cursor=pointer]
+                  - button "Save Tag Settings" [disabled]
+            - button "Disconnect" [ref=e2850] [cursor=pointer]:
+              - img
+              - text: Disconnect
+  - region "Notifications alt+T":
+    - list

@@ -1,0 +1,76 @@
+- generic [ref=e3]:
+  - generic [ref=e28]:
+    - link "Skip to main content" [ref=e29] [cursor=pointer]:
+      - /url: "#main-content"
+    - navigation "Main navigation" [ref=e30]:
+      - generic [ref=e31]:
+        - link "Whatomate" [ref=e32] [cursor=pointer]:
+          - /url: /
+          - img [ref=e34]
+          - generic: Whatomate
+        - button:
+          - img
+      - button "مكتبة الاركان المثالية" [ref=e38] [cursor=pointer]:
+        - img
+      - menubar [ref=e42]:
+        - menuitem "Dashboard" [ref=e43] [cursor=pointer]:
+          - img [ref=e44]
+          - generic: Dashboard
+        - menuitem "Chat" [ref=e49] [cursor=pointer]:
+          - img [ref=e50]
+          - generic: Chat
+        - menuitem "Chatbot" [ref=e52] [cursor=pointer]:
+          - img [ref=e53]
+          - generic: Chatbot
+        - menuitem "Agent Analytics" [ref=e56] [cursor=pointer]:
+          - img [ref=e57]
+          - generic: Agent Analytics
+        - menuitem "Campaigns" [ref=e59] [cursor=pointer]:
+          - img [ref=e60]
+          - generic: Campaigns
+        - menuitem "Settings" [ref=e63] [cursor=pointer]:
+          - img [ref=e64]
+          - generic: Settings
+      - button "User menu" [ref=e68] [cursor=pointer]:
+        - generic [ref=e70]: ن
+        - generic:
+          - generic [ref=e71]: نعماني
+          - generic [ref=e72]: admin@whatomate.local
+    - main [ref=e73]:
+      - generic [ref=e74]:
+        - generic [ref=e75]:
+          - generic [ref=e78]:
+            - generic [ref=e79]:
+              - paragraph [ref=e80]: Statuses
+              - generic [ref=e81]: "176"
+            - generic [ref=e82]:
+              - button "Refresh" [ref=e83] [cursor=pointer]:
+                - img
+              - button "Notifications" [ref=e85] [cursor=pointer]:
+                - img
+              - button "Statuses" [ref=e86] [cursor=pointer]:
+                - img [ref=e87]
+          - generic [ref=e89]:
+            - generic [ref=e90]:
+              - generic [ref=e91]:
+                - img [ref=e92]
+                - textbox "Search contacts..." [ref=e95]
+              - button [ref=e96] [cursor=pointer]:
+                - img
+              - button [ref=e97] [cursor=pointer]:
+                - img
+            - generic [ref=e98]:
+              - button "Assigned (0)" [ref=e99] [cursor=pointer]
+              - button "Pending (50)" [ref=e100] [cursor=pointer]
+          - generic [ref=e105]:
+            - img [ref=e106]
+            - paragraph [ref=e109]: No assigned chats
+        - generic [ref=e113]:
+          - img [ref=e115]
+          - heading "Select a conversation" [level=3] [ref=e118]
+          - paragraph [ref=e119]: Choose a contact to start chatting
+  - region "Notifications alt+T":
+    - list:
+      - status [ref=e120]:
+        - img [ref=e122]
+        - generic [ref=e125]: Login successful

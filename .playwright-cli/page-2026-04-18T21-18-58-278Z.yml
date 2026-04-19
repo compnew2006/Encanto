@@ -1,0 +1,743 @@
+- generic [ref=e3]:
+  - generic [ref=e34]:
+    - link "Skip to main content" [ref=e35] [cursor=pointer]:
+      - /url: "#main-content"
+    - navigation "Main navigation" [ref=e36]:
+      - generic [ref=e37]:
+        - link "Whatomate" [ref=e38] [cursor=pointer]:
+          - /url: /
+          - img [ref=e40]
+          - generic: Whatomate
+        - button:
+          - img
+      - button "مكتبة الاركان المثالية" [ref=e44] [cursor=pointer]:
+        - img
+      - menubar [ref=e48]:
+        - menuitem "Dashboard" [ref=e49] [cursor=pointer]:
+          - img [ref=e50]
+          - generic: Dashboard
+        - menuitem "Chat" [ref=e55] [cursor=pointer]:
+          - img [ref=e56]
+          - generic: Chat
+        - menuitem "Chatbot" [ref=e58] [cursor=pointer]:
+          - img [ref=e59]
+          - generic: Chatbot
+        - menuitem "Agent Analytics" [ref=e62] [cursor=pointer]:
+          - img [ref=e63]
+          - generic: Agent Analytics
+        - menuitem "Campaigns" [ref=e65] [cursor=pointer]:
+          - img [ref=e66]
+          - generic: Campaigns
+        - menuitem "Settings" [ref=e69] [cursor=pointer]:
+          - img [ref=e70]
+          - generic: Settings
+      - button "User menu" [ref=e74] [cursor=pointer]:
+        - generic [ref=e76]: ن
+        - generic:
+          - generic [ref=e77]: نعماني
+          - generic [ref=e78]: admin@whatomate.local
+    - main [ref=e79]:
+      - generic [ref=e80]:
+        - generic [ref=e81]:
+          - generic [ref=e84]:
+            - generic [ref=e85]:
+              - paragraph [ref=e86]: Statuses
+              - generic [ref=e87]: "175"
+            - generic [ref=e88]:
+              - button "Refresh" [ref=e89] [cursor=pointer]:
+                - img
+              - button "Notifications" [ref=e91] [cursor=pointer]:
+                - img
+                - generic [ref=e126]: "13"
+              - button "Statuses" [ref=e92] [cursor=pointer]:
+                - img [ref=e93]
+          - generic [ref=e95]:
+            - generic [ref=e96]:
+              - generic [ref=e97]:
+                - img [ref=e98]
+                - textbox "Search contacts..." [ref=e101]
+              - button [ref=e102] [cursor=pointer]:
+                - img
+              - button [ref=e103] [cursor=pointer]:
+                - img
+            - generic [ref=e104]:
+              - button "Assigned (0)" [ref=e105] [cursor=pointer]
+              - button "Pending (50)" [active] [ref=e106] [cursor=pointer]
+          - generic [ref=e110]:
+            - generic [ref=e127] [cursor=pointer]:
+              - 'button "Profile photo: مؤيد" [ref=e128]':
+                - img [ref=e130]
+              - generic [ref=e131]:
+                - paragraph [ref=e133]: مؤيد
+                - generic [ref=e134]:
+                  - generic "Adv-6800" [ref=e137]:
+                    - generic [ref=e139]: Adv-6800
+                  - generic [ref=e140]:
+                    - generic [ref=e141]: Public
+                    - 'button "Hide chat: مؤيد" [ref=e142]':
+                      - img [ref=e143]
+                    - 'button "Delete chat: مؤيد" [ref=e146]':
+                      - img [ref=e147]
+            - generic [ref=e150] [cursor=pointer]:
+              - 'button "Profile photo: دعايه واعلان الاركان المثاليه فرع عسير" [ref=e151]':
+                - generic [ref=e153]: دو
+              - generic [ref=e154]:
+                - paragraph [ref=e156]: دعايه واعلان الاركان المثاليه فرع عسير
+                - generic [ref=e157]:
+                  - generic "Print-Aser-208" [ref=e160]:
+                    - generic [ref=e162]: Print-Aser-208
+                  - generic [ref=e163]:
+                    - generic [ref=e164]: Public
+                    - 'button "Hide chat: دعايه واعلان الاركان المثاليه فرع عسير" [ref=e165]':
+                      - img [ref=e166]
+                    - 'button "Delete chat: دعايه واعلان الاركان المثاليه فرع عسير" [ref=e169]':
+                      - img [ref=e170]
+            - generic [ref=e173] [cursor=pointer]:
+              - 'button "Profile photo: قسم الدعايه والإعلان بمكتبه الأركان المثاليه" [ref=e174]':
+                - generic [ref=e176]: قا
+              - generic [ref=e177]:
+                - paragraph [ref=e179]: قسم الدعايه والإعلان بمكتبه الأركان المثاليه
+                - generic [ref=e180]:
+                  - generic "Adv-1926" [ref=e183]:
+                    - generic [ref=e185]: Adv-1926
+                  - generic [ref=e186]:
+                    - generic [ref=e187]: Public
+                    - 'button "Hide chat: قسم الدعايه والإعلان بمكتبه الأركان المثاليه" [ref=e188]':
+                      - img [ref=e189]
+                    - 'button "Delete chat: قسم الدعايه والإعلان بمكتبه الأركان المثاليه" [ref=e192]':
+                      - img [ref=e193]
+            - generic [ref=e196] [cursor=pointer]:
+              - 'button "Profile photo: ابو احمد" [ref=e197]':
+                - generic [ref=e199]: اا
+              - generic [ref=e200]:
+                - paragraph [ref=e202]: ابو احمد
+                - generic [ref=e203]:
+                  - generic "Print-Labn-614" [ref=e206]:
+                    - generic [ref=e208]: Print-Labn-614
+                  - generic [ref=e209]:
+                    - generic [ref=e210]: Public
+                    - 'button "Hide chat: ابو احمد" [ref=e211]':
+                      - img [ref=e212]
+                    - 'button "Delete chat: ابو احمد" [ref=e215]':
+                      - img [ref=e216]
+            - generic [ref=e219] [cursor=pointer]:
+              - 'button "Profile photo: تفعيل الواتساب علي الفروع (مشاكل وحلول )" [ref=e220]':
+                - generic [ref=e222]: تا
+              - generic [ref=e223]:
+                - paragraph [ref=e225]: تفعيل الواتساب علي الفروع (مشاكل وحلول )
+                - generic [ref=e226]:
+                  - generic "Print-Aser-208" [ref=e229]:
+                    - generic [ref=e231]: Print-Aser-208
+                  - generic [ref=e232]:
+                    - generic [ref=e233]: Public
+                    - 'button "Hide chat: تفعيل الواتساب علي الفروع (مشاكل وحلول )" [ref=e234]':
+                      - img [ref=e235]
+                    - 'button "Delete chat: تفعيل الواتساب علي الفروع (مشاكل وحلول )" [ref=e238]':
+                      - img [ref=e239]
+            - generic [ref=e242] [cursor=pointer]:
+              - 'button "Profile photo: تصاميم" [ref=e243]':
+                - generic [ref=e245]: ت
+              - generic [ref=e246]:
+                - paragraph [ref=e248]: تصاميم
+                - generic [ref=e249]:
+                  - generic "Adv-6800" [ref=e252]:
+                    - generic [ref=e254]: Adv-6800
+                  - generic [ref=e255]:
+                    - generic [ref=e256]: Public
+                    - 'button "Hide chat: تصاميم" [ref=e257]':
+                      - img [ref=e258]
+                    - 'button "Delete chat: تصاميم" [ref=e261]':
+                      - img [ref=e262]
+            - generic [ref=e265] [cursor=pointer]:
+              - 'button "Profile photo: الأركان المثالية لبن" [ref=e266]':
+                - img [ref=e268]
+              - generic [ref=e269]:
+                - paragraph [ref=e271]: الأركان المثالية لبن
+                - generic [ref=e272]:
+                  - generic "Print-Aser-208" [ref=e275]:
+                    - generic [ref=e277]: Print-Aser-208
+                  - generic [ref=e278]:
+                    - generic [ref=e279]: Public
+                    - 'button "Hide chat: الأركان المثالية لبن" [ref=e280]':
+                      - img [ref=e281]
+                    - 'button "Delete chat: الأركان المثالية لبن" [ref=e284]':
+                      - img [ref=e285]
+            - generic [ref=e288] [cursor=pointer]:
+              - 'button "Profile photo: خدمات مكتبة الاركان المثالية" [ref=e289]':
+                - img [ref=e291]
+              - generic [ref=e292]:
+                - paragraph [ref=e294]: خدمات مكتبة الاركان المثالية
+                - generic [ref=e295]:
+                  - generic "Print-Aser-208" [ref=e298]:
+                    - generic [ref=e300]: Print-Aser-208
+                  - generic [ref=e301]:
+                    - generic [ref=e302]: Public
+                    - 'button "Hide chat: خدمات مكتبة الاركان المثالية" [ref=e303]':
+                      - img [ref=e304]
+                    - 'button "Delete chat: خدمات مكتبة الاركان المثالية" [ref=e307]':
+                      - img [ref=e308]
+            - generic [ref=e311] [cursor=pointer]:
+              - 'button "Profile photo: khdmatalarkanalmthalyt" [ref=e312]':
+                - img [ref=e314]
+              - generic [ref=e315]:
+                - paragraph [ref=e317]: khdmatalarkanalmthalyt
+                - generic [ref=e318]:
+                  - generic "Print-Aser-208" [ref=e321]:
+                    - generic [ref=e323]: Print-Aser-208
+                  - generic [ref=e324]:
+                    - generic [ref=e325]: Public
+                    - 'button "Hide chat: khdmatalarkanalmthalyt" [ref=e326]':
+                      - img [ref=e327]
+                    - 'button "Delete chat: khdmatalarkanalmthalyt" [ref=e330]':
+                      - img [ref=e331]
+            - generic [ref=e334] [cursor=pointer]:
+              - 'button "Profile photo: moaidtaj" [ref=e335]':
+                - img [ref=e337]
+              - generic [ref=e338]:
+                - paragraph [ref=e340]: moaidtaj
+                - generic [ref=e341]:
+                  - generic "Adv-6800" [ref=e344]:
+                    - generic [ref=e346]: Adv-6800
+                  - generic [ref=e347]:
+                    - generic [ref=e348]: Public
+                    - 'button "Hide chat: moaidtaj" [ref=e349]':
+                      - img [ref=e350]
+                    - 'button "Delete chat: moaidtaj" [ref=e353]':
+                      - img [ref=e354]
+            - generic [ref=e357] [cursor=pointer]:
+              - 'button "Profile photo: مشرف خدمات الاركان المثالية" [ref=e358]':
+                - generic [ref=e360]: مخ
+              - generic [ref=e361]:
+                - paragraph [ref=e363]: مشرف خدمات الاركان المثالية
+                - generic [ref=e364]:
+                  - generic "Adv-1926" [ref=e367]:
+                    - generic [ref=e369]: Adv-1926
+                  - generic [ref=e370]:
+                    - generic [ref=e371]: Public
+                    - 'button "Hide chat: مشرف خدمات الاركان المثالية" [ref=e372]':
+                      - img [ref=e373]
+                    - 'button "Delete chat: مشرف خدمات الاركان المثالية" [ref=e376]':
+                      - img [ref=e377]
+            - generic [ref=e380] [cursor=pointer]:
+              - 'button "Profile photo: مكتبة الأركان المثالية" [ref=e381]':
+                - img [ref=e383]
+              - generic [ref=e384]:
+                - paragraph [ref=e386]: مكتبة الأركان المثالية
+                - generic [ref=e387]:
+                  - generic "Print-Aser-208" [ref=e390]:
+                    - generic [ref=e392]: Print-Aser-208
+                  - generic [ref=e393]:
+                    - generic [ref=e394]: Public
+                    - 'button "Hide chat: مكتبة الأركان المثالية" [ref=e395]':
+                      - img [ref=e396]
+                    - 'button "Delete chat: مكتبة الأركان المثالية" [ref=e399]':
+                      - img [ref=e400]
+            - generic [ref=e403] [cursor=pointer]:
+              - 'button "Profile photo: Shatha" [ref=e404]':
+                - generic [ref=e406]: S
+              - generic [ref=e407]:
+                - paragraph [ref=e409]: Shatha
+                - generic [ref=e410]:
+                  - generic "Adv-6800" [ref=e413]:
+                    - generic [ref=e415]: Adv-6800
+                  - generic [ref=e416]:
+                    - generic [ref=e417]: Public
+                    - 'button "Hide chat: Shatha" [ref=e418]':
+                      - img [ref=e419]
+                    - 'button "Delete chat: Shatha" [ref=e422]':
+                      - img [ref=e423]
+            - generic [ref=e426] [cursor=pointer]:
+              - 'button "Profile photo: نعمانى مكتبة الأركان المثالية" [ref=e427]':
+                - generic [ref=e429]: نم
+              - generic [ref=e430]:
+                - paragraph [ref=e432]: نعمانى مكتبة الأركان المثالية
+                - generic [ref=e433]:
+                  - generic "Print-Aser-208" [ref=e436]:
+                    - generic [ref=e438]: Print-Aser-208
+                  - generic [ref=e439]:
+                    - generic [ref=e440]: Public
+                    - 'button "Hide chat: نعمانى مكتبة الأركان المثالية" [ref=e441]':
+                      - img [ref=e442]
+                    - 'button "Delete chat: نعمانى مكتبة الأركان المثالية" [ref=e445]':
+                      - img [ref=e446]
+            - generic [ref=e449] [cursor=pointer]:
+              - 'button "Profile photo: مكتبة الأركان - قسم الطباعات الورقية" [ref=e450]':
+                - generic [ref=e452]: ما
+              - generic [ref=e453]:
+                - paragraph [ref=e455]: مكتبة الأركان - قسم الطباعات الورقية
+                - generic [ref=e456]:
+                  - generic "Adv-1926" [ref=e459]:
+                    - generic [ref=e461]: Adv-1926
+                  - generic [ref=e462]:
+                    - generic [ref=e463]: Public
+                    - 'button "Hide chat: مكتبة الأركان - قسم الطباعات الورقية" [ref=e464]':
+                      - img [ref=e465]
+                    - 'button "Delete chat: مكتبة الأركان - قسم الطباعات الورقية" [ref=e468]':
+                      - img [ref=e469]
+            - generic [ref=e472] [cursor=pointer]:
+              - 'button "Profile photo: لا إله إلا الله 🌹" [ref=e473]':
+                - img [ref=e475]
+              - generic [ref=e476]:
+                - paragraph [ref=e478]: لا إله إلا الله 🌹
+                - generic [ref=e479]:
+                  - generic "Print-Labn-614" [ref=e482]:
+                    - generic [ref=e484]: Print-Labn-614
+                  - generic [ref=e485]:
+                    - generic [ref=e486]: "1"
+                    - 'button "Hide chat: لا إله إلا الله 🌹" [ref=e487]':
+                      - img [ref=e488]
+                    - 'button "Delete chat: لا إله إلا الله 🌹" [ref=e491]':
+                      - img [ref=e492]
+            - generic [ref=e495] [cursor=pointer]:
+              - 'button "Profile photo: MBMH" [ref=e496]':
+                - img [ref=e498]
+              - generic [ref=e499]:
+                - paragraph [ref=e501]: MBMH
+                - generic [ref=e502]:
+                  - generic "Print-Labn-614" [ref=e505]:
+                    - generic [ref=e507]: Print-Labn-614
+                  - generic [ref=e508]:
+                    - generic [ref=e509]: "1"
+                    - 'button "Hide chat: MBMH" [ref=e510]':
+                      - img [ref=e511]
+                    - 'button "Delete chat: MBMH" [ref=e514]':
+                      - img [ref=e515]
+            - generic [ref=e518] [cursor=pointer]:
+              - 'button "Profile photo: ً" [ref=e519]':
+                - generic [ref=e521]: ً
+              - generic [ref=e522]:
+                - generic [ref=e523]:
+                  - paragraph: ً
+                - generic [ref=e524]:
+                  - generic "Print-Labn-614" [ref=e527]:
+                    - generic [ref=e529]: Print-Labn-614
+                  - generic [ref=e530]:
+                    - 'button "Hide chat: ً" [ref=e531]':
+                      - img [ref=e532]
+                    - 'button "Delete chat: ً" [ref=e535]':
+                      - img [ref=e536]
+            - generic [ref=e539] [cursor=pointer]:
+              - 'button "Profile photo: Layan Marzok" [ref=e540]':
+                - img [ref=e542]
+              - generic [ref=e543]:
+                - paragraph [ref=e545]: Layan Marzok
+                - generic [ref=e546]:
+                  - generic "Print-Labn-614" [ref=e549]:
+                    - generic [ref=e551]: Print-Labn-614
+                  - generic [ref=e552]:
+                    - 'button "Hide chat: Layan Marzok" [ref=e553]':
+                      - img [ref=e554]
+                    - 'button "Delete chat: Layan Marzok" [ref=e557]':
+                      - img [ref=e558]
+            - generic [ref=e561] [cursor=pointer]:
+              - 'button "Profile photo: ." [ref=e562]':
+                - generic [ref=e564]: .
+              - generic [ref=e565]:
+                - paragraph [ref=e567]: .
+                - generic [ref=e568]:
+                  - generic "Print-Labn-614" [ref=e571]:
+                    - generic [ref=e573]: Print-Labn-614
+                  - generic [ref=e574]:
+                    - 'button "Hide chat: ." [ref=e575]':
+                      - img [ref=e576]
+                    - 'button "Delete chat: ." [ref=e579]':
+                      - img [ref=e580]
+            - generic [ref=e583] [cursor=pointer]:
+              - 'button "Profile photo: ابو سديم" [ref=e584]':
+                - img [ref=e586]
+              - generic [ref=e587]:
+                - paragraph [ref=e589]: ابو سديم
+                - generic [ref=e590]:
+                  - generic "Print-Labn-614" [ref=e593]:
+                    - generic [ref=e595]: Print-Labn-614
+                  - generic [ref=e596]:
+                    - 'button "Hide chat: ابو سديم" [ref=e597]':
+                      - img [ref=e598]
+                    - 'button "Delete chat: ابو سديم" [ref=e601]':
+                      - img [ref=e602]
+            - generic [ref=e605] [cursor=pointer]:
+              - 'button "Profile photo: 🪴 أبو هاجوس 🪴" [ref=e606]':
+                - img [ref=e608]
+              - generic [ref=e609]:
+                - paragraph [ref=e611]: 🪴 أبو هاجوس 🪴
+                - generic [ref=e612]:
+                  - generic "Print-Labn-614" [ref=e615]:
+                    - generic [ref=e617]: Print-Labn-614
+                  - generic [ref=e618]:
+                    - 'button "Hide chat: 🪴 أبو هاجوس 🪴" [ref=e619]':
+                      - img [ref=e620]
+                    - 'button "Delete chat: 🪴 أبو هاجوس 🪴" [ref=e623]':
+                      - img [ref=e624]
+            - generic [ref=e627] [cursor=pointer]:
+              - 'button "Profile photo: ~" [ref=e628]':
+                - img [ref=e630]
+              - generic [ref=e631]:
+                - paragraph [ref=e633]: ~
+                - generic [ref=e634]:
+                  - generic "Print-Labn-614" [ref=e637]:
+                    - generic [ref=e639]: Print-Labn-614
+                  - generic [ref=e640]:
+                    - 'button "Hide chat: ~" [ref=e641]':
+                      - img [ref=e642]
+                    - 'button "Delete chat: ~" [ref=e645]':
+                      - img [ref=e646]
+            - generic [ref=e649] [cursor=pointer]:
+              - 'button "Profile photo: OS" [ref=e650]':
+                - generic [ref=e652]: O
+              - generic [ref=e653]:
+                - paragraph [ref=e655]: OS
+                - generic [ref=e656]:
+                  - generic "Print-Labn-614" [ref=e659]:
+                    - generic [ref=e661]: Print-Labn-614
+                  - generic [ref=e662]:
+                    - 'button "Hide chat: OS" [ref=e663]':
+                      - img [ref=e664]
+                    - 'button "Delete chat: OS" [ref=e667]':
+                      - img [ref=e668]
+            - generic [ref=e671] [cursor=pointer]:
+              - 'button "Profile photo: مركز أنا كفو للتدريب" [ref=e672]':
+                - img [ref=e674]
+              - generic [ref=e675]:
+                - paragraph [ref=e677]: مركز أنا كفو للتدريب
+                - generic [ref=e678]:
+                  - generic "Print-Aser-208" [ref=e681]:
+                    - generic [ref=e683]: Print-Aser-208
+                  - generic [ref=e684]:
+                    - 'button "Hide chat: مركز أنا كفو للتدريب" [ref=e685]':
+                      - img [ref=e686]
+                    - 'button "Delete chat: مركز أنا كفو للتدريب" [ref=e689]':
+                      - img [ref=e690]
+            - generic [ref=e693] [cursor=pointer]:
+              - 'button "Profile photo: Ziad A" [ref=e694]':
+                - img [ref=e696]
+              - generic [ref=e697]:
+                - paragraph [ref=e699]: Ziad A
+                - generic [ref=e700]:
+                  - generic "Print-Aser-208" [ref=e703]:
+                    - generic [ref=e705]: Print-Aser-208
+                  - generic [ref=e706]:
+                    - 'button "Hide chat: Ziad A" [ref=e707]':
+                      - img [ref=e708]
+                    - 'button "Delete chat: Ziad A" [ref=e711]':
+                      - img [ref=e712]
+            - generic [ref=e715] [cursor=pointer]:
+              - 'button "Profile photo: Mohammed Abu Sharkh" [ref=e716]':
+                - generic [ref=e718]: MA
+              - generic [ref=e719]:
+                - paragraph [ref=e721]: Mohammed Abu Sharkh
+                - generic [ref=e722]:
+                  - generic "Print-Aser-208" [ref=e725]:
+                    - generic [ref=e727]: Print-Aser-208
+                  - generic [ref=e728]:
+                    - 'button "Hide chat: Mohammed Abu Sharkh" [ref=e729]':
+                      - img [ref=e730]
+                    - 'button "Delete chat: Mohammed Abu Sharkh" [ref=e733]':
+                      - img [ref=e734]
+            - generic [ref=e737] [cursor=pointer]:
+              - 'button "Profile photo: Reem" [ref=e738]':
+                - img [ref=e740]
+              - generic [ref=e741]:
+                - paragraph [ref=e743]: Reem
+                - generic [ref=e744]:
+                  - generic "Print-Aser-208" [ref=e747]:
+                    - generic [ref=e749]: Print-Aser-208
+                  - generic [ref=e750]:
+                    - generic [ref=e751]: "1"
+                    - 'button "Hide chat: Reem" [ref=e752]':
+                      - img [ref=e753]
+                    - 'button "Delete chat: Reem" [ref=e756]':
+                      - img [ref=e757]
+            - generic [ref=e760] [cursor=pointer]:
+              - 'button "Profile photo: عبدالله الحازمي ⚖️ ." [ref=e761]':
+                - generic [ref=e763]: عا
+              - generic [ref=e764]:
+                - paragraph [ref=e766]: عبدالله الحازمي ⚖️ .
+                - generic [ref=e767]:
+                  - generic "Print-Aser-208" [ref=e770]:
+                    - generic [ref=e772]: Print-Aser-208
+                  - generic [ref=e773]:
+                    - 'button "Hide chat: عبدالله الحازمي ⚖️ ." [ref=e774]':
+                      - img [ref=e775]
+                    - 'button "Delete chat: عبدالله الحازمي ⚖️ ." [ref=e778]':
+                      - img [ref=e779]
+            - generic [ref=e782] [cursor=pointer]:
+              - 'button "Profile photo: ibra" [ref=e783]':
+                - img [ref=e785]
+              - generic [ref=e786]:
+                - paragraph [ref=e788]: ibra
+                - generic [ref=e789]:
+                  - generic "Print-Aser-208" [ref=e792]:
+                    - generic [ref=e794]: Print-Aser-208
+                  - generic [ref=e795]:
+                    - 'button "Hide chat: ibra" [ref=e796]':
+                      - img [ref=e797]
+                    - 'button "Delete chat: ibra" [ref=e800]':
+                      - img [ref=e801]
+            - generic [ref=e804] [cursor=pointer]:
+              - 'button "Profile photo: محمد الحسني" [ref=e805]':
+                - generic [ref=e807]: ما
+              - generic [ref=e808]:
+                - paragraph [ref=e810]: محمد الحسني
+                - generic [ref=e811]:
+                  - generic "العيينة-٠٠٢٦" [ref=e814]:
+                    - generic [ref=e816]: العيينة-٠٠٢٦
+                  - generic [ref=e817]:
+                    - 'button "Hide chat: محمد الحسني" [ref=e818]':
+                      - img [ref=e819]
+                    - 'button "Delete chat: محمد الحسني" [ref=e822]':
+                      - img [ref=e823]
+            - generic [ref=e826] [cursor=pointer]:
+              - 'button "Profile photo: 🤍❤️" [ref=e827]':
+                - img [ref=e829]
+              - generic [ref=e830]:
+                - paragraph [ref=e832]: 🤍❤️
+                - generic [ref=e833]:
+                  - generic "العيينة-٠٠٢٦" [ref=e836]:
+                    - generic [ref=e838]: العيينة-٠٠٢٦
+                  - generic [ref=e839]:
+                    - 'button "Hide chat: 🤍❤️" [ref=e840]':
+                      - img [ref=e841]
+                    - 'button "Delete chat: 🤍❤️" [ref=e844]':
+                      - img [ref=e845]
+            - generic [ref=e848] [cursor=pointer]:
+              - 'button "Profile photo: نعماني لبن" [ref=e849]':
+                - generic [ref=e851]: نل
+              - generic [ref=e852]:
+                - paragraph [ref=e854]: نعماني لبن
+                - generic [ref=e855]:
+                  - generic "العيينة-٠٠٢٦" [ref=e858]:
+                    - generic [ref=e860]: العيينة-٠٠٢٦
+                  - generic [ref=e861]:
+                    - 'button "Hide chat: نعماني لبن" [ref=e862]':
+                      - img [ref=e863]
+                    - 'button "Delete chat: نعماني لبن" [ref=e866]':
+                      - img [ref=e867]
+            - generic [ref=e870] [cursor=pointer]:
+              - 'button "Profile photo: TAHANi" [ref=e871]':
+                - generic [ref=e873]: T
+              - generic [ref=e874]:
+                - paragraph [ref=e876]: TAHANi
+                - generic [ref=e877]:
+                  - generic "العيينة-٠٠٢٦" [ref=e880]:
+                    - generic [ref=e882]: العيينة-٠٠٢٦
+                  - generic [ref=e883]:
+                    - 'button "Hide chat: TAHANi" [ref=e884]':
+                      - img [ref=e885]
+                    - 'button "Delete chat: TAHANi" [ref=e888]':
+                      - img [ref=e889]
+            - generic [ref=e892] [cursor=pointer]:
+              - 'button "Profile photo: أبــو رتــيــل" [ref=e893]':
+                - generic [ref=e895]: أر
+              - generic [ref=e896]:
+                - paragraph [ref=e898]: أبــو رتــيــل
+                - generic [ref=e899]:
+                  - generic "العيينة-٠٠٢٦" [ref=e902]:
+                    - generic [ref=e904]: العيينة-٠٠٢٦
+                  - generic [ref=e905]:
+                    - 'button "Hide chat: أبــو رتــيــل" [ref=e906]':
+                      - img [ref=e907]
+                    - 'button "Delete chat: أبــو رتــيــل" [ref=e910]':
+                      - img [ref=e911]
+            - generic [ref=e914] [cursor=pointer]:
+              - 'button "Profile photo: ابو عبدالله" [ref=e915]':
+                - generic [ref=e917]: اع
+              - generic [ref=e918]:
+                - paragraph [ref=e920]: ابو عبدالله
+                - generic [ref=e921]:
+                  - generic "العيينة-٠٠٢٦" [ref=e924]:
+                    - generic [ref=e926]: العيينة-٠٠٢٦
+                  - generic [ref=e927]:
+                    - 'button "Hide chat: ابو عبدالله" [ref=e928]':
+                      - img [ref=e929]
+                    - 'button "Delete chat: ابو عبدالله" [ref=e932]':
+                      - img [ref=e933]
+            - generic [ref=e936] [cursor=pointer]:
+              - 'button "Profile photo: Mustafa" [ref=e937]':
+                - generic [ref=e939]: M
+              - generic [ref=e940]:
+                - paragraph [ref=e942]: Mustafa
+                - generic [ref=e943]:
+                  - generic "العيينة-٠٠٢٦" [ref=e946]:
+                    - generic [ref=e948]: العيينة-٠٠٢٦
+                  - generic [ref=e949]:
+                    - 'button "Hide chat: Mustafa" [ref=e950]':
+                      - img [ref=e951]
+                    - 'button "Delete chat: Mustafa" [ref=e954]':
+                      - img [ref=e955]
+            - generic [ref=e958] [cursor=pointer]:
+              - 'button "Profile photo: ." [ref=e959]':
+                - generic [ref=e961]: .
+              - generic [ref=e962]:
+                - paragraph [ref=e964]: .
+                - generic [ref=e965]:
+                  - generic "العيينة-٠٠٢٦" [ref=e968]:
+                    - generic [ref=e970]: العيينة-٠٠٢٦
+                  - generic [ref=e971]:
+                    - 'button "Hide chat: ." [ref=e972]':
+                      - img [ref=e973]
+                    - 'button "Delete chat: ." [ref=e976]':
+                      - img [ref=e977]
+            - generic [ref=e980] [cursor=pointer]:
+              - 'button "Profile photo: ام فجر" [ref=e981]':
+                - img [ref=e983]
+              - generic [ref=e984]:
+                - paragraph [ref=e986]: ام فجر
+                - generic [ref=e987]:
+                  - generic "العيينة-٠٠٢٦" [ref=e990]:
+                    - generic [ref=e992]: العيينة-٠٠٢٦
+                  - generic [ref=e993]:
+                    - 'button "Hide chat: ام فجر" [ref=e994]':
+                      - img [ref=e995]
+                    - 'button "Delete chat: ام فجر" [ref=e998]':
+                      - img [ref=e999]
+            - generic [ref=e1002] [cursor=pointer]:
+              - 'button "Profile photo: ابو مالك الصلاحي" [ref=e1003]':
+                - generic [ref=e1005]: ام
+              - generic [ref=e1006]:
+                - paragraph [ref=e1008]: ابو مالك الصلاحي
+                - generic [ref=e1009]:
+                  - generic "العيينة-٠٠٢٦" [ref=e1012]:
+                    - generic [ref=e1014]: العيينة-٠٠٢٦
+                  - generic [ref=e1015]:
+                    - 'button "Hide chat: ابو مالك الصلاحي" [ref=e1016]':
+                      - img [ref=e1017]
+                    - 'button "Delete chat: ابو مالك الصلاحي" [ref=e1020]':
+                      - img [ref=e1021]
+            - generic [ref=e1024] [cursor=pointer]:
+              - 'button "Profile photo: سبحان الله" [ref=e1025]':
+                - generic [ref=e1027]: سا
+              - generic [ref=e1028]:
+                - paragraph [ref=e1030]: سبحان الله
+                - generic [ref=e1031]:
+                  - generic "العيينة-٠٠٢٦" [ref=e1034]:
+                    - generic [ref=e1036]: العيينة-٠٠٢٦
+                  - generic [ref=e1037]:
+                    - 'button "Hide chat: سبحان الله" [ref=e1038]':
+                      - img [ref=e1039]
+                    - 'button "Delete chat: سبحان الله" [ref=e1042]':
+                      - img [ref=e1043]
+            - generic [ref=e1046] [cursor=pointer]:
+              - 'button "Profile photo: H" [ref=e1047]':
+                - generic [ref=e1049]: H
+              - generic [ref=e1050]:
+                - paragraph [ref=e1052]: H
+                - generic [ref=e1053]:
+                  - generic "العيينة-٠٠٢٦" [ref=e1056]:
+                    - generic [ref=e1058]: العيينة-٠٠٢٦
+                  - generic [ref=e1059]:
+                    - 'button "Hide chat: H" [ref=e1060]':
+                      - img [ref=e1061]
+                    - 'button "Delete chat: H" [ref=e1064]':
+                      - img [ref=e1065]
+            - generic [ref=e1068] [cursor=pointer]:
+              - 'button "Profile photo: salmabwmhmd33" [ref=e1069]':
+                - img [ref=e1071]
+              - generic [ref=e1072]:
+                - paragraph [ref=e1074]: salmabwmhmd33
+                - generic [ref=e1075]:
+                  - generic "العيينة-٠٠٢٦" [ref=e1078]:
+                    - generic [ref=e1080]: العيينة-٠٠٢٦
+                  - generic [ref=e1081]:
+                    - 'button "Hide chat: salmabwmhmd33" [ref=e1082]':
+                      - img [ref=e1083]
+                    - 'button "Delete chat: salmabwmhmd33" [ref=e1086]':
+                      - img [ref=e1087]
+            - generic [ref=e1090] [cursor=pointer]:
+              - 'button "Profile photo: الحمدلله" [ref=e1091]':
+                - generic [ref=e1093]: ا
+              - generic [ref=e1094]:
+                - paragraph [ref=e1096]: الحمدلله
+                - generic [ref=e1097]:
+                  - generic "العيينة-٠٠٢٦" [ref=e1100]:
+                    - generic [ref=e1102]: العيينة-٠٠٢٦
+                  - generic [ref=e1103]:
+                    - 'button "Hide chat: الحمدلله" [ref=e1104]':
+                      - img [ref=e1105]
+                    - 'button "Delete chat: الحمدلله" [ref=e1108]':
+                      - img [ref=e1109]
+            - generic [ref=e1112] [cursor=pointer]:
+              - 'button "Profile photo: OMAR MUKHTAR ALI" [ref=e1113]':
+                - generic [ref=e1115]: OM
+              - generic [ref=e1116]:
+                - paragraph [ref=e1118]: OMAR MUKHTAR ALI
+                - generic [ref=e1119]:
+                  - generic "العيينة-٠٠٢٦" [ref=e1122]:
+                    - generic [ref=e1124]: العيينة-٠٠٢٦
+                  - generic [ref=e1125]:
+                    - 'button "Hide chat: OMAR MUKHTAR ALI" [ref=e1126]':
+                      - img [ref=e1127]
+                    - 'button "Delete chat: OMAR MUKHTAR ALI" [ref=e1130]':
+                      - img [ref=e1131]
+            - generic [ref=e1134] [cursor=pointer]:
+              - 'button "Profile photo: Abo Saif" [ref=e1135]':
+                - generic [ref=e1137]: AS
+              - generic [ref=e1138]:
+                - paragraph [ref=e1140]: Abo Saif
+                - generic [ref=e1141]:
+                  - generic "العيينة-٠٠٢٦" [ref=e1144]:
+                    - generic [ref=e1146]: العيينة-٠٠٢٦
+                  - generic [ref=e1147]:
+                    - 'button "Hide chat: Abo Saif" [ref=e1148]':
+                      - img [ref=e1149]
+                    - 'button "Delete chat: Abo Saif" [ref=e1152]':
+                      - img [ref=e1153]
+            - generic [ref=e1156] [cursor=pointer]:
+              - 'button "Profile photo: hashim58765" [ref=e1157]':
+                - generic [ref=e1159]: H
+              - generic [ref=e1160]:
+                - paragraph [ref=e1162]: hashim58765
+                - generic [ref=e1163]:
+                  - generic "العيينة-٠٠٢٦" [ref=e1166]:
+                    - generic [ref=e1168]: العيينة-٠٠٢٦
+                  - generic [ref=e1169]:
+                    - 'button "Hide chat: hashim58765" [ref=e1170]':
+                      - img [ref=e1171]
+                    - 'button "Delete chat: hashim58765" [ref=e1174]':
+                      - img [ref=e1175]
+            - generic [ref=e1178] [cursor=pointer]:
+              - 'button "Profile photo: Z" [ref=e1179]':
+                - img [ref=e1181]
+              - generic [ref=e1182]:
+                - paragraph [ref=e1184]: Z
+                - generic [ref=e1185]:
+                  - generic "Adv-1926" [ref=e1188]:
+                    - generic [ref=e1190]: Adv-1926
+                  - generic [ref=e1191]:
+                    - 'button "Hide chat: Z" [ref=e1192]':
+                      - img [ref=e1193]
+                    - 'button "Delete chat: Z" [ref=e1196]':
+                      - img [ref=e1197]
+            - generic [ref=e1200] [cursor=pointer]:
+              - 'button "Profile photo: دعايه واعلان الاركان المثاليه فرع عسير" [ref=e1201]':
+                - generic [ref=e1203]: دو
+              - generic [ref=e1204]:
+                - paragraph [ref=e1206]: دعايه واعلان الاركان المثاليه فرع عسير
+                - generic [ref=e1207]:
+                  - generic "Adv-6800" [ref=e1210]:
+                    - generic [ref=e1212]: Adv-6800
+                  - generic [ref=e1213]:
+                    - generic [ref=e1214]: "1"
+                    - 'button "Hide chat: دعايه واعلان الاركان المثاليه فرع عسير" [ref=e1215]':
+                      - img [ref=e1216]
+                    - 'button "Delete chat: دعايه واعلان الاركان المثاليه فرع عسير" [ref=e1219]':
+                      - img [ref=e1220]
+            - generic [ref=e1223] [cursor=pointer]:
+              - 'button "Profile photo: ملوك الخدمات و التعقيب تفاويض فردى و مهني" [ref=e1224]':
+                - img [ref=e1226]
+              - generic [ref=e1227]:
+                - paragraph [ref=e1229]: ملوك الخدمات و التعقيب تفاويض فردى و مهني
+                - generic [ref=e1230]:
+                  - generic "مؤيد-٤٣٤" [ref=e1233]:
+                    - generic [ref=e1235]: مؤيد-٤٣٤
+                  - generic [ref=e1236]:
+                    - generic [ref=e1237]: "9"
+                    - 'button "Hide chat: ملوك الخدمات و التعقيب تفاويض فردى و مهني" [ref=e1238]':
+                      - img [ref=e1239]
+                    - 'button "Delete chat: ملوك الخدمات و التعقيب تفاويض فردى و مهني" [ref=e1242]':
+                      - img [ref=e1243]
+        - generic [ref=e119]:
+          - img [ref=e121]
+          - heading "Select a conversation" [level=3] [ref=e124]
+          - paragraph [ref=e125]: Choose a contact to start chatting
+  - region "Notifications alt+T":
+    - list

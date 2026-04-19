@@ -1,0 +1,1161 @@
+- generic:
+  - generic:
+    - generic:
+      - generic:
+        - link:
+          - /url: "#main-content"
+          - text: Skip to main content
+        - navigation:
+          - generic:
+            - link:
+              - /url: /
+              - generic:
+                - img
+            - button:
+              - img
+          - generic:
+            - generic:
+              - button:
+                - img
+          - generic:
+            - generic:
+              - generic:
+                - menubar:
+                  - menuitem:
+                    - img
+                  - menuitem:
+                    - img
+                  - menuitem:
+                    - img
+                  - menuitem:
+                    - img
+                  - menuitem:
+                    - img
+                  - menuitem:
+                    - img
+          - generic:
+            - button:
+              - generic:
+                - generic: ن
+              - generic: نعماني
+              - generic: admin@whatomate.local
+        - main:
+          - generic:
+            - generic:
+              - generic:
+                - link:
+                  - /url: /settings
+                  - button:
+                    - img
+                - generic:
+                  - img
+                - generic:
+                  - heading [level=1]: WhatsApp Instances
+                  - navigation:
+                    - list:
+                      - listitem:
+                        - link:
+                          - /url: /settings
+                          - text: Settings
+                      - listitem:
+                        - img
+                      - listitem:
+                        - link [disabled]: WhatsApp Instances
+                - generic:
+                  - link:
+                    - /url: /settings/instances/health
+                    - button: Health Dashboard
+                  - button:
+                    - img
+                    - text: Add Account
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Connected
+                              - generic:
+                                - button:
+                                  - img
+                                - button:
+                                  - img
+                            - generic:
+                              - heading [level=3]: مؤيد-٤٣٤
+                              - paragraph: "966506530434"
+                            - generic:
+                              - img
+                              - generic: 966506530434:12@s.whatsapp.net
+                            - generic:
+                              - generic:
+                                - generic: Uptime
+                                - generic: 0m
+                              - generic:
+                                - generic: Queue
+                                - generic: "0"
+                              - generic:
+                                - generic: Sent / Received
+                                - generic: 0 / 0
+                              - generic:
+                                - generic: Error Rate
+                                - generic: 0.0%
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-sync history
+                                    - paragraph: Sync message history after connect
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-download incoming media
+                                    - paragraph: Prefetch incoming files in the background to reduce open-chat wait time
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Call auto-reject
+                                      - generic: "On"
+                                    - paragraph: Always on
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure call auto-reject
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Auto campaign
+                                    - paragraph: "Off"
+                                  - generic:
+                                    - switch
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure auto campaign
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Chat Close Rating Settings
+                                      - generic: "On"
+                                    - paragraph: "Reply window: 15 min"
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure rating message
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Assigned Chat Reset
+                                      - generic: "On"
+                                    - paragraph: Daily at 00:00 (Asia/Riyadh)
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure assigned chat reset
+                            - generic:
+                              - generic:
+                                - paragraph: Chat Source Tag
+                                - generic:
+                                  - generic: مؤيد-٤٣٤
+                              - generic:
+                                - generic:
+                                  - generic: Custom Label
+                                  - textbox:
+                                    - /placeholder: e.g. Sales +1 555...
+                                - generic:
+                                  - generic: Show as
+                                  - combobox:
+                                    - generic: Instance name
+                                    - img
+                              - generic:
+                                - generic:
+                                  - generic: Tag Color
+                                  - generic:
+                                    - button:
+                                      - img
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                - button [disabled]: Save Tag Settings
+                          - generic:
+                            - button:
+                              - img
+                              - text: Disconnect
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Connected
+                              - generic:
+                                - button:
+                                  - img
+                                - button:
+                                  - img
+                            - generic:
+                              - heading [level=3]: Adv-6800
+                              - paragraph: "966531536800"
+                            - generic:
+                              - img
+                              - generic: 966531536800:29@s.whatsapp.net
+                            - generic:
+                              - generic:
+                                - generic: Uptime
+                                - generic: 5h 46m
+                              - generic:
+                                - generic: Queue
+                                - generic: "0"
+                              - generic:
+                                - generic: Sent / Received
+                                - generic: 1 / 0
+                              - generic:
+                                - generic: Error Rate
+                                - generic: 0.0%
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-sync history
+                                    - paragraph: Sync message history after connect
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-download incoming media
+                                    - paragraph: Prefetch incoming files in the background to reduce open-chat wait time
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Call auto-reject
+                                    - paragraph: "Off"
+                                  - generic:
+                                    - switch
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure call auto-reject
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Auto campaign
+                                    - paragraph: "Off"
+                                  - generic:
+                                    - switch
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure auto campaign
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Chat Close Rating Settings
+                                      - generic: "On"
+                                    - paragraph: "Reply window: 15 min"
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure rating message
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Assigned Chat Reset
+                                      - generic: "On"
+                                    - paragraph: Daily at 00:00 (Asia/Riyadh)
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure assigned chat reset
+                            - generic:
+                              - generic:
+                                - paragraph: Chat Source Tag
+                                - generic:
+                                  - generic: Adv-6800
+                              - generic:
+                                - generic:
+                                  - generic: Custom Label
+                                  - textbox:
+                                    - /placeholder: e.g. Sales +1 555...
+                                - generic:
+                                  - generic: Show as
+                                  - combobox:
+                                    - generic: Instance name
+                                    - img
+                              - generic:
+                                - generic:
+                                  - generic: Tag Color
+                                  - generic:
+                                    - button
+                                    - button:
+                                      - img
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                - button [disabled]: Save Tag Settings
+                          - generic:
+                            - button:
+                              - img
+                              - text: Disconnect
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Connected
+                              - generic:
+                                - button:
+                                  - img
+                                - button:
+                                  - img
+                            - generic:
+                              - heading [level=3]: Adv-1926
+                              - paragraph: "966535551926"
+                            - generic:
+                              - img
+                              - generic: 966535551926:95@s.whatsapp.net
+                            - generic:
+                              - generic:
+                                - generic: Uptime
+                                - generic: 2h 8m
+                              - generic:
+                                - generic: Queue
+                                - generic: "0"
+                              - generic:
+                                - generic: Sent / Received
+                                - generic: 5 / 0
+                              - generic:
+                                - generic: Error Rate
+                                - generic: 16.7%
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-sync history
+                                    - paragraph: Sync message history after connect
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-download incoming media
+                                    - paragraph: Prefetch incoming files in the background to reduce open-chat wait time
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Call auto-reject
+                                    - paragraph: "Off"
+                                  - generic:
+                                    - switch
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure call auto-reject
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Auto campaign
+                                    - paragraph: "Off"
+                                  - generic:
+                                    - switch
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure auto campaign
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Chat Close Rating Settings
+                                      - generic: "On"
+                                    - paragraph: "Reply window: 15 min"
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure rating message
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Assigned Chat Reset
+                                      - generic: "On"
+                                    - paragraph: Daily at 00:00 (Asia/Riyadh)
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure assigned chat reset
+                            - generic:
+                              - generic:
+                                - paragraph: Chat Source Tag
+                                - generic:
+                                  - generic: Adv-1926
+                              - generic:
+                                - generic:
+                                  - generic: Custom Label
+                                  - textbox:
+                                    - /placeholder: e.g. Sales +1 555...
+                                - generic:
+                                  - generic: Show as
+                                  - combobox:
+                                    - generic: Instance name
+                                    - img
+                              - generic:
+                                - generic:
+                                  - generic: Tag Color
+                                  - generic:
+                                    - button
+                                    - button
+                                    - button:
+                                      - img
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                - button [disabled]: Save Tag Settings
+                          - generic:
+                            - button:
+                              - img
+                              - text: Disconnect
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Connected
+                              - generic:
+                                - button:
+                                  - img
+                                - button:
+                                  - img
+                            - generic:
+                              - heading [level=3]: العيينة-٠٠٢٦
+                              - paragraph: "966554840026"
+                            - generic:
+                              - img
+                              - generic: 966554840026:6@s.whatsapp.net
+                            - generic:
+                              - generic:
+                                - generic: Uptime
+                                - generic: 1h 53m
+                              - generic:
+                                - generic: Queue
+                                - generic: "0"
+                              - generic:
+                                - generic: Sent / Received
+                                - generic: 92 / 43
+                              - generic:
+                                - generic: Error Rate
+                                - generic: 6.1%
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-sync history
+                                    - paragraph: Sync message history after connect
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-download incoming media
+                                    - paragraph: Prefetch incoming files in the background to reduce open-chat wait time
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Call auto-reject
+                                    - paragraph: "Off"
+                                  - generic:
+                                    - switch
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure call auto-reject
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Auto campaign
+                                    - paragraph: "Off"
+                                  - generic:
+                                    - switch
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure auto campaign
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Chat Close Rating Settings
+                                      - generic: "On"
+                                    - paragraph: "Reply window: 15 min"
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure rating message
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Assigned Chat Reset
+                                      - generic: "On"
+                                    - paragraph: Daily at 00:00 (Asia/Riyadh)
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure assigned chat reset
+                            - generic:
+                              - generic:
+                                - paragraph: Chat Source Tag
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                              - generic:
+                                - generic:
+                                  - generic: Custom Label
+                                  - textbox:
+                                    - /placeholder: e.g. Sales +1 555...
+                                - generic:
+                                  - generic: Show as
+                                  - combobox:
+                                    - generic: Instance name
+                                    - img
+                              - generic:
+                                - generic:
+                                  - generic: Tag Color
+                                  - generic:
+                                    - button
+                                    - button
+                                    - button
+                                    - button:
+                                      - img
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                - button [disabled]: Save Tag Settings
+                          - generic:
+                            - button:
+                              - img
+                              - text: Disconnect
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Disconnected
+                              - generic:
+                                - button:
+                                  - img
+                                - button:
+                                  - img
+                            - generic:
+                              - heading [level=3]: عادل-٠٣٥
+                              - paragraph: No phone number
+                            - generic:
+                              - img
+                              - generic: Not paired
+                            - generic:
+                              - generic:
+                                - generic: Uptime
+                                - generic: 0m
+                              - generic:
+                                - generic: Queue
+                                - generic: "0"
+                              - generic:
+                                - generic: Sent / Received
+                                - generic: 0 / 0
+                              - generic:
+                                - generic: Error Rate
+                                - generic: 0.0%
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-sync history
+                                    - paragraph: Sync message history after connect
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-download incoming media
+                                    - paragraph: Prefetch incoming files in the background to reduce open-chat wait time
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Call auto-reject
+                                    - paragraph: "Off"
+                                  - generic:
+                                    - switch
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure call auto-reject
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Auto campaign
+                                    - paragraph: "Off"
+                                  - generic:
+                                    - switch
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure auto campaign
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Chat Close Rating Settings
+                                      - generic: "On"
+                                    - paragraph: "Reply window: 15 min"
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure rating message
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Assigned Chat Reset
+                                      - generic: "On"
+                                    - paragraph: Daily at 00:00 (Asia/Riyadh)
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure assigned chat reset
+                            - generic:
+                              - generic:
+                                - paragraph: Chat Source Tag
+                                - generic:
+                                  - generic: عادل-٠٣٥
+                              - generic:
+                                - generic:
+                                  - generic: Custom Label
+                                  - textbox:
+                                    - /placeholder: e.g. Sales +1 555...
+                                - generic:
+                                  - generic: Show as
+                                  - combobox:
+                                    - generic: Instance name
+                                    - img
+                              - generic:
+                                - generic:
+                                  - generic: Tag Color
+                                  - generic:
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button:
+                                      - img
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                - button [disabled]: Save Tag Settings
+                          - generic:
+                            - button:
+                              - img
+                              - text: Connect / Scan QR
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Connected
+                              - generic:
+                                - button:
+                                  - img
+                                - button:
+                                  - img
+                            - generic:
+                              - heading [level=3]: Print-Aser-208
+                              - paragraph: "966506516208"
+                            - generic:
+                              - img
+                              - generic: 966506516208:53@s.whatsapp.net
+                            - generic:
+                              - generic:
+                                - generic: Uptime
+                                - generic: 48m
+                              - generic:
+                                - generic: Queue
+                                - generic: "0"
+                              - generic:
+                                - generic: Sent / Received
+                                - generic: 58 / 17
+                              - generic:
+                                - generic: Error Rate
+                                - generic: 9.4%
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-sync history
+                                    - paragraph: Sync message history after connect
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-download incoming media
+                                    - paragraph: Prefetch incoming files in the background to reduce open-chat wait time
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Call auto-reject
+                                      - generic: "On"
+                                    - paragraph: Always on
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure call auto-reject
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Auto campaign
+                                    - paragraph: "Off"
+                                  - generic:
+                                    - switch
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure auto campaign
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Chat Close Rating Settings
+                                      - generic: "On"
+                                    - paragraph: "Reply window: 15 min"
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure rating message
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Assigned Chat Reset
+                                      - generic: "On"
+                                    - paragraph: Daily at 00:00 (Asia/Riyadh)
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure assigned chat reset
+                            - generic:
+                              - generic:
+                                - paragraph: Chat Source Tag
+                                - generic:
+                                  - generic: Print-Aser-208
+                              - generic:
+                                - generic:
+                                  - generic: Custom Label
+                                  - textbox:
+                                    - /placeholder: e.g. Sales +1 555...
+                                - generic:
+                                  - generic: Show as
+                                  - combobox:
+                                    - generic: Instance name
+                                    - img
+                              - generic:
+                                - generic:
+                                  - generic: Tag Color
+                                  - generic:
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button:
+                                      - img
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                - button [disabled]: Save Tag Settings
+                          - generic:
+                            - button:
+                              - img
+                              - text: Disconnect
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Connected
+                              - generic:
+                                - button:
+                                  - img
+                                - button:
+                                  - img
+                            - generic:
+                              - heading [level=3]: emad-395
+                              - paragraph: "966506524395"
+                            - generic:
+                              - img
+                              - generic: 966506524395:26@s.whatsapp.net
+                            - generic:
+                              - generic:
+                                - generic: Uptime
+                                - generic: 0m
+                              - generic:
+                                - generic: Queue
+                                - generic: "0"
+                              - generic:
+                                - generic: Sent / Received
+                                - generic: 0 / 0
+                              - generic:
+                                - generic: Error Rate
+                                - generic: 0.0%
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-sync history
+                                    - paragraph: Sync message history after connect
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-download incoming media
+                                    - paragraph: Prefetch incoming files in the background to reduce open-chat wait time
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Call auto-reject
+                                      - generic: "On"
+                                    - paragraph: Always on
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure call auto-reject
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Auto campaign
+                                    - paragraph: "Off"
+                                  - generic:
+                                    - switch
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure auto campaign
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Chat Close Rating Settings
+                                      - generic: "On"
+                                    - paragraph: "Reply window: 15 min"
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure rating message
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Assigned Chat Reset
+                                      - generic: "On"
+                                    - paragraph: Daily at 00:00 (Asia/Riyadh)
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure assigned chat reset
+                            - generic:
+                              - generic:
+                                - paragraph: Chat Source Tag
+                                - generic:
+                                  - generic: emad-395
+                              - generic:
+                                - generic:
+                                  - generic: Custom Label
+                                  - textbox:
+                                    - /placeholder: e.g. Sales +1 555...
+                                - generic:
+                                  - generic: Show as
+                                  - combobox:
+                                    - generic: Instance name
+                                    - img
+                              - generic:
+                                - generic:
+                                  - generic: Tag Color
+                                  - generic:
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button:
+                                      - img
+                                    - button
+                                    - button
+                                    - button
+                                - button [disabled]: Save Tag Settings
+                          - generic:
+                            - button:
+                              - img
+                              - text: Disconnect
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Connected
+                              - generic:
+                                - button:
+                                  - img
+                                - button:
+                                  - img
+                            - generic:
+                              - heading [level=3]: Print-Labn-614
+                              - paragraph: "966553444614"
+                            - generic:
+                              - img
+                              - generic: 966553444614:82@s.whatsapp.net
+                            - generic:
+                              - generic:
+                                - generic: Uptime
+                                - generic: 1h 8m
+                              - generic:
+                                - generic: Queue
+                                - generic: "0"
+                              - generic:
+                                - generic: Sent / Received
+                                - generic: 120 / 91
+                              - generic:
+                                - generic: Error Rate
+                                - generic: 11.8%
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-sync history
+                                    - paragraph: Sync message history after connect
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - paragraph: Auto-download incoming media
+                                    - paragraph: Prefetch incoming files in the background to reduce open-chat wait time
+                                  - generic:
+                                    - switch [checked]
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Call auto-reject
+                                      - generic: "On"
+                                    - paragraph: Always on
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure call auto-reject
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Auto campaign
+                                      - generic: "On"
+                                    - paragraph: Every 7 day(s) • Draft
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure auto campaign
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Chat Close Rating Settings
+                                      - generic: "On"
+                                    - paragraph: "Reply window: 15 min"
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure rating message
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - paragraph: Assigned Chat Reset
+                                      - generic: "On"
+                                    - paragraph: Daily at 00:00 (Asia/Riyadh)
+                                  - generic:
+                                    - switch [checked]
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Configure assigned chat reset
+                            - generic:
+                              - generic:
+                                - paragraph: Chat Source Tag
+                                - generic:
+                                  - generic: Print-Labn-614
+                              - generic:
+                                - generic:
+                                  - generic: Custom Label
+                                  - textbox:
+                                    - /placeholder: e.g. Sales +1 555...
+                                - generic:
+                                  - generic: Show as
+                                  - combobox:
+                                    - generic: Instance name
+                                    - img
+                              - generic:
+                                - generic:
+                                  - generic: Tag Color
+                                  - generic:
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button
+                                    - button:
+                                      - img
+                                    - button
+                                    - button
+                                - button [disabled]: Save Tag Settings
+                          - generic:
+                            - button:
+                              - img
+                              - text: Disconnect
+      - region "Notifications alt+T":
+        - list
+  - dialog "Call Auto-Reject Settings" [ref=e1348]:
+    - generic [ref=e1349]:
+      - heading "Call Auto-Reject Settings" [level=2] [ref=e1350]
+      - paragraph [ref=e1351]: Configure automatic rejection for incoming voice and video calls for this instance.
+    - generic [ref=e1352]:
+      - generic [ref=e1353]:
+        - generic [ref=e1354]:
+          - generic [ref=e1355]:
+            - generic [ref=e1356]: Enable auto-reject
+            - paragraph [ref=e1357]: When enabled, matching calls are declined immediately.
+          - switch [checked] [active] [ref=e1358] [cursor=pointer]
+        - generic [ref=e1359]:
+          - generic [ref=e1360]:
+            - generic [ref=e1361]: Reject individual calls
+            - switch [checked] [ref=e1362] [cursor=pointer]
+          - generic [ref=e1363]:
+            - generic [ref=e1364]: Reject group calls
+            - switch [checked] [ref=e1365] [cursor=pointer]
+      - generic [ref=e1366]:
+        - generic [ref=e1367]: Reply mode
+        - combobox [ref=e1368] [cursor=pointer]:
+          - generic: Reject without message
+          - img [ref=e1369]
+      - generic [ref=e1371]:
+        - generic [ref=e1372]: Schedule
+        - combobox [ref=e1373] [cursor=pointer]:
+          - generic: Always on
+          - img [ref=e1374]
+      - generic [ref=e1376]:
+        - generic [ref=e1377]: Emergency bypass contacts
+        - textbox "One number per line (only digits kept)." [ref=e1378]
+        - paragraph [ref=e1379]: Calls from these contacts will bypass auto-reject.
+    - generic [ref=e1380]:
+      - button "Cancel" [ref=e1381] [cursor=pointer]
+      - button "Save settings" [ref=e1382] [cursor=pointer]
+    - button "Close" [ref=e1383] [cursor=pointer]:
+      - img [ref=e1384]
+      - generic [ref=e1386]: Close

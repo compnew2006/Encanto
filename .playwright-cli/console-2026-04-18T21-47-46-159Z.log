@@ -1,0 +1,17 @@
+[     890ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/me:0
+[     958ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/auth/refresh:0
+[  935690ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/instances/de3b3c04-5d60-44a0-b412-1fd01c6ff37e/health:0
+[  935695ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/instances/97b65f0d-00d0-4618-831d-b2aa9b3ee48c/health:0
+[  935696ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/instances/94b926ea-aec4-4933-94ea-19d0461cccd9/health:0
+[  935697ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/instances/5738280d-f76e-4bcc-8b0f-240e58e9d4be/health:0
+[  935698ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/instances/b58bc49f-6a4b-4235-86f0-c97738db40ad/health:0
+[  935699ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/instances/ee37b89e-64f7-4b4b-8b9f-0f8201d1de05/health:0
+[  935700ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/instances/6df96253-4bbf-465a-8df3-30d9c956e233/health:0
+[  935701ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/instances/6129b735-749f-46b4-a274-12cdc56c4074/health:0
+[  935769ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/auth/refresh:0
+[  935773ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/auth/refresh:0
+[  935775ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/auth/refresh:0
+[  935777ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/auth/refresh:0
+[  935779ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/auth/refresh:0
+[  935788ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/auth/refresh:0
+[  935788ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://ofuqalmadenah.com/api/auth/refresh:0

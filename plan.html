@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Whatomate - الخطة بعد تدقيق الواجهة الحية</title>
+  <style>
+    :root {
+      --bg: #0f1320;
+      --panel: #171c2c;
+      --panel-2: #212842;
+      --border: #313a5a;
+      --text: #edf2ff;
+      --muted: #a8b1d1;
+      --accent: #ffb84d;
+      --green: #66c18c;
+      --red: #e37777;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      background: radial-gradient(circle at top, #18203a 0%, #0f1320 50%, #0b0f1b 100%);
+      color: var(--text);
+      line-height: 1.75;
+    }
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 18px 48px;
+    }
+    h1, h2, h3 { margin: 0 0 12px; }
+    h1 { font-size: 32px; }
+    h2 { font-size: 22px; margin-top: 28px; }
+    .sub { color: var(--muted); margin-bottom: 18px; }
+    .card {
+      background: rgba(23, 28, 44, 0.94);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin: 16px 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill {
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .keep { color: var(--green); }
+    .remove { color: var(--red); }
+    ol, ul { margin: 0; padding-right: 20px; }
+    code {
+      background: #111729;
+      border: 1px solid #2f3a5d;
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #ffdca8;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>خطة Whatomate بعد تدقيق الواجهة الحية</h1>
+    <p class="sub">
+      تم تحديث هذه النسخة بعد فحص الواجهات الحية <code>/chat</code> و <code>/analytics/agents</code> و <code>/settings</code> و
+      <code>/settings/license</code> و <code>/settings/instances</code> و <code>/settings/contacts</code> و <code>/settings/closed-chats</code> في
+      <code>ofuqalmadenah.com</code> بتاريخ <code>2026-04-19</code>. الهدف هنا أن تعكس الخطة ما يظهر فعلياً في المنتج، لا
+      النطاق النظري المختزل فقط.
+    </p>
+
+    <div class="card">
+      <h2>الـ Stack النهائي</h2>
+      <div class="pill-row">
+        <span class="pill keep">Go</span>
+        <span class="pill keep">chi</span>
+        <span class="pill keep">pgx</span>
+        <span class="pill keep">sqlc</span>
+        <span class="pill keep">PostgreSQL</span>
+        <span class="pill keep">Redis</span>
+        <span class="pill keep">Svelte 5</span>
+        <span class="pill keep">SvelteKit</span>
+        <span class="pill keep">WebSocket داخل Go</span>
+        <span class="pill keep">whatsmeow</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>الوحدات المؤكدة في الواجهة الحية</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>المنصة والتنقل</h3>
+          <ul>
+            <li>شريط جنب رئيسي فيه <code>Dashboard</code>, <code>Chat</code>, <code>Chatbot</code>, <code>Agent Analytics</code>, <code>Campaigns</code>, <code>Settings</code></li>
+            <li>مبدّل منظمة في الشريط الجانبي مع إنشاء منظمة جديدة وحذف المنظمة المحددة</li>
+            <li>قائمة مستخدم تتضمن التوافر، <code>/profile</code>، الثيم، اللغة، وتسجيل الخروج</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>مساحة المحادثة</h3>
+          <ul>
+            <li>تبويبات <code>Assigned</code> و <code>Pending</code></li>
+            <li>مربع بحث، زر <code>Add Contact</code>، وفلتر بالمؤسسة ونوع المحادثة والتاغات</li>
+            <li>إجراءات القائمة: إخفاء المحادثة وحذفها لكل صف</li>
+            <li>مؤشرات <code>Public</code>، <code>Pending</code>، وعدد غير المقروء</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>التعاون داخل المحادثة</h3>
+          <ul>
+            <li>إسناد المحادثة لوكيل عبر <code>Assign Contact</code></li>
+            <li>زر تثبيت <code>Pin</code> وزر إضافي من نوع <code>user-x</code> يحتاج ربط endpoint واضح لإعادة ضبط المسؤولية</li>
+            <li>لوحة <code>Notes</code> للملاحظات الداخلية</li>
+            <li>لوحة <code>Contact Info</code> مع <code>Tags</code> و <code>Collaborators</code> وبيانات عامة للجهة</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>الرسائل والوسائط</h3>
+          <ul>
+            <li>محرر فيه <code>emoji</code> و<code>quick message</code> و<code>attachment</code> و<code>print</code></li>
+            <li>وسائط بعمليات <code>Print</code> و<code>Download</code> و<code>Download All</code></li>
+            <li>عمليات <code>Revoke message</code> و<code>Retry sending</code> مع إظهار سبب الفشل مثل <code>instance not connected</code></li>
+            <li>قبل إرسال الرسالة النصية فقط، backend يحاكي <code>typing event</code> عبر <code>whatsmeow</code> لمدة تتناسب مع طول النص، مع استثناء الملفات والوسائط</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>الإشعارات والحالات</h3>
+          <ul>
+            <li>مركز إشعارات مع <code>Mark all as read</code> وعناصر من رسائل غير مقروءة وتنبيهات نظام</li>
+            <li>درج <code>Statuses</code> مع <code>Add status</code> وقائمة بالحالات حسب الجهة وinstance</li>
+            <li>زر <code>Refresh</code> وتحديثات فورية عبر WebSocket</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>وحدات مجاورة مؤكدة</h3>
+          <ul>
+            <li>وجود صفحة <code>/chatbot</code> في الشريط الجانبي</li>
+            <li>وجود صفحة <code>/analytics/agents</code></li>
+            <li>وجود صفحة <code>/campaigns</code></li>
+            <li>لوحة بيانات جهة الاتصال تشير صراحة إلى <code>chatbot flow settings</code> كمرجع لإعداد عرض البيانات</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>مركز الإعدادات</h3>
+          <ul>
+            <li>شجرة الإعدادات تحتوي <code>General</code>, <code>Chatbot</code>, <code>WhatsApp</code>, <code>Contacts</code>, <code>Closed Chats</code>, <code>Canned Responses</code>, <code>Tags</code>, <code>Teams</code>, <code>Users</code>, <code>Roles</code>, <code>API Keys</code>, <code>Webhooks</code>, <code>Custom Actions</code>, <code>SSO</code>, <code>License</code></li>
+            <li>صفحة <code>/settings</code> نفسها تحتوي تبويبات <code>General</code>, <code>Appearance</code>, <code>Chat</code>, <code>Notifications</code></li>
+            <li>تبويب <code>Appearance</code> يحتوي <code>Color Mode</code> و<code>Theme Style</code> مع presets مثل <code>Twitter</code>, <code>Ocean Breeze</code>, <code>Soft Pop</code>, <code>Amber Minimal</code></li>
+            <li>تبويب <code>Chat</code> يحتوي <code>Media Grouping Window</code>, <code>Sidebar Contact View</code>, <code>Chat Background</code>, وإعدادات إظهار <code>Print</code> و<code>Download</code> وربط <code>Closed Chats</code></li>
+            <li>تبويب <code>Notifications</code> يحتوي <code>Email Notifications</code>, <code>New Message Alerts</code>, <code>Notification Sound</code> مع <code>Play</code>, و<code>Campaign Updates</code></li>
+            <li>الإعدادات العامة تؤكد وجود جدولة <code>Uploads Cleanup</code> مع تشغيل يدوي عبر <code>Run Cleanup Now</code>، ويجب أن تبقى هذه الخاصية للأدمن فقط</li>
+            <li>لم تظهر أي خاصية إسناد داخل صفحة <code>/settings</code> نفسها؛ الإسناد بقي محصوراً في مساحة المحادثات</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>الترخيص داخل المنتج</h3>
+          <ul>
+            <li>صفحة <code>/settings/license</code> تعرض إدارة <code>offline activation</code> والحصص وحالة التجديد للـ deployment</li>
+            <li>الأزرار المؤكدة: <code>Refresh</code>, <code>Copy HWID</code>, <code>Activate license</code>, <code>Refresh status</code></li>
+            <li>في التدقيق الحي بتاريخ <code>2026-04-19</code> ظهرت الحالة <code>Disabled</code> مع بطاقات <code>Organizations</code>, <code>Users / Org</code>, <code>WA Endpoints / Org</code>, <code>Storage / Org</code>, و<code>Subscription Days</code></li>
+            <li>الواجهة تعرض <code>HWID</code> كاملاً مع <code>Short ID</code> وتطلب إرساله إلى الـ vendor للحصول على <code>signed security key</code> خاص بهذا الخادم</li>
+            <li>من الكود المحلي تأكد أن الترخيص مبني على <code>Ed25519-signed JWT</code> مرتبط بـ <code>HWID hash</code> ويحمل حدود <code>organizations</code>, <code>users</code>, <code>WA endpoints</code>, <code>workers</code>, و<code>storage</code></li>
+            <li>المسار <code>/settings/license</code> للأدمن فقط، ويوجد أيضاً مسار cleanup خاص عند تجاوز الحصة المرخصة</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>إدارة مثيلات واتساب</h3>
+          <ul>
+            <li>صفحة <code>/settings/instances</code> تعرض instances كبطاقات لا كجدول فقط</li>
+            <li>أزرار مؤكدة: <code>Health Dashboard</code>, <code>Add Account</code>, <code>Edit instance name</code>, <code>Delete instance</code>, <code>Disconnect</code>, <code>Connect / Scan QR</code></li>
+            <li>كل بطاقة تعرض <code>Connected / Disconnected</code>، الهاتف، <code>JID</code>، وقياسات <code>Uptime</code>, <code>Queue</code>, <code>Sent / Received</code>, <code>Error Rate</code></li>
+            <li>إعدادات تشغيل لكل instance: <code>Auto-sync history</code>, <code>Auto-download incoming media</code>, <code>Call auto-reject</code>, <code>Auto campaign</code>, <code>Chat Close Rating Settings</code>, <code>Assigned Chat Reset</code>, و<code>Chat Source Tag</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>تحليلات الوكلاء</h3>
+          <ul>
+            <li>صفحة <code>/analytics/agents</code> تحتوي فلاتر <code>All Agents</code>, <code>All</code>, <code>This month</code>, <code>Any</code>، وزر <code>Export CSV</code></li>
+            <li>تحتوي بطاقات مؤشرات مثل <code>Transfers Handled</code>, <code>Completed conversations</code>, <code>Active Conversations</code>, <code>Avg Resolution Time</code>, <code>Avg Queue Time</code>, <code>Break Time</code>, و<code>Average Rating</code></li>
+            <li>تعرض أقسام <code>Transfer Trends</code>, <code>Conversation Sources</code>, <code>Agent Comparison</code>, وجدول <code>Customer Ratings</code></li>
+            <li>جدول التقييمات يحتوي <code>Agent</code>, <code>Phone Number</code>, <code>Contact</code>, <code>Rating</code>, <code>Rated At</code>, <code>Closing Agent</code>, <code>Rating Message</code>, و<code>Context Messages</code></li>
+            <li>زر رقم الهاتف داخل الجدول يفتح المحادثة مباشرة، ولم تظهر أي خاصية إسناد داخل شاشة التحليلات نفسها</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>إدارة جهات الاتصال</h3>
+          <ul>
+            <li>صفحة <code>/settings/contacts</code> تعرض <code>Search contacts...</code> وفلتر <code>All instances</code> مع جدول للجهات</li>
+            <li>الأزرار المؤكدة: <code>Import/Export</code> و<code>Add Contact</code>، وعلى كل صف <code>Open chat</code>, <code>Edit</code>, <code>Delete</code></li>
+            <li>نموذج الإنشاء يطلب <code>Phone Number</code>, <code>Profile Name</code>, و<code>WhatsApp Instance</code>، ونموذج التعديل يسمح بتحديث الاسم والرقم</li>
+            <li>نافذة <code>Import/Export Contacts</code> تدعم <code>Export CSV</code> بأعمدة اختيارية مثل <code>Assigned User ID</code> و<code>Last Message At</code>، وتدعم <code>Import CSV</code> مع <code>Update existing records if duplicate found</code></li>
+            <li>الصفحة لا تعرض زر إسناد مباشر، لكن بيانات الإسناد تظهر ضمن التصدير وتبقى إدارة الإسناد الفعلية داخل شاشة المحادثة</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>المحادثات المغلقة</h3>
+          <ul>
+            <li>صفحة <code>/settings/closed-chats</code> تعرض فلاتر <code>All Agents</code>, <code>All instances</code>, <code>25</code> مع زر <code>Refresh</code></li>
+            <li>الجدول يحتوي <code>Contact Name</code>, <code>Closed By</code>, <code>Date Closed</code>, و<code>Actions</code></li>
+            <li>الإجراء المؤكد على الصف هو <code>Reopen</code> مع تنقل صفحات عبر <code>Previous</code> و<code>Next</code></li>
+            <li>هذه الشاشة لا تعرض خاصية إسناد؛ هي شاشة مراجعة وتشغيل للمحادثات المغلقة فقط</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>ما يزال خارج النطاق أو غير مؤكد</h2>
+      <div class="pill-row">
+        <span class="pill remove">Meta Cloud API</span>
+        <span class="pill remove">Templates</span>
+        <span class="pill remove">Widgets</span>
+        <span class="pill remove">AI replies</span>
+        <span class="pill remove">SLA automation</span>
+        <span class="pill remove">Keyword rules</span>
+        <span class="pill remove">Agent transfer queue</span>
+      </div>
+      <p class="sub">
+        هذه العناصر لم تظهر بوضوح في تدقيق شاشة <code>/chat</code> الحالي، لذلك تبقى خارج الخطة
+        الأساسية إلى حين تدقيق صفحاتها المخصصة.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>مراحل العمل المحدثة</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>1. الأساس والبنية</h3>
+          <ul>
+            <li>هيكل monorepo واضح</li>
+            <li>Docker Compose محلي</li>
+            <li>SQL migrations + <code>sqlc</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>2. الهوية والسياق</h3>
+          <ul>
+            <li>Auth و JWT</li>
+            <li>Organizations و org switcher</li>
+            <li>User menu: availability, theme, language, profile</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>3. Workspace المحادثات</h3>
+          <ul>
+            <li>Inbox tabs: assigned / pending</li>
+            <li>Search / filter / start new chat</li>
+            <li>Assign / pin / notes / info / tags / collaborators</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>4. الرسائل والوسائط</h3>
+          <ul>
+            <li>Text / media / quick replies / emoji</li>
+            <li>Pre-send typing simulation للنصوص فقط عبر <code>whatsmeow</code></li>
+            <li>Print / download / download-all</li>
+            <li>Retry / revoke / realtime status updates</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>5. الحالات والإشعارات</h3>
+          <ul>
+            <li>Statuses drawer</li>
+            <li>Notification center</li>
+            <li>Realtime inbox sync</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>6. الوحدات المجاورة</h3>
+          <ul>
+            <li>Dashboard</li>
+            <li>Chatbot و flow-based data panels</li>
+            <li>Agent analytics مع KPIs وratings drill-down وexport</li>
+            <li>Campaigns</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>7. الإعدادات والمثيلات</h3>
+          <ul>
+            <li>Settings hub مع تبويبات <code>General</code>, <code>Appearance</code>, <code>Chat</code>, <code>Notifications</code></li>
+            <li>التنظيف الدوري للملفات <code>Uploads Cleanup</code> يبقى للأدمن فقط</li>
+            <li>License management مع <code>HWID</code>, <code>security key</code>, quota cards, وcleanup mode عند overage</li>
+            <li>Instance cards مع create / rename / connect / disconnect / delete</li>
+            <li>لوحة صحة للمثيلات وسياسات تشغيل مستقلة لكل instance</li>
+            <li>شاشات <code>Contacts</code> و<code>Closed Chats</code> تبقى ضمن مركز الإعدادات الفعلي</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>إضافات مطلوبة على الخطة</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>الواجهة والتجربة</h3>
+          <ul>
+            <li>دعم <code>i18n</code> عبر ملفات <code>JSON</code> مع حفظ <code>locale</code> المختار في الإعدادات</li>
+            <li>الثيمات تكون مبنية على <code>Tailwind</code> مع <code>Light / Dark / System</code></li>
+            <li>الشريط الجانبي يتمدد عند اقتراب الفأرة مع زر تثبيت للحالة</li>
+            <li>إرسال الملفات عبر <code>drag &amp; drop</code> داخل composer مع معاينة أولية</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>الصلاحيات والرؤية</h3>
+          <ul>
+            <li>حالة المستخدم تصبح <code>available</code> أو <code>unavailable</code> أو <code>busy</code> بدل toggle ثنائي</li>
+            <li>كل خاصية يمكن ضبطها كـ <code>create</code> أو <code>update</code> أو <code>delete</code> أو <code>read-only</code></li>
+            <li>التحكم حسب الدور في رؤية وإرسال المحادثات <code>unclaimed</code></li>
+            <li>التحكم في رؤية كل جهات الاتصال أو جهات instances محددة أو أرقام هاتف مصرّح بها فقط</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>التكاملات</h3>
+          <ul>
+            <li>الإبقاء على إنشاء/حذف <code>API Keys</code> ضمن الخطة بشكل صريح</li>
+            <li>دعم إنشاء/حذف <code>Webhooks</code> لأي events مدعومة</li>
+            <li>كل webhook تدعم <code>Webhook URL</code> و<code>Secret</code> اختياري و<code>Custom Headers</code> اختيارية</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>الترخيص والتفعيل</h3>
+          <ul>
+            <li>التفعيل يجب أن يكون <code>offline</code> عبر <code>signed security key</code> وليس مكالمة SaaS مباشرة أثناء التشغيل</li>
+            <li>الـ token يجب أن يحمل <code>license_id</code>, <code>license_family_id</code>, <code>revision</code>, <code>license_kind</code>, <code>tier</code>, وlimits التشغيلية</li>
+            <li>الـ backend يخزن token مشفرة at rest، ويعيد بناء الحالة دورياً مع <code>grace period</code> و<code>time rollback tolerance</code></li>
+            <li>عند تجاوز الحصة يجب نقل المستخدمين إلى <code>/license-cleanup</code> والسماح فقط بعمليات الحذف والتنظيف اللازمة للعودة ضمن الحد</li>
+            <li>يوجد نظام vendor منفصل لإصدار ومراجعة الـ licenses مع <code>Generate</code>, <code>Verify</code>, <code>Registry</code>, وmetadata مثل <code>customer_name</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>الكيانات التي يجب أن تبقى في الخطة</h2>
+      <ul>
+        <li><strong>Identity:</strong> <code>organizations</code>, <code>users</code>, <code>user_organizations</code>, <code>custom_roles</code>, <code>teams</code>, <code>api_keys</code></li>
+        <li><strong>Messaging:</strong> <code>contacts</code>, <code>messages</code>, <code>media_assets</code>, <code>conversation_notes</code>, <code>contact_collaborators</code>, <code>tags</code>, <code>canned_responses</code>, <code>contact_user_deletions</code>, <code>chat_closure_ratings</code></li>
+        <li><strong>Realtime Inbox:</strong> <code>user_notifications</code>, <code>whatsapp_statuses</code>, <code>instance_notifications</code>, <code>user_availability_logs</code></li>
+        <li><strong>Instance Operations:</strong> <code>whatsapp_instance_settings</code>, <code>whatsapp_instance_health_snapshots</code>, <code>instance_call_policies</code>, <code>instance_auto_campaigns</code>, <code>instance_rating_settings</code>, <code>instance_assignment_resets</code></li>
+        <li><strong>Chatbot-adjacent config:</strong> <code>chatbot_flows</code> أو ما يعادلها لحفظ إعدادات عرض بيانات جهة الاتصال</li>
+        <li><strong>Licensing:</strong> <code>license_records</code>, <code>license_events</code> داخل التطبيق، مع registry vendor منفصل لإصدار المفاتيح وإدارة metadata</li>
+        <li><strong>Visibility &amp; Integrations:</strong> <code>user_contact_visibility_rules</code>, <code>webhooks</code></li>
+        <li><strong>Adjacent modules:</strong> كيانات <code>analytics</code> تبقى في الخطة بشكل مؤكد الآن على الأقل من خلال KPIs و<code>customer ratings</code> وdrill-down إلى chat، بينما <code>campaigns</code> ما زالت تحتاج تدقيقاً أوسع قبل تجميد تصميمها النهائي</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>المسارات المؤكدة من الواجهة</h2>
+      <ul>
+        <li><code>/dashboard</code></li>
+        <li><code>/chat</code></li>
+        <li><code>/chat/[contactId]</code></li>
+        <li><code>/chatbot</code></li>
+        <li><code>/analytics/agents</code></li>
+        <li><code>/campaigns</code></li>
+        <li><code>/profile</code></li>
+        <li><code>/settings</code></li>
+        <li><code>/settings/license</code></li>
+        <li><code>/settings/contacts</code></li>
+        <li><code>/settings/closed-chats</code></li>
+        <li><code>/settings/instances</code></li>
+        <li><code>/settings/instances/health</code></li>
+        <li><code>/settings/*</code></li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

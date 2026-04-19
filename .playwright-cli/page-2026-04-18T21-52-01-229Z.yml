@@ -1,0 +1,314 @@
+- generic [ref=e3]:
+  - generic [ref=e28]:
+    - link "Skip to main content" [ref=e29] [cursor=pointer]:
+      - /url: "#main-content"
+    - navigation "Main navigation" [ref=e30]:
+      - generic [ref=e31]:
+        - link "Whatomate" [ref=e32] [cursor=pointer]:
+          - /url: /
+          - img [ref=e34]
+          - generic: Whatomate
+        - button:
+          - img
+      - button "مكتبة الاركان المثالية" [ref=e1327] [cursor=pointer]:
+        - img
+      - menubar [ref=e42]:
+        - menuitem "Dashboard" [ref=e43] [cursor=pointer]:
+          - img [ref=e44]
+          - generic: Dashboard
+        - menuitem "Chat" [ref=e49] [cursor=pointer]:
+          - img [ref=e50]
+          - generic: Chat
+        - menuitem "Chatbot" [ref=e52] [cursor=pointer]:
+          - img [ref=e53]
+          - generic: Chatbot
+        - menuitem "Agent Analytics" [ref=e56] [cursor=pointer]:
+          - img [ref=e57]
+          - generic: Agent Analytics
+        - menuitem "Campaigns" [ref=e59] [cursor=pointer]:
+          - img [ref=e60]
+          - generic: Campaigns
+        - menuitem "Settings" [ref=e63] [cursor=pointer]:
+          - img [ref=e64]
+          - generic: Settings
+      - button "User menu" [ref=e68] [cursor=pointer]:
+        - generic [ref=e70]: ن
+        - generic:
+          - generic [ref=e71]: نعماني
+          - generic [ref=e72]: admin@whatomate.local
+    - main [ref=e73]:
+      - generic [ref=e1515]:
+        - generic [ref=e1517]:
+          - img [ref=e1519]
+          - generic [ref=e1521]:
+            - heading "Instance Health Dashboard" [level=1] [ref=e1522]
+            - paragraph [ref=e1523]: Live uptime, throughput, error, and queue metrics for each connected number.
+        - generic [ref=e1525]:
+          - button "Refresh" [ref=e1527] [cursor=pointer]
+          - generic [ref=e1528]:
+            - generic [ref=e1529]:
+              - heading "مؤيد-٤٣٤ connected" [level=3] [ref=e1531]:
+                - generic [ref=e1532]: مؤيد-٤٣٤
+                - generic [ref=e1533]: connected
+              - generic [ref=e1534]:
+                - generic [ref=e1535]:
+                  - generic [ref=e1536]:
+                    - img [ref=e1537]
+                    - generic [ref=e1540]: Uptime
+                  - generic [ref=e1541]: 0m
+                - generic [ref=e1542]:
+                  - generic [ref=e1543]:
+                    - img [ref=e1544]
+                    - generic [ref=e1547]: Sent today
+                  - generic [ref=e1548]: "0"
+                - generic [ref=e1549]:
+                  - generic [ref=e1550]:
+                    - img [ref=e1551]
+                    - generic [ref=e1554]: Received today
+                  - generic [ref=e1555]: "0"
+                - generic [ref=e1556]:
+                  - generic [ref=e1557]:
+                    - img [ref=e1558]
+                    - generic [ref=e1560]: Failed today
+                  - generic [ref=e1561]: "0"
+                - generic [ref=e1562]:
+                  - generic [ref=e1563]:
+                    - img [ref=e1564]
+                    - generic [ref=e1566]: Error rate
+                  - generic [ref=e1567]: 0.0%
+                - generic [ref=e1568]:
+                  - generic [ref=e1569]: Queue depth
+                  - generic [ref=e1570]: "0"
+            - generic [ref=e1571]:
+              - heading "Adv-6800 connected" [level=3] [ref=e1573]:
+                - generic [ref=e1574]: Adv-6800
+                - generic [ref=e1575]: connected
+              - generic [ref=e1576]:
+                - generic [ref=e1577]:
+                  - generic [ref=e1578]:
+                    - img [ref=e1579]
+                    - generic [ref=e1582]: Uptime
+                  - generic [ref=e1583]: 5h 48m
+                - generic [ref=e1584]:
+                  - generic [ref=e1585]:
+                    - img [ref=e1586]
+                    - generic [ref=e1589]: Sent today
+                  - generic [ref=e1590]: "1"
+                - generic [ref=e1591]:
+                  - generic [ref=e1592]:
+                    - img [ref=e1593]
+                    - generic [ref=e1596]: Received today
+                  - generic [ref=e1597]: "0"
+                - generic [ref=e1598]:
+                  - generic [ref=e1599]:
+                    - img [ref=e1600]
+                    - generic [ref=e1602]: Failed today
+                  - generic [ref=e1603]: "0"
+                - generic [ref=e1604]:
+                  - generic [ref=e1605]:
+                    - img [ref=e1606]
+                    - generic [ref=e1608]: Error rate
+                  - generic [ref=e1609]: 0.0%
+                - generic [ref=e1610]:
+                  - generic [ref=e1611]: Queue depth
+                  - generic [ref=e1612]: "0"
+            - generic [ref=e1613]:
+              - heading "Adv-1926 connected" [level=3] [ref=e1615]:
+                - generic [ref=e1616]: Adv-1926
+                - generic [ref=e1617]: connected
+              - generic [ref=e1618]:
+                - generic [ref=e1619]:
+                  - generic [ref=e1620]:
+                    - img [ref=e1621]
+                    - generic [ref=e1624]: Uptime
+                  - generic [ref=e1625]: 2h 10m
+                - generic [ref=e1626]:
+                  - generic [ref=e1627]:
+                    - img [ref=e1628]
+                    - generic [ref=e1631]: Sent today
+                  - generic [ref=e1632]: "5"
+                - generic [ref=e1633]:
+                  - generic [ref=e1634]:
+                    - img [ref=e1635]
+                    - generic [ref=e1638]: Received today
+                  - generic [ref=e1639]: "0"
+                - generic [ref=e1640]:
+                  - generic [ref=e1641]:
+                    - img [ref=e1642]
+                    - generic [ref=e1644]: Failed today
+                  - generic [ref=e1645]: "1"
+                - generic [ref=e1646]:
+                  - generic [ref=e1647]:
+                    - img [ref=e1648]
+                    - generic [ref=e1650]: Error rate
+                  - generic [ref=e1651]: 16.7%
+                - generic [ref=e1652]:
+                  - generic [ref=e1653]: Queue depth
+                  - generic [ref=e1654]: "0"
+            - generic [ref=e1655]:
+              - heading "العيينة-٠٠٢٦ connected" [level=3] [ref=e1657]:
+                - generic [ref=e1658]: العيينة-٠٠٢٦
+                - generic [ref=e1659]: connected
+              - generic [ref=e1660]:
+                - generic [ref=e1661]:
+                  - generic [ref=e1662]:
+                    - img [ref=e1663]
+                    - generic [ref=e1666]: Uptime
+                  - generic [ref=e1667]: 1h 55m
+                - generic [ref=e1668]:
+                  - generic [ref=e1669]:
+                    - img [ref=e1670]
+                    - generic [ref=e1673]: Sent today
+                  - generic [ref=e1674]: "92"
+                - generic [ref=e1675]:
+                  - generic [ref=e1676]:
+                    - img [ref=e1677]
+                    - generic [ref=e1680]: Received today
+                  - generic [ref=e1681]: "43"
+                - generic [ref=e1682]:
+                  - generic [ref=e1683]:
+                    - img [ref=e1684]
+                    - generic [ref=e1686]: Failed today
+                  - generic [ref=e1687]: "6"
+                - generic [ref=e1688]:
+                  - generic [ref=e1689]:
+                    - img [ref=e1690]
+                    - generic [ref=e1692]: Error rate
+                  - generic [ref=e1693]: 6.1%
+                - generic [ref=e1694]:
+                  - generic [ref=e1695]: Queue depth
+                  - generic [ref=e1696]: "0"
+            - generic [ref=e1697]:
+              - heading "عادل-٠٣٥ disconnected" [level=3] [ref=e1699]:
+                - generic [ref=e1700]: عادل-٠٣٥
+                - generic [ref=e1701]: disconnected
+              - generic [ref=e1702]:
+                - generic [ref=e1703]:
+                  - generic [ref=e1704]:
+                    - img [ref=e1705]
+                    - generic [ref=e1708]: Uptime
+                  - generic [ref=e1709]: 0m
+                - generic [ref=e1710]:
+                  - generic [ref=e1711]:
+                    - img [ref=e1712]
+                    - generic [ref=e1715]: Sent today
+                  - generic [ref=e1716]: "0"
+                - generic [ref=e1717]:
+                  - generic [ref=e1718]:
+                    - img [ref=e1719]
+                    - generic [ref=e1722]: Received today
+                  - generic [ref=e1723]: "0"
+                - generic [ref=e1724]:
+                  - generic [ref=e1725]:
+                    - img [ref=e1726]
+                    - generic [ref=e1728]: Failed today
+                  - generic [ref=e1729]: "0"
+                - generic [ref=e1730]:
+                  - generic [ref=e1731]:
+                    - img [ref=e1732]
+                    - generic [ref=e1734]: Error rate
+                  - generic [ref=e1735]: 0.0%
+                - generic [ref=e1736]:
+                  - generic [ref=e1737]: Queue depth
+                  - generic [ref=e1738]: "0"
+            - generic [ref=e1739]:
+              - heading "Print-Aser-208 connected" [level=3] [ref=e1741]:
+                - generic [ref=e1742]: Print-Aser-208
+                - generic [ref=e1743]: connected
+              - generic [ref=e1744]:
+                - generic [ref=e1745]:
+                  - generic [ref=e1746]:
+                    - img [ref=e1747]
+                    - generic [ref=e1750]: Uptime
+                  - generic [ref=e1751]: 50m
+                - generic [ref=e1752]:
+                  - generic [ref=e1753]:
+                    - img [ref=e1754]
+                    - generic [ref=e1757]: Sent today
+                  - generic [ref=e1758]: "58"
+                - generic [ref=e1759]:
+                  - generic [ref=e1760]:
+                    - img [ref=e1761]
+                    - generic [ref=e1764]: Received today
+                  - generic [ref=e1765]: "17"
+                - generic [ref=e1766]:
+                  - generic [ref=e1767]:
+                    - img [ref=e1768]
+                    - generic [ref=e1770]: Failed today
+                  - generic [ref=e1771]: "6"
+                - generic [ref=e1772]:
+                  - generic [ref=e1773]:
+                    - img [ref=e1774]
+                    - generic [ref=e1776]: Error rate
+                  - generic [ref=e1777]: 9.4%
+                - generic [ref=e1778]:
+                  - generic [ref=e1779]: Queue depth
+                  - generic [ref=e1780]: "0"
+            - generic [ref=e1781]:
+              - heading "emad-395 connected" [level=3] [ref=e1783]:
+                - generic [ref=e1784]: emad-395
+                - generic [ref=e1785]: connected
+              - generic [ref=e1786]:
+                - generic [ref=e1787]:
+                  - generic [ref=e1788]:
+                    - img [ref=e1789]
+                    - generic [ref=e1792]: Uptime
+                  - generic [ref=e1793]: 0m
+                - generic [ref=e1794]:
+                  - generic [ref=e1795]:
+                    - img [ref=e1796]
+                    - generic [ref=e1799]: Sent today
+                  - generic [ref=e1800]: "0"
+                - generic [ref=e1801]:
+                  - generic [ref=e1802]:
+                    - img [ref=e1803]
+                    - generic [ref=e1806]: Received today
+                  - generic [ref=e1807]: "0"
+                - generic [ref=e1808]:
+                  - generic [ref=e1809]:
+                    - img [ref=e1810]
+                    - generic [ref=e1812]: Failed today
+                  - generic [ref=e1813]: "0"
+                - generic [ref=e1814]:
+                  - generic [ref=e1815]:
+                    - img [ref=e1816]
+                    - generic [ref=e1818]: Error rate
+                  - generic [ref=e1819]: 0.0%
+                - generic [ref=e1820]:
+                  - generic [ref=e1821]: Queue depth
+                  - generic [ref=e1822]: "0"
+            - generic [ref=e1823]:
+              - heading "Print-Labn-614 connected" [level=3] [ref=e1825]:
+                - generic [ref=e1826]: Print-Labn-614
+                - generic [ref=e1827]: connected
+              - generic [ref=e1828]:
+                - generic [ref=e1829]:
+                  - generic [ref=e1830]:
+                    - img [ref=e1831]
+                    - generic [ref=e1834]: Uptime
+                  - generic [ref=e1835]: 1h 10m
+                - generic [ref=e1836]:
+                  - generic [ref=e1837]:
+                    - img [ref=e1838]
+                    - generic [ref=e1841]: Sent today
+                  - generic [ref=e1842]: "120"
+                - generic [ref=e1843]:
+                  - generic [ref=e1844]:
+                    - img [ref=e1845]
+                    - generic [ref=e1848]: Received today
+                  - generic [ref=e1849]: "91"
+                - generic [ref=e1850]:
+                  - generic [ref=e1851]:
+                    - img [ref=e1852]
+                    - generic [ref=e1854]: Failed today
+                  - generic [ref=e1855]: "16"
+                - generic [ref=e1856]:
+                  - generic [ref=e1857]:
+                    - img [ref=e1858]
+                    - generic [ref=e1860]: Error rate
+                  - generic [ref=e1861]: 11.8%
+                - generic [ref=e1862]:
+                  - generic [ref=e1863]: Queue depth
+                  - generic [ref=e1864]: "0"
+  - region "Notifications alt+T":
+    - list

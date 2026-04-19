@@ -1,0 +1,2062 @@
+- generic:
+  - generic:
+    - generic:
+      - generic:
+        - link:
+          - /url: "#main-content"
+          - text: Skip to main content
+        - navigation:
+          - generic:
+            - link:
+              - /url: /
+              - generic:
+                - img
+            - button:
+              - img
+          - generic:
+            - generic:
+              - button:
+                - img
+          - generic:
+            - generic:
+              - generic:
+                - menubar:
+                  - menuitem:
+                    - img
+                  - menuitem:
+                    - img
+                  - menuitem:
+                    - img
+                  - menuitem:
+                    - img
+                  - menuitem:
+                    - img
+                  - menuitem:
+                    - img
+          - generic:
+            - button:
+              - generic:
+                - generic: ن
+              - generic: نعماني
+              - generic: admin@whatomate.local
+        - main:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - paragraph: Statuses
+                      - generic: "175"
+                    - generic:
+                      - button:
+                        - img
+                      - generic:
+                        - button:
+                          - img
+                          - generic: "13"
+                      - button:
+                        - img
+              - generic:
+                - generic:
+                  - generic:
+                    - img
+                    - textbox:
+                      - /placeholder: Search contacts...
+                  - button:
+                    - img
+                  - button:
+                    - img
+                - generic:
+                  - button: Assigned (0)
+                  - button: Pending (50)
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: مؤيد
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Adv-6800
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: دو
+                        - generic:
+                          - generic:
+                            - paragraph: دعايه واعلان الاركان المثاليه فرع عسير
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Aser-208
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: قا
+                        - generic:
+                          - generic:
+                            - paragraph: قسم الدعايه والإعلان بمكتبه الأركان المثاليه
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Adv-1926
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: اا
+                        - generic:
+                          - generic:
+                            - paragraph: ابو احمد
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Labn-614
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: تا
+                        - generic:
+                          - generic:
+                            - paragraph: تفعيل الواتساب علي الفروع (مشاكل وحلول )
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Aser-208
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: ت
+                        - generic:
+                          - generic:
+                            - paragraph: تصاميم
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Adv-6800
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: الأركان المثالية لبن
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Aser-208
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: خدمات مكتبة الاركان المثالية
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Aser-208
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: khdmatalarkanalmthalyt
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Aser-208
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: moaidtaj
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Adv-6800
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: مخ
+                        - generic:
+                          - generic:
+                            - paragraph: مشرف خدمات الاركان المثالية
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Adv-1926
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: مكتبة الأركان المثالية
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Aser-208
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: S
+                        - generic:
+                          - generic:
+                            - paragraph: Shatha
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Adv-6800
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: نم
+                        - generic:
+                          - generic:
+                            - paragraph: نعمانى مكتبة الأركان المثالية
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Aser-208
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: ما
+                        - generic:
+                          - generic:
+                            - paragraph: مكتبة الأركان - قسم الطباعات الورقية
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Adv-1926
+                            - generic:
+                              - generic: Public
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: لا إله إلا الله 🌹
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Labn-614
+                            - generic:
+                              - generic: "1"
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: MBMH
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Labn-614
+                            - generic:
+                              - generic: "1"
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: ً
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Labn-614
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: Layan Marzok
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Labn-614
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: .
+                        - generic:
+                          - generic:
+                            - paragraph: .
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Labn-614
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: ابو سديم
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Labn-614
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: 🪴 أبو هاجوس 🪴
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Labn-614
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: ~
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Labn-614
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: O
+                        - generic:
+                          - generic:
+                            - paragraph: OS
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Labn-614
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: مركز أنا كفو للتدريب
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Aser-208
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: Ziad A
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Aser-208
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: MA
+                        - generic:
+                          - generic:
+                            - paragraph: Mohammed Abu Sharkh
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Aser-208
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: Reem
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Aser-208
+                            - generic:
+                              - generic: "1"
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: عا
+                        - generic:
+                          - generic:
+                            - paragraph: عبدالله الحازمي ⚖️ .
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Aser-208
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: ibra
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Print-Aser-208
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: ما
+                        - generic:
+                          - generic:
+                            - paragraph: محمد الحسني
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: 🤍❤️
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: نل
+                        - generic:
+                          - generic:
+                            - paragraph: نعماني لبن
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: T
+                        - generic:
+                          - generic:
+                            - paragraph: TAHANi
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: أر
+                        - generic:
+                          - generic:
+                            - paragraph: أبــو رتــيــل
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: اع
+                        - generic:
+                          - generic:
+                            - paragraph: ابو عبدالله
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: M
+                        - generic:
+                          - generic:
+                            - paragraph: Mustafa
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: .
+                        - generic:
+                          - generic:
+                            - paragraph: .
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: ام فجر
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: ام
+                        - generic:
+                          - generic:
+                            - paragraph: ابو مالك الصلاحي
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: سا
+                        - generic:
+                          - generic:
+                            - paragraph: سبحان الله
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: H
+                        - generic:
+                          - generic:
+                            - paragraph: H
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: salmabwmhmd33
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: ا
+                        - generic:
+                          - generic:
+                            - paragraph: الحمدلله
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: OM
+                        - generic:
+                          - generic:
+                            - paragraph: OMAR MUKHTAR ALI
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: AS
+                        - generic:
+                          - generic:
+                            - paragraph: Abo Saif
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: H
+                        - generic:
+                          - generic:
+                            - paragraph: hashim58765
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: العيينة-٠٠٢٦
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: Z
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Adv-1926
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - generic: دو
+                        - generic:
+                          - generic:
+                            - paragraph: دعايه واعلان الاركان المثاليه فرع عسير
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: Adv-6800
+                            - generic:
+                              - generic: "1"
+                              - button:
+                                - img
+                              - button:
+                                - img
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                        - generic:
+                          - generic:
+                            - paragraph: ملوك الخدمات و التعقيب تفاويض فردى و مهني
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: مؤيد-٤٣٤
+                            - generic:
+                              - generic: "9"
+                              - button:
+                                - img
+                              - button:
+                                - img
+            - generic:
+              - generic:
+                - generic:
+                  - button:
+                    - generic:
+                      - img
+                  - generic:
+                    - generic:
+                      - paragraph: مؤيد
+                      - generic: Public
+                      - generic: Pending
+                    - paragraph: "966506530434"
+                - generic:
+                  - button:
+                    - img
+                  - button:
+                    - img
+                  - button:
+                    - img
+                  - button:
+                    - img
+                  - button:
+                    - img
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Monday, April 6, 2026
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: "[Image]"
+                            - generic:
+                              - generic: 04:55 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: "[Image]"
+                            - generic:
+                              - generic: 04:55 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: "[Image]"
+                            - generic:
+                              - generic: 04:56 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: "[Image]"
+                            - generic:
+                              - generic: 04:56 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic: Tuesday, April 7, 2026
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - img
+                                - generic: "[Document]"
+                            - generic:
+                              - generic: 08:10 AM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - img
+                                - generic: "[Document]"
+                            - generic:
+                              - generic: 08:46 AM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - img
+                                - generic: "[Document]"
+                            - generic:
+                              - generic: 08:11 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: "[Image]"
+                            - generic:
+                              - generic: 08:39 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: "[Image]"
+                            - generic:
+                              - generic: 08:39 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: "[Image]"
+                            - generic:
+                              - generic: 08:39 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: "[Image]"
+                            - generic:
+                              - generic: 08:39 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: "[Image]"
+                            - generic:
+                              - generic: 08:39 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: "[Image]"
+                            - generic:
+                              - generic: 08:39 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: "[Image]"
+                            - generic:
+                              - generic: 08:39 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - text: مطويات للعرض للسوشيال ميديا خليه يرفعها
+                              - generic:
+                                - generic: 08:39 PM
+                                - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - text: تم
+                              - generic:
+                                - generic: 08:43 PM
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic: Wednesday, April 8, 2026
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - img
+                                - generic: "[Document]"
+                            - generic:
+                              - generic: 10:01 AM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - img
+                                - generic: "[Document]"
+                            - generic:
+                              - generic: 05:45 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - img
+                                - generic: "[Document]"
+                            - generic:
+                              - text: .
+                              - generic:
+                                - generic: 09:01 PM
+                                - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - img
+                                - generic: "[Document]"
+                            - generic:
+                              - generic: 09:22 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic: Thursday, April 9, 2026
+                        - generic:
+                          - generic:
+                            - generic:
+                              - text: "الوليد بن عمارة : +966 50 015 0444"
+                              - generic:
+                                - generic: 09:01 AM
+                                - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - img
+                                - generic: "[Document]"
+                            - generic:
+                              - generic: 06:55 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic: Sunday, April 12, 2026
+                        - generic:
+                          - generic:
+                            - img
+                            - generic: 2 files sent together
+                        - generic:
+                          - generic:
+                            - generic:
+                              - img
+                              - generic:
+                                - button:
+                                  - img
+                                  - text: Print
+                                - button:
+                                  - img
+                                  - text: Download
+                            - generic:
+                              - generic: 08:59 AM
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - img
+                              - generic:
+                                - button:
+                                  - img
+                                  - text: Print
+                                - button:
+                                  - img
+                                  - text: Download
+                            - generic:
+                              - generic: 08:59 AM
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - button:
+                            - img
+                            - generic: Download All (2 files)
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/d60f7fb5-7687-4fe3-a78f-1e1c1ab00015
+                                  - img
+                                  - generic: 3323.plt
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 08:33 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/40656c7d-6fcb-4d1e-bc90-363213ba68c7
+                                  - img
+                                  - generic: 3323.plt
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 08:33 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/fc0658c6-d8bf-43eb-8460-6ec813028458
+                                  - img
+                                  - generic: 2121.pdf
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Print
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 08:33 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/cda9291c-4194-458a-af90-d1d872209b21
+                                  - img
+                                  - generic: 2121.pdf
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Print
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 08:33 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/144ffd68-84cf-4320-8b87-eb59f9fc256e
+                                  - img
+                                  - generic: 02 +.dxf
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Print
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 09:35 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/ae9117fd-c10c-4cec-a6c8-08462f76a16f
+                                  - img
+                                  - generic: 01 +.dxf
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Print
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 09:35 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic: Monday, April 13, 2026
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/83354364-f57d-4eb4-b8ae-c78b63e9ab46
+                                  - img
+                                  - generic: new cut.dxf
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Print
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 09:29 AM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/8f137b12-f76e-4a24-a553-dcaf340c4c70
+                                  - img
+                                  - generic: print +3.tif
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Print
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 09:51 AM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/30a5c5d0-14d0-4016-9210-474ffa4ed440
+                                  - img
+                                  - generic: new cut +2.dxf
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Print
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 10:00 AM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - text: مطلوب خام لمدرسه بن رشد
+                              - generic:
+                                - generic: 06:55 PM
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - text: خام ؟؟
+                              - generic:
+                                - generic: 07:25 PM
+                                - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/bdce50cd-2dfe-4424-818b-64784c3a1552
+                                  - img
+                                  - generic: لوحة تخرج تخرج.dxf
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Print
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 08:12 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - text: نفذ
+                              - generic:
+                                - generic: 08:23 PM
+                            - generic:
+                              - generic: 👍
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - img
+                              - generic:
+                                - button:
+                                  - img
+                                  - text: Print
+                                - button:
+                                  - img
+                                  - text: Download
+                            - generic:
+                              - generic: 08:29 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/d7aef53f-eaf9-4250-908f-0d2d1833ede4
+                                  - img
+                                  - generic: cut 50-70.dxf
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Print
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 09:03 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - img
+                              - generic:
+                                - button:
+                                  - img
+                                  - text: Print
+                                - button:
+                                  - img
+                                  - text: Download
+                            - generic:
+                              - generic: 09:07 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic: Tuesday, April 14, 2026
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/6459e34b-165e-4633-973f-29a0cc3404f8
+                                  - img
+                                  - generic: file.tif
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Print
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 07:35 AM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - img
+                              - generic:
+                                - button:
+                                  - img
+                                  - text: Print
+                                - button:
+                                  - img
+                                  - text: Download
+                            - generic:
+                              - generic: 06:27 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - img
+                              - generic:
+                                - button:
+                                  - img
+                                  - text: Print
+                                - button:
+                                  - img
+                                  - text: Download
+                            - generic:
+                              - generic: 06:27 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/bb01aa6d-0e72-47c0-ae32-0e7ee5bff2a4
+                                  - img
+                                  - generic: 50--70 cut.dxf
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Print
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 08:10 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic: Wednesday, April 15, 2026
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/a502e80a-6354-479d-82e4-d2a9d9d414cf
+                                  - img
+                                  - generic: cut +.dxf
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Print
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 08:29 AM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/efd0bbea-92d7-4447-9eec-237fd6ce8594
+                                  - img
+                                  - generic: healthy food cut.dxf
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Print
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 10:52 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic: Today
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/b629daa6-e6ae-4d41-8bfd-e59405bcd213
+                                  - img
+                                  - generic: dxf cut...dxf
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 10:54 AM
+                              - img
+                            - generic:
+                              - img
+                              - generic: instance not connected
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - text: "شمس : ."
+                              - generic:
+                                - generic: 06:03 PM
+                                - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - img
+                              - generic:
+                                - button:
+                                  - img
+                                  - text: Print
+                                - button:
+                                  - img
+                                  - text: Download
+                            - generic:
+                              - generic: 07:52 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - link:
+                                  - /url: blob:https://ofuqalmadenah.com/2eac8143-66d0-4594-81ed-da0e2c701baa
+                                  - img
+                                  - generic: cut 50-70.dxf
+                                - generic:
+                                  - button:
+                                    - img
+                                    - text: Print
+                                  - button:
+                                    - img
+                                    - text: Download
+                            - generic:
+                              - generic: 09:55 PM
+                              - img
+                          - generic:
+                            - button:
+                              - img
+                            - button:
+                              - img
+                            - button:
+                              - img
+              - generic:
+                - generic:
+                  - generic:
+                    - button:
+                      - img
+                  - generic:
+                    - button:
+                      - img
+                  - button:
+                    - img
+                  - button:
+                    - img
+                  - button [disabled]:
+                    - img
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - img
+                  - generic: Notes
+                - button:
+                  - img
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - img
+                        - paragraph: No notes yet
+                        - paragraph: Write a note
+              - generic:
+                - generic:
+                  - textbox:
+                    - /placeholder: Write a note...
+                  - button [disabled]:
+                    - img
+            - generic:
+              - generic:
+                - heading [level=3]: Contact Info
+                - generic:
+                  - button:
+                    - img
+                  - button:
+                    - img
+                  - button:
+                    - img
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - img
+                        - heading [level=4]: مؤيد
+                        - generic:
+                          - img
+                          - generic: "966506530434"
+                      - generic:
+                        - generic:
+                          - heading [level=5]:
+                            - img
+                            - text: Tags
+                          - button:
+                            - img
+                        - generic:
+                          - generic: No tags
+                      - generic:
+                        - generic:
+                          - heading [level=5]:
+                            - img
+                            - text: Collaborators
+                          - button:
+                            - img
+                        - generic:
+                          - paragraph: No collaborators yet
+                      - generic:
+                        - generic:
+                          - button [expanded]:
+                            - generic: General
+                            - img
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Avatar Synced At
+                                - generic: 2026-04-18T16:03:54Z
+                              - generic:
+                                - generic: Avatar Url
+                                - generic: https://pps.whatsapp.net/v/t61.24694-24/491872686_1066379471557814_306509588999445868_n.jpg?ccb=11-4&oh=01_Q5Aa4QHzT9AI96yOTZVSs8wtLTwr-Ah5PRISWns-7j7sexx5rQ&oe=69F0A672&_nc_sid=5e03e0&_nc_cat=109
+                      - generic:
+                        - img
+                        - paragraph: No data configured
+                        - paragraph: Configure panel display in the chatbot flow settings.
+      - region "Notifications alt+T":
+        - list
+  - dialog "Start New Chat" [ref=e2433]:
+    - generic [ref=e2434]:
+      - heading "Start New Chat" [level=2] [ref=e2435]
+      - paragraph [ref=e2436]: Choose the sending WhatsApp instance and enter an international phone number to open a direct chat.
+    - generic [ref=e2437]:
+      - generic [ref=e2438]:
+        - generic [ref=e2439]: Phone Number *
+        - textbox "+1 555 123 4567" [active] [ref=e2440]
+        - paragraph [ref=e2441]: Enter an international phone number with country code.
+      - generic [ref=e2442]:
+        - generic [ref=e2443]: Profile Name
+        - textbox "John Doe" [ref=e2444]
+      - generic [ref=e2445]:
+        - generic [ref=e2446]: WhatsApp Instance
+        - combobox [ref=e2447] [cursor=pointer]:
+          - generic: مؤيد-٤٣٤
+          - img [ref=e2448]
+    - generic [ref=e2450]:
+      - button "Cancel" [ref=e2451] [cursor=pointer]
+      - button "Create Chat" [ref=e2452] [cursor=pointer]
+    - button "Close" [ref=e2453] [cursor=pointer]:
+      - img [ref=e2454]
+      - generic [ref=e2456]: Close
