@@ -1,5 +1,43 @@
 @import "tailwindcss";
 
 :root {
-	font-family: Inter, Roboto, sans-serif;
+	font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+	color: #14213d;
+	background:
+		radial-gradient(circle at top left, rgba(244, 162, 97, 0.18), transparent 35%),
+		radial-gradient(circle at top right, rgba(42, 157, 143, 0.18), transparent 35%),
+		linear-gradient(180deg, #f7f3eb 0%, #f1ede3 100%);
+}
+
+:root[data-theme='dark'] {
+	color: #f6f1e8;
+	background:
+		radial-gradient(circle at top left, rgba(244, 162, 97, 0.16), transparent 35%),
+		radial-gradient(circle at top right, rgba(42, 157, 143, 0.16), transparent 35%),
+		linear-gradient(180deg, #16212e 0%, #0f1722 100%);
+}
+
+body {
+	min-height: 100vh;
+}
+
+.surface {
+	background: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(20px);
+}
+
+:root[data-theme='dark'] .surface {
+	background: rgba(15, 23, 34, 0.82);
+}
+
+.app-shell-grid {
+	display: grid;
+	grid-template-columns: 280px minmax(0, 1fr);
+	min-height: 100vh;
+}
+
+@media (max-width: 960px) {
+	.app-shell-grid {
+		grid-template-columns: 1fr;
+	}
 }

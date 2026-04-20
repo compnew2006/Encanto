@@ -1,0 +1,138 @@
+{
+  "permissions": [
+    {
+      "key": "chats.view",
+      "resource": "chats",
+      "action": "view",
+      "label": "View chats",
+      "description": "Open inbox rows and conversation detail surfaces."
+    },
+    {
+      "key": "chats.unclaimed.view",
+      "resource": "chats",
+      "action": "unclaimed.view",
+      "label": "View pending chats",
+      "description": "See pending and unclaimed chat rows."
+    },
+    {
+      "key": "chats.unclaimed.send",
+      "resource": "chats",
+      "action": "unclaimed.send",
+      "label": "Reply to pending chats",
+      "description": "Send replies before a pending chat is claimed."
+    },
+    {
+      "key": "messages.view",
+      "resource": "messages",
+      "action": "view",
+      "label": "View messages",
+      "description": "Read message history inside chat detail."
+    },
+    {
+      "key": "messages.send",
+      "resource": "messages",
+      "action": "send",
+      "label": "Send messages",
+      "description": "Send new messages in chats the user can operate."
+    },
+    {
+      "key": "notes.view",
+      "resource": "notes",
+      "action": "view",
+      "label": "View notes",
+      "description": "Read internal conversation notes."
+    },
+    {
+      "key": "notes.create",
+      "resource": "notes",
+      "action": "create",
+      "label": "Create notes",
+      "description": "Write internal conversation notes."
+    },
+    {
+      "key": "contacts.view",
+      "resource": "contacts",
+      "action": "view",
+      "label": "View contacts",
+      "description": "Read contact records and contact-linked chat surfaces."
+    },
+    {
+      "key": "contacts.create",
+      "resource": "contacts",
+      "action": "create",
+      "label": "Create contacts",
+      "description": "Create or import contacts."
+    },
+    {
+      "key": "contacts.update",
+      "resource": "contacts",
+      "action": "update",
+      "label": "Update contacts",
+      "description": "Edit contact details."
+    },
+    {
+      "key": "contacts.delete",
+      "resource": "contacts",
+      "action": "delete",
+      "label": "Delete contacts",
+      "description": "Delete contact records."
+    },
+    {
+      "key": "contacts.export",
+      "resource": "contacts",
+      "action": "export",
+      "label": "Export contacts",
+      "description": "Export contact data inside the visible scope."
+    },
+    {
+      "key": "contacts.scope.all",
+      "resource": "contacts",
+      "action": "scope.all",
+      "label": "All contacts scope",
+      "description": "Role default allows all organization contacts."
+    },
+    {
+      "key": "contacts.scope.instance_only",
+      "resource": "contacts",
+      "action": "scope.instance_only",
+      "label": "Instance-only scope",
+      "description": "Role default restricts visibility to allowed instances."
+    },
+    {
+      "key": "contacts.scope.allowed_numbers",
+      "resource": "contacts",
+      "action": "scope.allowed_numbers",
+      "label": "Allowed numbers scope",
+      "description": "Role default restricts visibility to an explicit phone whitelist."
+    },
+    {
+      "key": "settings.manage",
+      "resource": "settings",
+      "action": "manage",
+      "label": "Manage settings",
+      "description": "Open and manage organization settings surfaces."
+    },
+    {
+      "key": "roles.manage",
+      "resource": "roles",
+      "action": "manage",
+      "label": "Manage roles",
+      "description": "Create, edit, and delete custom roles."
+    },
+    {
+      "key": "users.view",
+      "resource": "users",
+      "action": "view",
+      "label": "View users",
+      "description": "Read user lists and user context details."
+    },
+    {
+      "key": "users.update",
+      "resource": "users",
+      "action": "update",
+      "label": "Update users",
+      "description": "Update user availability and permission overrides."
+    }
+  ]
+}
+

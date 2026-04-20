@@ -15,7 +15,7 @@ To recreate this project with the same configuration:
 
 ```sh
 # recreate this project
-npx sv@0.15.1 create --template minimal --types ts --no-install frontend
+npx sv@0.15.1 create --template minimal --types ts --add tailwindcss="plugins:none" vitest="usages:unit" eslint sveltekit-adapter="adapter:node" --no-download-check --install npm frontend
 ```
 
 ## Developing
