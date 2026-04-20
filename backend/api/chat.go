@@ -6,19 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-type SendMessageRequest struct {
-	Type          string `json:"type"`
-	Body          string `json:"body"`
-	FileName      string `json:"file_name"`
-	FileSizeLabel string `json:"file_size_label"`
-	MediaURL      string `json:"media_url"`
-}
-
-type StartDirectChatRequest struct {
-	PhoneNumber string `json:"phone_number"`
-	ProfileName string `json:"profile_name"`
-	InstanceID  string `json:"instance_id"`
-}
+// Local request types (not shared externally)
 
 type AssignRequest struct {
 	AssigneeID string `json:"assignee_id"`
@@ -32,10 +20,12 @@ type AddCollaboratorRequest struct {
 	UserID string `json:"user_id"`
 }
 
-type CreateStatusRequest struct {
-	ContactID  string `json:"contact_id"`
-	InstanceID string `json:"instance_id"`
-	Body       string `json:"body"`
+type TogglePinRequest struct {
+	Pinned bool `json:"pinned"`
+}
+
+type ToggleHideRequest struct {
+	Hidden bool `json:"hidden"`
 }
 
 func (s *Server) GetWorkspace(w http.ResponseWriter, r *http.Request) {
@@ -45,22 +35,31 @@ func (s *Server) GetWorkspace(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	contactID := chi.URLParam(r, "contactID")
-	snapshot, err := s.store.Workspace(
-		currentOrgID(r),
-		claims.UserID,
-		contactID,
-		r.URL.Query().Get("tab"),
-		r.URL.Query().Get("search"),
-		r.URL.Query().Get("instance_id"),
-		r.URL.Query().Get("tag"),
-	)
+	snapshot, err := s.store.Workspace(currentOrgID(r), claims.UserID)
 	if err != nil {
 		errorJSON(w, http.StatusNotFound, err.Error())
 		return
 	}
 
-	writeJSON(w, http.StatusOK, snapshot)
+	// If a specific conversation is requested, attach it
+	contactID := chi.URLParam(r, "contactID")
+	if contactID == "" {
+		contactID = r.URL.Query().Get("contact_id")
+	}
+	if contactID != "" {
+		detail, err := s.store.GetConversation(currentOrgID(r), claims.UserID, contactID)
+		if err == nil {
+			writeJSON(w, http.StatusOK, map[string]any{
+				"workspace":    snapshot,
+				"conversation": detail,
+			})
+			return
+		}
+	}
+
+	writeJSON(w, http.StatusOK, map[string]any{
+		"workspace": snapshot,
+	})
 }
 
 func (s *Server) CreateDirectChat(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +72,7 @@ func (s *Server) CreateDirectChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req StartDirectChatRequest
+	var req CreateDirectChatRequest
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return
@@ -211,7 +210,10 @@ func (s *Server) TogglePin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	contact, err := s.store.TogglePin(currentOrgID(r), claims.UserID, chi.URLParam(r, "contactID"))
+	var req TogglePinRequest
+	_ = decodeJSON(r, &req)
+
+	contact, err := s.store.TogglePin(currentOrgID(r), claims.UserID, chi.URLParam(r, "contactID"), req.Pinned)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
@@ -227,7 +229,10 @@ func (s *Server) ToggleHide(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	contact, err := s.store.ToggleHide(currentOrgID(r), claims.UserID, chi.URLParam(r, "contactID"))
+	var req ToggleHideRequest
+	_ = decodeJSON(r, &req)
+
+	contact, err := s.store.ToggleHide(currentOrgID(r), claims.UserID, chi.URLParam(r, "contactID"), req.Hidden)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
@@ -338,12 +343,12 @@ func (s *Server) ListNotifications(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) MarkAllNotificationsRead(w http.ResponseWriter, r *http.Request) {
-	notifications, err := s.store.MarkAllNotificationsRead(currentOrgID(r))
-	if err != nil {
+	if err := s.store.MarkAllNotificationsRead(currentOrgID(r)); err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
+	notifications, _ := s.store.ListNotifications(currentOrgID(r))
 	s.hub.Publish(currentOrgID(r), "notification_read", map[string]any{"notifications": notifications})
 	writeJSON(w, http.StatusOK, map[string]any{"notifications": notifications})
 }
@@ -364,18 +369,19 @@ func (s *Server) CreateStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req CreateStatusRequest
+	var req AddStatusRequest
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return
 	}
 
-	status, err := s.store.AddStatus(currentOrgID(r), claims.UserID, req)
+	status, err := s.store.AddStatus(currentOrgID(r), req)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
+	_ = claims
 	s.hub.Publish(currentOrgID(r), "status_feed_update", map[string]any{"status": status})
 	writeJSON(w, http.StatusCreated, map[string]any{"status": status})
 }

@@ -9,14 +9,12 @@ import (
 )
 
 type Server struct {
-	store *Store
+	store *PGStore
 	hub   *RealtimeHub
 }
 
-func NewServer() *Server {
-	store := NewStore()
+func NewServer(store *PGStore) *Server {
 	hub := NewRealtimeHub()
-
 	return &Server{
 		store: store,
 		hub:   hub,

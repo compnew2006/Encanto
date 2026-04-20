@@ -2,31 +2,12 @@ package api
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 )
 
-type CreateInstanceRequest struct {
-	Name        string `json:"name"`
-	PhoneNumber string `json:"phone_number"`
-}
-
 type UpdateInstanceNameRequest struct {
 	Name string `json:"name"`
-}
-
-type InstanceHealthSummary struct {
-	ID            string    `json:"id"`
-	Name          string    `json:"name"`
-	Status        string    `json:"status"`
-	UptimeLabel   string    `json:"uptime_label"`
-	QueueDepth    int       `json:"queue_depth"`
-	SentToday     int       `json:"sent_today"`
-	ReceivedToday int       `json:"received_today"`
-	FailedToday   int       `json:"failed_today"`
-	ErrorRate     string    `json:"error_rate"`
-	ObservedAt    time.Time `json:"observed_at"`
 }
 
 func (s *Server) ListInstances(w http.ResponseWriter, r *http.Request) {
@@ -111,17 +92,14 @@ func (s *Server) ConnectInstance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	instance, inbound, err := s.store.ConnectInstance(currentOrgID(r), claims.UserID, chi.URLParam(r, "instanceID"))
+	instance, err := s.store.ConnectInstance(currentOrgID(r), claims.UserID, chi.URLParam(r, "instanceID"))
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	s.hub.Publish(currentOrgID(r), "instance_connected", map[string]any{"instance": instance})
-	if inbound != nil {
-		s.hub.Publish(currentOrgID(r), "new_message", map[string]any{"contact_id": inbound.ContactID, "message": inbound})
-	}
-	writeJSON(w, http.StatusOK, map[string]any{"instance": instance, "inbound_message": inbound})
+	writeJSON(w, http.StatusOK, map[string]any{"instance": instance})
 }
 
 func (s *Server) DisconnectInstance(w http.ResponseWriter, r *http.Request) {
@@ -180,7 +158,7 @@ func (s *Server) UpdateInstanceSettings(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	var req InstanceSettings
+	var req InstanceSettingsRequest
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return
@@ -205,7 +183,7 @@ func (s *Server) UpdateInstanceCallPolicy(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	var req InstanceCallPolicy
+	var req CallPolicyRequest
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return
@@ -230,7 +208,7 @@ func (s *Server) UpdateInstanceAutoCampaign(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	var req InstanceAutoCampaign
+	var req AutoCampaignRequest
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return

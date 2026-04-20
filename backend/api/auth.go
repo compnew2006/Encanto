@@ -32,6 +32,7 @@ type Claims struct {
 type UserSettings struct {
 	Theme         string `json:"theme"`
 	Language      string `json:"language"`
+	ThemePreset   string `json:"theme_preset"`
 	SidebarPinned bool   `json:"sidebar_pinned"`
 }
 
@@ -68,23 +69,18 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate credentials
-	if req.Email != mockEmail || req.Password != mockPassword {
+	user, err := s.store.GetUserByEmail(req.Email, req.Password)
+	if err != nil {
 		http.Error(w, `{"error":"Invalid email or password"}`, http.StatusUnauthorized)
 		return
 	}
 
-	// If org_context exists, respect it, otherwise fallback
-	activeOrgID := ""
-	if cookie, err := r.Cookie("org_context"); err == nil {
-		activeOrgID = cookie.Value
-	}
-	user := s.store.GetUserResponse(activeOrgID)
+	activeOrgID := user.CurrentOrganization.ID
 
-	// Refresh org context cookie to ensure canonical ID
+	// Refresh org context cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:     "org_context",
-		Value:    user.CurrentOrganization.ID,
+		Value:    activeOrgID,
 		Expires:  time.Now().Add(365 * 24 * time.Hour),
 		HttpOnly: true,
 		Secure:   false,
@@ -115,7 +111,7 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 		Value:    tokenString,
 		Expires:  expirationTime,
 		HttpOnly: true,
-		Secure:   false, // Set to true in production with HTTPS
+		Secure:   false,
 		Path:     "/",
 		SameSite: http.SameSiteLaxMode,
 	})

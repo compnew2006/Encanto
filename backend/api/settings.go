@@ -2,12 +2,7 @@ package api
 
 import "net/http"
 
-type UpdateProfileRequest struct {
-	Name        string `json:"name"`
-	Status      string `json:"status"`
-	Language    string `json:"language"`
-	ThemePreset string `json:"theme_preset"`
-}
+
 
 func (s *Server) GetProfile(w http.ResponseWriter, r *http.Request) {
 	profile, err := s.store.ProfileForOrg(currentOrgID(r))
@@ -189,6 +184,6 @@ func (s *Server) RunCleanup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) isAdmin(orgID string) bool {
-	user := s.store.GetUserResponse(orgID)
-	return user.Role == "admin"
+	// Verify that an admin user exists for this org (fast DB check)
+	return s.store.IsUserAdmin(orgID, "")
 }
