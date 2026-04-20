@@ -135,7 +135,13 @@ func (m *WhatsAppManager) handleEvent(orgID, instanceID string, client *whatsmeo
 			return // skip media/stickers for now to keep it simple
 		}
 
-		msg, err := m.server.store.HandleInboundMessage(orgID, instanceID, v.Info.Chat.String(), v.Info.Sender.String(), body, "text")
+		senderJID := m.resolveSenderJID(client, v.Info)
+		groupName := ""
+		if v.Info.IsGroup {
+			groupName = m.resolveGroupName(client, v.Info.Chat)
+		}
+
+		msg, err := m.server.store.HandleInboundMessage(orgID, instanceID, v.Info.Chat.String(), senderJID.String(), groupName, body, "text")
 		if err == nil {
 			// Broadcast to frontend
 			m.server.hub.Publish(orgID, "new_message", map[string]any{
@@ -152,6 +158,37 @@ func (m *WhatsAppManager) handleEvent(orgID, instanceID string, client *whatsmeo
 		})
 		m.StopInstance(instanceID)
 	}
+}
+
+func (m *WhatsAppManager) resolveSenderJID(client *whatsmeow.Client, info types.MessageInfo) types.JID {
+	if !info.SenderAlt.IsEmpty() && info.SenderAlt.Server == types.DefaultUserServer {
+		return info.SenderAlt
+	}
+
+	if info.Sender.Server != types.HiddenUserServer {
+		return info.Sender
+	}
+
+	if client != nil && client.Store != nil && client.Store.LIDs != nil {
+		if pn, err := client.Store.LIDs.GetPNForLID(context.Background(), info.Sender); err == nil && !pn.IsEmpty() {
+			return pn
+		}
+	}
+
+	return info.Sender
+}
+
+func (m *WhatsAppManager) resolveGroupName(client *whatsmeow.Client, chatJID types.JID) string {
+	if client == nil || chatJID.Server != types.GroupServer {
+		return ""
+	}
+
+	info, err := client.GetGroupInfo(context.Background(), chatJID)
+	if err != nil || info == nil {
+		return ""
+	}
+
+	return strings.TrimSpace(info.Name)
 }
 
 func (m *WhatsAppManager) SendMessage(orgID, instanceID, phone, messageID, body string) {

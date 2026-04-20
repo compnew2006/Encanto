@@ -332,7 +332,7 @@ func (s *PGStore) SendOutgoingMessage(orgID, userID, contactID string, req SendM
 	return msg, nil
 }
 
-func (s *PGStore) HandleInboundMessage(orgID, instanceID, chatJID, senderJID, body, msgType string) (ChatMessage, error) {
+func (s *PGStore) HandleInboundMessage(orgID, instanceID, chatJID, senderJID, groupName, body, msgType string) (ChatMessage, error) {
 	// Route group traffic into the group conversation instead of opening one conversation per participant.
 	conversationID := senderJID
 	if isGroupJID(chatJID) {
@@ -352,7 +352,10 @@ func (s *PGStore) HandleInboundMessage(orgID, instanceID, chatJID, senderJID, bo
 
 	contactName := displayPhoneNumber(phone)
 	if isGroupJID(chatJID) {
-		contactName = "Group " + displayPhoneNumber(phone)
+		contactName = strings.TrimSpace(groupName)
+		if contactName == "" {
+			contactName = "Group " + displayPhoneNumber(phone)
+		}
 	}
 
 	previewBody := body
@@ -406,7 +409,8 @@ func (s *PGStore) HandleInboundMessage(orgID, instanceID, chatJID, senderJID, bo
 		_, _ = s.db.Exec(s.ctx(), `
 			UPDATE contacts 
 			SET name = CASE
-					WHEN metadata->>'type' = 'group' THEN name
+				WHEN metadata->>'type' = 'group' AND $1 <> '' THEN $1
+				WHEN metadata->>'type' = 'group' THEN name
 					WHEN name = phone_number OR name = '' THEN $1
 					ELSE name
 				END,
