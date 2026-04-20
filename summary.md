@@ -1,105 +1,77 @@
 # Summary
 
 **Task**
-Implement phases 5 through 10 from the project docs, using `Docs/` and the prior `summary.md` as context, and carry the work through implementation, test coverage, verification, and documentation.
+Implement Milestones 11 through 16 from `Docs/`, using the prior `summary.md` as the handoff baseline, and carry the work through implementation, testing, verification, checklist updates, and a new summary.
 
 **Approach & Key Decisions**
-- Built an in-memory operational backend slice for chat workspace, profile/settings, notifications/statuses, WhatsApp account operations, and realtime updates so phases 5-10 are executable end to end.
-- Refactored the backend entrypoint around a reusable `Server` with grouped API routes and a websocket hub.
-- Added protected frontend surfaces for inbox workspace, profile, settings, and account operations to match the documented flows.
-- Fixed the login form hydration bug that cleared the email field before submit.
-- Made frontend/backend base URLs configurable through `PUBLIC_API_BASE` so Playwright can run on isolated ports without colliding with existing local processes.
-- Expanded local CORS allowlists for the Playwright frontend ports used during browser verification.
+- Extended the in-memory backend slice with contacts admin, closed-chat review, license bootstrap/activation, analytics derivation, campaign execution, jobs/webhook delivery history, and audit/outbox tracking.
+- Wired legacy mutations into the new reliability model so cleanup, chat actions, direct-chat creation, and account operations now emit audit records, outbox events, and job history instead of leaving those Milestone 15 surfaces disconnected.
+- Added protected frontend surfaces for Contacts, Closed Chats, License, Restricted Cleanup, Agent Analytics, Campaigns, and Audit/Reliability, while expanding the global nav and settings center shortcuts.
+- Enforced license limits on creation paths and redirected restricted tenants into `/license-cleanup`, keeping delete-based cleanup actions available until usage returns within entitlement.
+- Added Playwright coverage for the new milestone flows and fixed cross-browser/state-collision issues in the existing operational suite.
 
 **Files Modified**
-- `backend/api/auth.go`
-- `backend/go.mod`
-- `backend/go.sum`
-- `backend/main.go`
-- `frontend/playwright.config.ts`
-- `frontend/src/hooks.server.ts`
-- `frontend/src/lib/user.svelte.ts`
-- `frontend/src/routes/+layout.svelte`
-- `frontend/src/routes/chat/+page.svelte`
-- `frontend/src/routes/login/+page.server.ts`
-- `frontend/src/routes/login/+page.svelte`
-- `frontend/tests/auth.spec.ts`
-- `summary.md`
-
-**Files Created**
 - `backend/api/chat.go`
+- `backend/api/campaigns_admin.go`
+- `backend/api/contacts_admin.go`
 - `backend/api/instances.go`
+- `backend/api/phase11_16.go`
+- `backend/api/reliability_admin.go`
 - `backend/api/server.go`
-- `backend/api/settings.go`
 - `backend/api/store.go`
-- `backend/api/ws.go`
+- `frontend/src/hooks.server.ts`
 - `frontend/src/lib/api.ts`
-- `frontend/src/lib/realtime/ws.ts`
-- `frontend/src/routes/chat/[contactId]/+page.svelte`
-- `frontend/src/routes/profile/+page.svelte`
+- `frontend/src/routes/+layout.svelte`
 - `frontend/src/routes/settings/+page.svelte`
 - `frontend/src/routes/settings/instances/+page.svelte`
 - `frontend/tests/operations.spec.ts`
+- `Docs/checklist.md`
+- `summary.md`
+
+**Files Created**
+- `backend/api/analytics_admin.go`
+- `backend/api/campaigns_admin.go`
+- `backend/api/contacts_admin.go`
+- `backend/api/license_admin.go`
+- `backend/api/phase11_16.go`
+- `backend/api/reliability_admin.go`
+- `frontend/src/routes/analytics/agents/+page.svelte`
+- `frontend/src/routes/campaigns/+page.svelte`
+- `frontend/src/routes/license-cleanup/+page.svelte`
+- `frontend/src/routes/settings/audit/+page.svelte`
+- `frontend/src/routes/settings/closed-chats/+page.svelte`
+- `frontend/src/routes/settings/contacts/+page.svelte`
+- `frontend/src/routes/settings/license/+page.svelte`
+
+**Files Deleted**
+- None.
 
 **Dependencies / Env Changes**
-- Added Go dependency: `github.com/gorilla/websocket`
-- Frontend now reads `PUBLIC_API_BASE` for browser/server API calls during local and Playwright runs.
-- Playwright verification uses isolated local ports:
-  - backend: `18080`
-  - frontend: `4173`
+- No new package dependencies were required beyond the existing Milestone 5-10 stack.
+- Existing local verification still uses:
+  - backend on `18080`
+  - frontend on `4173`
+  - `PUBLIC_API_BASE=http://127.0.0.1:18080` for Playwright webserver startup
 
-**Tests Added**
-- `frontend/tests/auth.spec.ts`
-  - invalid login rejection
-  - valid login
-  - session persistence after reload
-  - protected-route redirect after logout
+**Tests Added / Expanded**
 - `frontend/tests/operations.spec.ts`
-  - profile save
-  - general/appearance/notification settings save
-  - cleanup action
-  - chat message send
-  - internal note add
-  - notifications read-all flow
-  - status post flow
-  - account creation
-  - account connect action
-  - account policy save
+  - contacts create/edit/export/import/open-chat
+  - close-from-chat and reopen-from-closed-chats
+  - license activation, limit enforcement, cleanup-mode redirect, cleanup exit
+  - analytics export
+  - campaign create/launch/recipient inspection
+  - audit page and webhook retry
+- Existing operational tests were also made cross-project-safe by switching direct-chat data to per-browser unique values.
 
 **Verification Results**
 - `go test ./...` in `backend`: passed
 - `npm run check` in `frontend`: passed
-- `npx playwright test --project=chromium` in `frontend`: passed (`5/5`)
-- `npx playwright test` in `frontend`: passed (`15/15`)
+- `npx playwright test --project=chromium` in `frontend`: passed (`9/9`)
+- `npx playwright test` in `frontend`: passed (`27/27`)
   - projects: `chromium`, `firefox`, `webkit`
+- `Docs/checklist.md`: updated to mark Phases 11-16 complete with implementation notes
 
 **Known Limitations**
-- The backend remains an in-memory mock implementation; data resets on process restart.
-- Vite emits harmless local-dev noise during Playwright runs (`favicon.ico` 404 and transient WebKit HMR console warnings), but the full suite passes.
-
-## 2026-04-19 Follow-up Comparison Pass
-
-**Reference comparison**
-- Reviewed the local phase 5-10 surfaces against `https://ofuqalmadenah.com` with the provided admin account.
-- Focused the implementation pass on concrete scope gaps that were visible in the reference product and explicitly required by the docs: direct chat creation, media attachment picker/dropzone flow, and editable cleanup scheduling.
-
-**Implemented gaps**
-- Added `Start New Chat` to the inbox with backend-backed direct chat creation and navigation into the new conversation.
-- Replaced the placeholder media composer fields with a real file picker/dropzone, preview metadata, optional caption support, and persisted media file-size labels.
-- Added editable uploads cleanup retention/hour controls, backend persistence, and admin-only cleanup schedule actions in the settings surface.
-- Added backend store tests and expanded Playwright coverage for the new flows.
-
-## 2026-04-20 Auth Host Fix
-
-**Issue**
-- Logging in through `http://localhost:5173` left the app in an unauthorized state because the frontend hardcoded backend calls to `127.0.0.1:8080`.
-- The login/session cookies were created for `localhost`, but browser-side API and websocket calls were targeting `127.0.0.1`, so the backend never received the session cookie.
-
-**Fix**
-- Added shared API-base resolution that derives the backend host from the current browser/request host unless `PUBLIC_API_BASE` is explicitly set.
-- Updated login action, request hooks, logout route, API client, and websocket client to use the resolved host instead of hardcoded `127.0.0.1`.
-- Added `autocomplete` attributes to the login form fields to remove the browser console warning.
-
-**Verification**
-- `npm run check` in `frontend`: passed
-- Manual browser verification on `http://localhost:5173/login`: login now redirects into `/chat/...` without the follow-up `401 Unauthorized` cascade
+- The backend is still an in-memory implementation; all milestone data resets on process restart.
+- The current license-cleanup simulation primarily exercises contact overage because the demo activation logic lowers contact entitlement more aggressively than campaign/account entitlement.
+- Local Playwright runs still emit harmless dev-server noise (`favicon.ico` 404s and transient WebKit module/HMR console warnings), but the full suite passes.

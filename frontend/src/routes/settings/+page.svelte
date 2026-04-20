@@ -86,6 +86,29 @@
 		<a href="/settings/instances" class="rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:border-blue-300 hover:text-blue-700">Open Account Operations</a>
 	</div>
 
+	<div class="mb-6 grid gap-3 md:grid-cols-4">
+		<a href="/settings/contacts" class="rounded-[1.75rem] border border-gray-200 bg-white px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300">
+			<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Milestone 11</p>
+			<h2 class="mt-2 text-base font-semibold text-gray-900">Contacts</h2>
+			<p class="mt-2 text-sm text-gray-500">Search, create, edit, export, and import the shared contacts directory.</p>
+		</a>
+		<a href="/settings/closed-chats" class="rounded-[1.75rem] border border-gray-200 bg-white px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300">
+			<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Milestone 11</p>
+			<h2 class="mt-2 text-base font-semibold text-gray-900">Closed Chats</h2>
+			<p class="mt-2 text-sm text-gray-500">Review closed conversations, filter them, and reopen a chat directly into the inbox.</p>
+		</a>
+		<a href="/settings/license" class="rounded-[1.75rem] border border-gray-200 bg-white px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300">
+			<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Milestone 12</p>
+			<h2 class="mt-2 text-base font-semibold text-gray-900">License</h2>
+			<p class="mt-2 text-sm text-gray-500">Inspect HWID, quotas, cleanup restrictions, and activate offline license keys.</p>
+		</a>
+		<a href="/settings/audit" class="rounded-[1.75rem] border border-gray-200 bg-white px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300">
+			<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Milestone 15</p>
+			<h2 class="mt-2 text-base font-semibold text-gray-900">Audit & Reliability</h2>
+			<p class="mt-2 text-sm text-gray-500">Inspect job runs, webhook delivery retries, and the administrative audit log.</p>
+		</a>
+	</div>
+
 	{#if error}
 		<div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
 	{/if}

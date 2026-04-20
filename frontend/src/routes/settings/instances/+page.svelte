@@ -74,6 +74,17 @@
 		}
 	}
 
+	async function deleteInstance(instance: WhatsAppInstance) {
+		if (!window.confirm(`Delete ${instance.name}?`)) return;
+		try {
+			await apiFetch(`/api/instances/${instance.id}`, { method: 'DELETE' });
+			await loadAll();
+			success = 'Account deleted.';
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Delete failed.';
+		}
+	}
+
 	async function saveInstanceSettings(instance: WhatsAppInstance) {
 		try {
 			await Promise.all([
@@ -109,7 +120,10 @@
 			<h1 class="mt-2 text-3xl font-semibold text-gray-900">WhatsApp Accounts & Health</h1>
 			<p class="mt-2 text-sm text-gray-500">Operational catalog, lifecycle controls, health metrics, and per-account policies.</p>
 		</div>
-		<a href="/settings" class="rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:border-blue-300 hover:text-blue-700">Back to Settings</a>
+		<div class="flex gap-2">
+			<a href="/settings/audit" class="rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:border-blue-300 hover:text-blue-700">Audit</a>
+			<a href="/settings" class="rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:border-blue-300 hover:text-blue-700">Back to Settings</a>
+		</div>
 	</div>
 
 	{#if error}
@@ -145,13 +159,14 @@
 								</div>
 								<p class="mt-2 text-sm text-gray-500">{instance.phone_number || 'No phone number yet'} · {instance.jid || 'JID pending'}</p>
 							</div>
-							<div class="flex flex-wrap gap-2">
-								<button class="rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-700" onclick={() => renameInstance(instance, instance.name)}>Save Name</button>
-								<button data-testid={`connect-${instance.id}`} class="rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-700" onclick={() => runInstanceAction(`/api/instances/${instance.id}/connect`, `${instance.name} connected.`)}>Connect / Scan QR</button>
-								<button class="rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-700" onclick={() => runInstanceAction(`/api/instances/${instance.id}/disconnect`, `${instance.name} disconnected.`)}>Disconnect</button>
-								<button class="rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-700" onclick={() => runInstanceAction(`/api/instances/${instance.id}/recover`, `${instance.name} recovery started.`)}>Recover</button>
-							</div>
+						<div class="flex flex-wrap gap-2">
+							<button class="rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-700" onclick={() => renameInstance(instance, instance.name)}>Save Name</button>
+							<button data-testid={`connect-${instance.id}`} class="rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-700" onclick={() => runInstanceAction(`/api/instances/${instance.id}/connect`, `${instance.name} connected.`)}>Connect / Scan QR</button>
+							<button class="rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-700" onclick={() => runInstanceAction(`/api/instances/${instance.id}/disconnect`, `${instance.name} disconnected.`)}>Disconnect</button>
+							<button class="rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-700" onclick={() => runInstanceAction(`/api/instances/${instance.id}/recover`, `${instance.name} recovery started.`)}>Recover</button>
+							<button data-testid={`delete-instance-${instance.id}`} class="rounded-full border border-red-200 px-4 py-2 text-sm text-red-600" onclick={() => deleteInstance(instance)}>Delete</button>
 						</div>
+					</div>
 
 						<div class="mt-4 grid gap-3 md:grid-cols-5">
 							<div class="rounded-[1.5rem] bg-gray-50 px-4 py-3">

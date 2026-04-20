@@ -69,6 +69,9 @@ func (s *Server) CreateDirectChat(w http.ResponseWriter, r *http.Request) {
 		errorJSON(w, http.StatusUnauthorized, err.Error())
 		return
 	}
+	if !s.requireLicensedWrite(w, r, "contacts") {
+		return
+	}
 
 	var req StartDirectChatRequest
 	if err := decodeJSON(r, &req); err != nil {

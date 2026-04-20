@@ -134,78 +134,78 @@ Notes:
 
 ## Phase 11: Contacts and Closed Conversations
 
-- [ ] `11-1` Contacts screen completed
+- [x] `11-1` Contacts screen completed
   Result: CRUD, search, filter, and open-conversation actions work
-- [ ] `11-2` Import/export completed
+- [x] `11-2` Import/export completed
   Result: import, export, and duplicate handling are safe
-- [ ] `11-3` Closed conversations screen completed
+- [x] `11-3` Closed conversations screen completed
   Result: review, filter, refresh, and reopen work
 
 Notes:
 
--
+- Added `/settings/contacts` and `/settings/closed-chats` with end-to-end CRUD, CSV import/export, and reopen-to-inbox flow backed by new contacts/closed-chat APIs.
 
 ## Phase 12: Licensing and Limits
 
-- [ ] `12-1` License page and activation completed
+- [x] `12-1` License page and activation completed
   Result: current state, identity, and activation flow work
-- [ ] `12-2` Limits and enforcement completed
+- [x] `12-2` Limits and enforcement completed
   Result: usage and limit behavior are visible and enforced
-- [ ] `12-3` Restricted cleanup mode completed
+- [x] `12-3` Restricted cleanup mode completed
   Result: over-limit flow safely narrows the usable surface
 
 Notes:
 
--
+- Added `/settings/license` and `/license-cleanup`, enforced quota checks on contact/instance/campaign creation paths, and redirected restricted tenants into cleanup mode until usage returned within limits.
 
 ## Phase 13: Analytics
 
-- [ ] `13-1` Metric derivation completed
+- [x] `13-1` Metric derivation completed
   Result: metrics derive from recorded facts
-- [ ] `13-2` Analytics screen completed
+- [x] `13-2` Analytics screen completed
   Result: filters, cards, tables, and export work
-- [ ] `13-3` Event-based validation completed
+- [x] `13-3` Event-based validation completed
   Result: every important number can be explained from its source records
 
 Notes:
 
--
+- Added analytics derivation from conversation events, ratings, and assignment history with `/analytics/agents` cards, breakdowns, comparison rows, drill-down links, and CSV export.
 
 ## Phase 14: Campaigns
 
-- [ ] `14-1` Campaign definition completed
+- [x] `14-1` Campaign definition completed
   Result: campaigns can be created, saved, edited, and scheduled
-- [ ] `14-2` Runs and recipient tracking completed
+- [x] `14-2` Runs and recipient tracking completed
   Result: each run and recipient outcome is inspectable
-- [ ] `14-3` Operational automation linked to campaigns
+- [x] `14-3` Operational automation linked to campaigns
   Result: automatic launch paths route through the same campaign domain
 
 Notes:
 
--
+- Added reusable campaign definitions, run history, recipient outcomes, delete support, and linked instance auto-campaign syncing so operational automations flow through the same campaign model.
 
 ## Phase 15: Reliability and Audit
 
-- [ ] `15-1` Background execution history completed
+- [x] `15-1` Background execution history completed
   Result: long-running work is reviewable
-- [ ] `15-2` Reliable outbound event delivery completed
+- [x] `15-2` Reliable outbound event delivery completed
   Result: important events are not silently lost after save
-- [ ] `15-3` General audit log completed
+- [x] `15-3` General audit log completed
   Result: sensitive actions are traceable later
 
 Notes:
 
--
+- Added job history, outbox/webhook delivery tracking with retry, and audit records across cleanup, messaging, account operations, licensing, contacts, and campaigns, surfaced in `/settings/audit`.
 
 ## Phase 16: Verification, Cleanup, and Handoff
 
-- [ ] `16-1` Verification plan completed
+- [x] `16-1` Verification plan completed
   Result: normal, failure, and recovery paths are covered
-- [ ] `16-2` Final cleanup completed
+- [x] `16-2` Final cleanup completed
   Result: naming, structure, and leftovers are cleaned up
-- [ ] `16-3` Handoff pack completed
+- [x] `16-3` Handoff pack completed
   Result: another engineer or AI assistant can continue safely
 
 Notes:
 
--
+- Verified backend, frontend type checks, Chromium smoke, and the full Playwright cross-browser suite; refreshed the checklist and overwrote `summary.md` with the handoff record for the next session.

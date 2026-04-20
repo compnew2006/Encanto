@@ -53,12 +53,21 @@ func (s *Server) CreateInstance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+	if !s.requireLicensedWrite(w, r, "instances") {
+		return
+	}
+
 	var req CreateInstanceRequest
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return
 	}
-	instance, err := s.store.CreateInstance(currentOrgID(r), req)
+	instance, err := s.store.CreateInstance(currentOrgID(r), claims.UserID, req)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
@@ -72,12 +81,18 @@ func (s *Server) UpdateInstanceName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
 	var req UpdateInstanceNameRequest
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return
 	}
-	instance, err := s.store.UpdateInstanceName(currentOrgID(r), chi.URLParam(r, "instanceID"), req.Name)
+	instance, err := s.store.UpdateInstanceName(currentOrgID(r), claims.UserID, chi.URLParam(r, "instanceID"), req.Name)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
@@ -115,7 +130,13 @@ func (s *Server) DisconnectInstance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	instance, err := s.store.DisconnectInstance(currentOrgID(r), chi.URLParam(r, "instanceID"))
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	instance, err := s.store.DisconnectInstance(currentOrgID(r), claims.UserID, chi.URLParam(r, "instanceID"))
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
@@ -131,7 +152,13 @@ func (s *Server) RecoverInstance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	instance, err := s.store.RecoverInstance(currentOrgID(r), chi.URLParam(r, "instanceID"))
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	instance, err := s.store.RecoverInstance(currentOrgID(r), claims.UserID, chi.URLParam(r, "instanceID"))
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
@@ -147,12 +174,18 @@ func (s *Server) UpdateInstanceSettings(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
 	var req InstanceSettings
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return
 	}
-	instance, err := s.store.UpdateInstanceSettings(currentOrgID(r), chi.URLParam(r, "instanceID"), req)
+	instance, err := s.store.UpdateInstanceSettings(currentOrgID(r), claims.UserID, chi.URLParam(r, "instanceID"), req)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
@@ -166,12 +199,18 @@ func (s *Server) UpdateInstanceCallPolicy(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
 	var req InstanceCallPolicy
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return
 	}
-	instance, err := s.store.UpdateInstanceCallPolicy(currentOrgID(r), chi.URLParam(r, "instanceID"), req)
+	instance, err := s.store.UpdateInstanceCallPolicy(currentOrgID(r), claims.UserID, chi.URLParam(r, "instanceID"), req)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
@@ -185,12 +224,18 @@ func (s *Server) UpdateInstanceAutoCampaign(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
 	var req InstanceAutoCampaign
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return
 	}
-	instance, err := s.store.UpdateInstanceAutoCampaign(currentOrgID(r), chi.URLParam(r, "instanceID"), req)
+	instance, err := s.store.UpdateInstanceAutoCampaign(currentOrgID(r), claims.UserID, chi.URLParam(r, "instanceID"), req)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
