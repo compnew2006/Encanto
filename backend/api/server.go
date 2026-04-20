@@ -9,16 +9,19 @@ import (
 )
 
 type Server struct {
-	store *PGStore
-	hub   *RealtimeHub
+	store    *PGStore
+	hub      *RealtimeHub
+	WhatsApp *WhatsAppManager
 }
 
 func NewServer(store *PGStore) *Server {
 	hub := NewRealtimeHub()
-	return &Server{
+	s := &Server{
 		store: store,
 		hub:   hub,
 	}
+	s.WhatsApp = NewWhatsAppManager(s)
+	return s
 }
 
 func (s *Server) Router() *chi.Mux {

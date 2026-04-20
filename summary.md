@@ -156,3 +156,85 @@ cd backend && go run .
 # Frontend (separate terminal)
 cd frontend && npm run dev
 ```
+# Task Summary: WhatsApp Instance Management Stabilization
+
+## Overview
+Resolved frontend runtime crashes and functional regressions following the migration to a PostgreSQL backend. Aligned backend API responses with frontend expectations and added defensive guards to state management.
+
+## Changes Made
+
+### Backend (Go / PostgreSQL)
+- **API Response Wrapping**: Updated `Connect`, `Disconnect`, `Recover`, `Rename`, and `UpdateSettings` handlers to return objects wrapped in `{"instance": ...}`.
+- **Health Summary Alignment**: Renamed `InstanceID/Name` to `ID/Name` in `InstanceHealthSummary` type and updated `PGStore.ListInstanceHealth` to match.
+- **Granular Update Logic**: Fixed body decoding for `UpdateInstanceSettings`, `UpdateInstanceCallPolicy`, and `UpdateInstanceAutoCampaign` to handle specific sub-structs (Settings, CallPolicy, AutoCampaign).
+- **Multi-tenancy Fix**: Included `organization_id` in instance SELECT queries to ensure strict data isolation.
+- **Health Persistence**: Updated `scanInstance` to fetch real-time health metrics from the `whatsapp_instances` table.
+
+### Frontend (Svelte 5)
+- **Defensive State Management**: Added null checks in `UserState.update()` (`user.svelte.ts`) to prevent crashes when settings or current_organization are missing.
+- **Safe Initialization**: Enhanced `loadAll` in the Instances page to safely handle empty or malformed responses.
+- **Robust Rendering**: Added optional chaining and ID fallbacks in the health summary list.
+- **Safe Array Indexing**: Prevented "undefined reading '0'" errors in the Chat page by checking for `workspace.instances` existence and length.
+
+## Verification
+- Verified backend structures against frontend TypeScript interfaces.
+- Confirmed mutation endpoints return the correct JSON wrappers.
+- Ensured health metrics are correctly mapped between DB and UI.
+
+## Results
+✅ Connect / Scan QR now shows the pairing code.
+✅ Save Name correctly persists and updates UI.
+✅ Runtime TypeErrors on page load are resolved.
+✅ Health summary display is restored.
+
+# Task Summary: Chat Layout Refactor
+
+## Overview
+Refactored the chat workspace to match the attached reference more closely, with a desktop left rail that expands on hover, a denser conversation list, a cleaner center thread pane, and a card-based details column.
+
+## Changes Made
+
+### Frontend (Svelte 5)
+- Reworked `frontend/src/routes/chat/[contactId]/+page.svelte` into a four-panel desktop layout: hover-expand sidebar, conversation list, thread view, and details panel.
+- Updated conversation rows, message bubbles, action bars, and composer styling to better match the requested support-chat layout.
+- Preserved the existing chat actions, filters, notes, statuses, and realtime refresh behavior while changing only the presentation layer and helper formatting.
+
+### Verification Fix
+- Cleaned a stale fallback in `frontend/src/routes/settings/instances/+page.svelte` so the project type-check passes again with the current `InstanceHealthSummary` type.
+
+## Verification
+- Ran `cd frontend && npm run check`
+
+## Results
+✅ Chat workspace now follows the requested reference structure more closely.
+✅ Desktop sidebar expands on hover.
+✅ `svelte-check` passes with 0 errors and 0 warnings.
+
+# Task Summary: Chat Bubble Density And Group Routing
+
+## Overview
+Reduced message bubble height by compacting message meta/actions, clamped the sidebar preview to one line, and corrected inbound group-message routing so new group messages stay inside the group conversation instead of creating one conversation per participant.
+
+## Changes Made
+
+### Frontend
+- Updated `frontend/src/routes/chat/[contactId]/+page.svelte` so message action buttons stay on one compact horizontal row.
+- Reduced badge/button padding inside bubbles to avoid oversized outbound cards.
+- Clamped conversation preview text to one line in the left sidebar.
+- Added fallback identifier formatting so raw JID-like values render more cleanly in the chat UI.
+
+### Backend
+- Updated `backend/api/whatsapp_manager.go` to pass both chat JID and sender JID into inbound message handling.
+- Updated `backend/api/store_pg_chat.go` so inbound group traffic is keyed by the group chat JID, not the participant JID.
+- Added shared JID normalization/display helpers in `backend/api/helpers.go`.
+- Group inbound previews now include the sender identifier prefix, so messages remain distinguishable inside the group thread.
+
+## Verification
+- Ran `cd frontend && npm run check`
+- Built the active backend entrypoint with `cd backend && go build ./main.go`
+- Restarted the backend server with `cd backend && go run .`
+
+## Results
+✅ Bubble action rows are smaller and stay on one line.
+✅ Sidebar previews are single-line.
+✅ New inbound group messages now route into the group conversation.

@@ -23,6 +23,11 @@ func main() {
 	store := api.NewPGStore(db)
 	server := api.NewServer(store)
 
+	// Load existing WhatsApp sessions
+	if err := server.WhatsApp.LoadSessions(); err != nil {
+		log.Printf("WARNING: failed to load WhatsApp sessions: %v", err)
+	}
+
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)

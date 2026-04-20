@@ -38,8 +38,8 @@
 				apiFetch<{ health: InstanceHealthSummary[] }>('/api/instances/health'),
 				apiFetch<SettingsSummary>('/api/settings/summary')
 			]);
-			instances = instanceResponse.instances;
-			health = healthResponse.health;
+			instances = instanceResponse?.instances || [];
+			health = healthResponse?.health || [];
 			settings = settingsResponse;
 
 			// If the QR modal is open for an instance, refresh the QR code in it
@@ -239,6 +239,13 @@
 	onMount(async () => {
 		await loadAll();
 		teardownRealtime = await connectRealtime(async (message) => {
+			if (message.type === 'qr_updated') {
+				if (qrModal.open && qrModal.instanceId === message.payload.instance_id) {
+					qrModal.qrCode = message.payload.qr_code;
+				}
+				return;
+			}
+
 			if (
 				[
 					'instance_connected',

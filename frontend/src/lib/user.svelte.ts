@@ -26,16 +26,19 @@ export class UserState {
 	}
 
 	update(user: User) {
-		this.id = user.id;
-		this.email = user.email;
-		this.name = user.name;
-		this.avatar = user.avatar;
+		if (!user) return;
+		this.id = user.id || '';
+		this.email = user.email || '';
+		this.name = user.name || '';
+		this.avatar = user.avatar || '';
 		this.status = user.status === 'online' || user.status === 'busy' ? user.status : 'offline';
 		this.role = user.role === 'admin' ? 'admin' : 'agent';
 		
-		this.settings.theme = user.settings.theme;
-		this.settings.language = user.settings.language;
-		this.settings.sidebar_pinned = user.settings.sidebar_pinned;
+		if (user.settings) {
+			this.settings.theme = user.settings.theme || 'light';
+			this.settings.language = user.settings.language || 'ar';
+			this.settings.sidebar_pinned = user.settings.sidebar_pinned ?? true;
+		}
 
 		this.organizations = user.organizations || [];
 		this.current_organization = user.current_organization || { id: '', name: '', role: '' };

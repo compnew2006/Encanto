@@ -155,6 +155,7 @@
 			workspace = await apiFetch<WorkspaceSnapshot>(`/api/chats/${currentContactId}?${params.toString()}`);
 			selectedAssignee = workspace.selected?.contact.assigned_user_id ?? '';
 			if (
+				workspace.instances &&
 				workspace.instances.length > 0 &&
 				(!newContactInstanceId || !workspace.instances.some((instance) => instance.id === newContactInstanceId))
 			) {
@@ -365,6 +366,54 @@
 		window.open(href, '_blank');
 	}
 
+	function contactInitials(name: string) {
+		return name
+			.split(' ')
+			.filter(Boolean)
+			.slice(0, 2)
+			.map((part) => part[0]?.toUpperCase() ?? '')
+			.join('');
+	}
+
+	function statusBadgeClass(status: string) {
+		switch (status) {
+			case 'assigned':
+				return 'bg-sky-100 text-sky-700';
+			case 'pending':
+				return 'bg-amber-100 text-amber-700';
+			case 'closed':
+				return 'bg-slate-200 text-slate-600';
+			default:
+				return 'bg-slate-100 text-slate-600';
+		}
+	}
+
+	function cleanIdentifier(value: string) {
+		let cleaned = value.trim();
+		const atIndex = cleaned.indexOf('@');
+		if (atIndex !== -1) cleaned = cleaned.slice(0, atIndex);
+		const colonIndex = cleaned.indexOf(':');
+		if (colonIndex !== -1) cleaned = cleaned.slice(0, colonIndex);
+		return cleaned;
+	}
+
+	function formatPhoneDisplay(value: string) {
+		const cleaned = cleanIdentifier(value);
+		if (!cleaned) return '';
+		if (cleaned.startsWith('+')) return cleaned;
+		if (/^\d{10,15}$/.test(cleaned)) return `+${cleaned}`;
+		return cleaned;
+	}
+
+	function contactTitle(contact: ChatContact) {
+		const label = contact.name?.trim();
+		const displayPhone = formatPhoneDisplay(contact.phone_display || contact.phone_number);
+		if (!label || label === contact.phone_number || label === contact.phone_display) {
+			return displayPhone || label || 'Conversation';
+		}
+		return label;
+	}
+
 	onMount(async () => {
 		unsubscribePage = page.subscribe(($page) => {
 			const nextContact = $page.params.contactId ?? '';
@@ -401,174 +450,225 @@
 	});
 </script>
 
-<div class="px-5 py-5">
+<div class="h-[calc(100vh-4rem)] overflow-hidden bg-[#eef3fb] p-3 md:p-4">
 	{#if error}
-		<div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+		<div class="mb-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
 	{/if}
 	{#if infoMessage}
-		<div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{infoMessage}</div>
+		<div class="mb-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{infoMessage}</div>
 	{/if}
 
-	<div class="grid min-h-[78vh] grid-cols-12 gap-4">
-		<aside class="col-span-12 lg:col-span-3 rounded-[2rem] border border-gray-200 bg-white p-4 shadow-sm">
-			<div class="mb-4 flex items-center justify-between gap-3">
-				<div>
-					<p class="text-xs font-semibold uppercase tracking-[0.25em] text-blue-600">Conversation Workspace</p>
-					<h2 class="text-2xl font-semibold text-gray-900">Inbox</h2>
+	<div class="grid h-full min-h-0 grid-cols-1 gap-3 xl:grid-cols-[auto_minmax(20rem,24rem)_minmax(0,1fr)_22rem]">
+		<aside class="group hidden h-full min-h-0 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.08)] transition-[width] duration-300 ease-out xl:block xl:w-20 hover:xl:w-72">
+			<div class="flex h-full flex-col px-3 py-4">
+				<div class="mb-4 flex items-center gap-3 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3">
+					<div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-sky-600 text-sm font-semibold text-white">E1</div>
+					<div class="min-w-0 opacity-0 transition duration-200 group-hover:opacity-100">
+						<p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">Current view</p>
+						<p class="truncate text-sm font-semibold text-slate-900">Conversations</p>
+					</div>
 				</div>
-				<div class="flex items-center gap-2">
-					<button data-testid="open-direct-chat" class="rounded-full bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700" onclick={openDirectChatDialog}>
-						Start New Chat
-					</button>
-					<button class="rounded-full border border-gray-200 px-3 py-2 text-sm text-gray-600 hover:border-blue-300 hover:text-blue-700" onclick={() => loadWorkspace()}>
-						Refresh
-					</button>
-				</div>
-			</div>
 
-			<div class="mb-3 grid grid-cols-3 gap-2">
-				<button data-testid="tab-assigned" class={`rounded-2xl px-3 py-2 text-sm font-medium ${currentTab === 'assigned' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'}`} onclick={() => openTab('assigned')}>
-					Assigned
-					<span class="block text-xs opacity-80">{workspace?.tab_counts.assigned ?? 0}</span>
-				</button>
-				<button data-testid="tab-pending" class={`rounded-2xl px-3 py-2 text-sm font-medium ${currentTab === 'pending' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'}`} onclick={() => openTab('pending')}>
-					Pending
-					<span class="block text-xs opacity-80">{workspace?.tab_counts.pending ?? 0}</span>
-				</button>
-				<button data-testid="tab-closed" class={`rounded-2xl px-3 py-2 text-sm font-medium ${currentTab === 'closed' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'}`} onclick={() => openTab('closed')}>
-					Closed
-					<span class="block text-xs opacity-80">{workspace?.tab_counts.closed ?? 0}</span>
-				</button>
-			</div>
+				<nav class="space-y-1.5">
+					<button class="flex w-full items-center gap-3 overflow-hidden rounded-2xl px-3 py-3 text-left text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">
+						<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-sky-100 text-lg text-sky-700">💬</span>
+						<span class="truncate text-sm font-medium opacity-0 transition duration-200 group-hover:opacity-100">All Conversations</span>
+					</button>
+					<button class="flex w-full items-center gap-3 overflow-hidden rounded-2xl px-3 py-3 text-left text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">
+						<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-lg">＠</span>
+						<span class="truncate text-sm font-medium opacity-0 transition duration-200 group-hover:opacity-100">Mentions</span>
+					</button>
+					<button class="flex w-full items-center gap-3 overflow-hidden rounded-2xl px-3 py-3 text-left text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">
+						<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-lg">⏳</span>
+						<span class="truncate text-sm font-medium opacity-0 transition duration-200 group-hover:opacity-100">Waiting</span>
+					</button>
+				</nav>
 
-			<div class="space-y-2 border-b border-gray-100 pb-4">
-				<input bind:value={search} class="w-full rounded-2xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400" placeholder="Search contacts..." />
-				<div class="grid grid-cols-2 gap-2">
-					<select bind:value={instanceFilter} class="rounded-2xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400">
-						<option value="">All instances</option>
+				<div class="mt-6 overflow-hidden">
+					<p class="px-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400 opacity-0 transition duration-200 group-hover:opacity-100">Inboxes</p>
+					<div class="mt-2 space-y-1.5">
 						{#each workspace?.instances ?? [] as instance}
-							<option value={instance.id}>{instance.name}</option>
+							<button class="flex w-full items-center gap-3 overflow-hidden rounded-2xl px-3 py-3 text-left text-slate-600 transition hover:bg-slate-50 hover:text-slate-900">
+								<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-xs font-semibold text-slate-600">
+									{contactInitials(instance.name)}
+								</span>
+								<span class="truncate text-sm font-medium opacity-0 transition duration-200 group-hover:opacity-100">{instance.name}</span>
+							</button>
 						{/each}
-					</select>
-					<input bind:value={tagFilter} class="rounded-2xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400" placeholder="Tag" />
+					</div>
 				</div>
-				<button class="w-full rounded-2xl bg-gray-900 px-3 py-2 text-sm font-medium text-white" onclick={applyFilters}>Apply Filters</button>
+
+				<div class="mt-auto space-y-1.5 overflow-hidden">
+					<button data-testid="open-direct-chat" class="flex w-full items-center gap-3 rounded-2xl bg-sky-600 px-3 py-3 text-left text-white transition hover:bg-sky-700" onclick={openDirectChatDialog}>
+						<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-lg">＋</span>
+						<span class="truncate text-sm font-medium opacity-0 transition duration-200 group-hover:opacity-100">New conversation</span>
+					</button>
+					<button class="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-slate-600 transition hover:bg-slate-50 hover:text-slate-900" onclick={() => loadWorkspace()}>
+						<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-lg">↻</span>
+						<span class="truncate text-sm font-medium opacity-0 transition duration-200 group-hover:opacity-100">Refresh workspace</span>
+					</button>
+				</div>
+			</div>
+		</aside>
+
+		<aside class="flex h-full min-h-0 flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
+			<div class="border-b border-slate-200 px-4 py-4">
+				<div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+					<span class="text-slate-400">⌕</span>
+					<input bind:value={search} class="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400" placeholder="Search for messages in conversations" />
+				</div>
+				<div class="mt-4 flex items-center justify-between gap-3">
+					<div>
+						<h2 class="text-[2rem] font-semibold leading-none text-slate-900">Conversations</h2>
+						<p class="mt-1 text-sm text-slate-400">Inbox workspace</p>
+					</div>
+					<div class="flex items-center gap-2">
+						<select bind:value={instanceFilter} class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-600 outline-none focus:border-sky-400">
+							<option value="">All inboxes</option>
+							{#each workspace?.instances ?? [] as instance}
+								<option value={instance.id}>{instance.name}</option>
+							{/each}
+						</select>
+						<button class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-600 transition hover:border-sky-300 hover:text-sky-700" onclick={applyFilters}>Apply</button>
+					</div>
+				</div>
+
+				<div class="mt-4 flex items-center gap-2 text-sm">
+					<button data-testid="tab-assigned" class={`rounded-xl px-3 py-2 font-medium transition ${currentTab === 'assigned' ? 'bg-sky-50 text-sky-700' : 'text-slate-500 hover:bg-slate-100'}`} onclick={() => openTab('assigned')}>Mine {workspace?.tab_counts.assigned ?? 0}</button>
+					<button data-testid="tab-pending" class={`rounded-xl px-3 py-2 font-medium transition ${currentTab === 'pending' ? 'bg-sky-50 text-sky-700' : 'text-slate-500 hover:bg-slate-100'}`} onclick={() => openTab('pending')}>Unassigned {workspace?.tab_counts.pending ?? 0}</button>
+					<button data-testid="tab-closed" class={`rounded-xl px-3 py-2 font-medium transition ${currentTab === 'closed' ? 'bg-sky-50 text-sky-700' : 'text-slate-500 hover:bg-slate-100'}`} onclick={() => openTab('closed')}>All {workspace?.tab_counts.closed ?? 0}</button>
+				</div>
+
+				<div class="mt-3 flex items-center gap-2">
+					<input bind:value={tagFilter} class="min-w-0 flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-sky-400" placeholder="Filter by label" />
+					<button class="rounded-xl bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800" onclick={applyFilters}>Filter</button>
+				</div>
 			</div>
 
-			<div class="mt-4 space-y-2 overflow-y-auto">
+			<div class="min-h-0 flex-1 overflow-y-auto">
 				{#each workspace?.conversations ?? [] as contact}
 					<button
 						data-testid={`conversation-${contact.id}`}
-						class={`w-full rounded-[1.5rem] border px-3 py-3 text-left transition ${contact.id === currentContactId ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-white hover:border-blue-200 hover:bg-gray-50'}`}
+						class={`flex w-full items-start gap-3 border-l-2 px-4 py-4 text-left transition ${contact.id === currentContactId ? 'border-sky-500 bg-sky-50/70' : 'border-transparent hover:bg-slate-50'}`}
 						onclick={() => selectContact(contact)}
 					>
-						<div class="mb-2 flex items-start justify-between gap-2">
-							<div>
-								<p class="font-medium text-gray-900">{contact.name}</p>
-								<p class="text-xs text-gray-500">{contact.phone_display || contact.phone_number}</p>
-							</div>
-							<div class="flex items-center gap-1">
-								{#if contact.is_pinned}
-									<span class="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-amber-700">Pinned</span>
-								{/if}
-								{#if contact.unread_count > 0}
-									<span class="rounded-full bg-blue-600 px-2 py-1 text-[10px] font-semibold text-white">{contact.unread_count}</span>
-								{/if}
-							</div>
+						<div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-semibold text-sky-700">
+							{contactInitials(contact.name)}
 						</div>
-						<p class="text-sm text-gray-600 line-clamp-2">{contact.last_message_preview}</p>
-						<div class="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
-							<span class="rounded-full bg-gray-100 px-2 py-1 uppercase">{contact.status}</span>
-							<span>{contact.instance_name}</span>
-							{#each contact.tags as tag}
-								<span class="rounded-full bg-emerald-50 px-2 py-1 text-emerald-700">{tag}</span>
-							{/each}
+						<div class="min-w-0 flex-1">
+							<div class="flex items-start justify-between gap-3">
+								<div class="min-w-0">
+									<p class="truncate text-sm font-semibold text-slate-900">{contactTitle(contact)}</p>
+									<p class="mt-0.5 truncate text-xs text-slate-400">{contact.instance_name}</p>
+								</div>
+								<div class="shrink-0 text-right">
+									<p class="text-xs text-slate-400">{contact.last_message_at ? formatDateTime(contact.last_message_at) : ''}</p>
+									{#if contact.unread_count > 0}
+										<span class="mt-1 inline-flex min-w-6 items-center justify-center rounded-full bg-emerald-500 px-2 py-0.5 text-[11px] font-semibold text-white">{contact.unread_count}</span>
+									{/if}
+								</div>
+							</div>
+							<p class="mt-2 truncate text-sm text-slate-600">{contact.last_message_preview || 'No recent message yet.'}</p>
+							<div class="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
+								<span class={`rounded-full px-2.5 py-1 font-medium uppercase ${statusBadgeClass(contact.status)}`}>{contact.status}</span>
+								{#if contact.is_pinned}
+									<span class="rounded-full bg-amber-100 px-2.5 py-1 font-medium text-amber-700">Pinned</span>
+								{/if}
+								{#each contact.tags.slice(0, 2) as tag}
+									<span class="rounded-full bg-slate-100 px-2.5 py-1 text-slate-500">{tag}</span>
+								{/each}
+							</div>
 						</div>
 					</button>
 				{/each}
 				{#if (workspace?.conversations?.length ?? 0) === 0}
-					<div class="rounded-[1.5rem] border border-dashed border-gray-200 px-4 py-6 text-center text-sm text-gray-500">
-						No conversations match the current tab and filters.
-					</div>
+					<div class="px-4 py-8 text-center text-sm text-slate-500">No conversations match the current filters.</div>
 				{/if}
 			</div>
 		</aside>
 
-		<section class="col-span-12 lg:col-span-6 rounded-[2rem] border border-gray-200 bg-white shadow-sm">
+		<section class="flex h-full min-h-0 flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
 			{#if loading}
-				<div class="flex min-h-[70vh] items-center justify-center text-gray-500">Loading conversation...</div>
+				<div class="flex min-h-[70vh] items-center justify-center text-slate-500">Loading conversation...</div>
 			{:else if workspace?.selected}
-				<div class="border-b border-gray-100 px-5 py-4">
-					<div class="flex flex-wrap items-start justify-between gap-3">
-						<div>
-							<div class="flex items-center gap-3">
-								<img class="h-12 w-12 rounded-2xl object-cover" src={workspace.selected.contact.avatar} alt={workspace.selected.contact.name} />
-								<div>
-									<h3 class="text-xl font-semibold text-gray-900">{workspace.selected.contact.name}</h3>
-									<p class="text-sm text-gray-500">{workspace.selected.contact.phone_display || workspace.selected.contact.phone_number}</p>
+				<div class="border-b border-slate-200 px-5 py-4">
+					<div class="flex flex-wrap items-center justify-between gap-4">
+						<div class="flex items-center gap-3">
+							{#if workspace.selected.contact.avatar}
+								<img class="h-11 w-11 rounded-full object-cover" src={workspace.selected.contact.avatar} alt={workspace.selected.contact.name} />
+							{:else}
+								<div class="flex h-11 w-11 items-center justify-center rounded-full bg-sky-100 text-sm font-semibold text-sky-700">
+									{contactInitials(workspace.selected.contact.name)}
 								</div>
-							</div>
-							<div class="mt-3 flex flex-wrap gap-2 text-xs text-gray-500">
-								<span class="rounded-full bg-blue-50 px-3 py-1 text-blue-700">{workspace.selected.contact.instance_name}</span>
-								<span class="rounded-full bg-gray-100 px-3 py-1">{workspace.selected.contact.status}</span>
-								{#if workspace.selected.contact.assigned_user_name}
-									<span class="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">Assigned to {workspace.selected.contact.assigned_user_name}</span>
-								{/if}
+							{/if}
+							<div>
+								<div class="flex items-center gap-2">
+									<h3 class="text-lg font-semibold text-slate-900">{contactTitle(workspace.selected.contact)}</h3>
+									<span class={`rounded-full px-2.5 py-1 text-[11px] font-medium uppercase ${statusBadgeClass(workspace.selected.contact.status)}`}>{workspace.selected.contact.status}</span>
+								</div>
+								<p class="mt-1 text-sm text-slate-500">{workspace.selected.contact.phone_display || workspace.selected.contact.phone_number}</p>
 							</div>
 						</div>
 
 						<div class="flex flex-wrap items-center gap-2">
-							<button data-testid="notifications-toggle" class="rounded-full border border-gray-200 px-3 py-2 text-sm text-gray-600 hover:border-blue-300 hover:text-blue-700" onclick={() => showNotifications = !showNotifications}>
-								Notifications ({workspace.notifications.filter((item) => !item.is_read).length})
+							<button data-testid="notifications-toggle" class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-600 transition hover:border-sky-300 hover:text-sky-700" onclick={() => showNotifications = !showNotifications}>
+								Alerts {workspace.notifications.filter((item) => !item.is_read).length}
 							</button>
-							<button data-testid="statuses-toggle" class="rounded-full border border-gray-200 px-3 py-2 text-sm text-gray-600 hover:border-blue-300 hover:text-blue-700" onclick={() => showStatuses = !showStatuses}>
-								Statuses ({workspace.statuses.length})
+							<button data-testid="statuses-toggle" class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-600 transition hover:border-sky-300 hover:text-sky-700" onclick={() => showStatuses = !showStatuses}>
+								Statuses {workspace.statuses.length}
 							</button>
-							<button data-testid="notes-toggle" class="rounded-full border border-gray-200 px-3 py-2 text-sm text-gray-600 hover:border-blue-300 hover:text-blue-700" onclick={() => showNotes = !showNotes}>Notes</button>
-							<button data-testid="info-toggle" class="rounded-full border border-gray-200 px-3 py-2 text-sm text-gray-600 hover:border-blue-300 hover:text-blue-700" onclick={() => showInfo = !showInfo}>Info</button>
-							<button data-testid="timeline-toggle" class="rounded-full border border-gray-200 px-3 py-2 text-sm text-gray-600 hover:border-blue-300 hover:text-blue-700" onclick={() => showTimeline = !showTimeline}>Timeline</button>
+							<button class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-600" onclick={toggleConversationState}>
+								{selectedContact?.status === 'closed' ? 'Reopen' : 'Resolve'}
+							</button>
 						</div>
 					</div>
 
-					<div class="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]">
-						<select bind:value={selectedAssignee} class="rounded-2xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400">
+					<div class="mt-4 flex flex-wrap items-center gap-2">
+						<span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-500">{workspace.selected.contact.instance_name}</span>
+						{#if workspace.selected.contact.assigned_user_name}
+							<span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">Assigned to {workspace.selected.contact.assigned_user_name}</span>
+						{/if}
+						{#each workspace.selected.contact.tags as tag}
+							<span class="rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-700">{tag}</span>
+						{/each}
+					</div>
+
+					<div class="mt-4 grid gap-2 md:grid-cols-[minmax(0,1fr)_repeat(4,auto)]">
+						<select bind:value={selectedAssignee} class="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-sky-400">
 							<option value="">Select assignee</option>
 							{#each workspace.users as user}
 								<option value={user.id}>{user.name}</option>
 							{/each}
 						</select>
-						<button data-testid="assign-action" class="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-medium text-white" onclick={assignConversation}>Assign</button>
-						<button data-testid="unassign-action" class="rounded-2xl border border-gray-200 px-4 py-2 text-sm text-gray-700" onclick={unassignConversation}>Unassign</button>
-						<button data-testid="pin-action" class="rounded-2xl border border-gray-200 px-4 py-2 text-sm text-gray-700" onclick={togglePinnedConversation}>
+						<button data-testid="assign-action" class="rounded-xl bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-700" onclick={assignConversation}>Assign</button>
+						<button data-testid="unassign-action" class="rounded-xl border border-slate-200 px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-50" onclick={unassignConversation}>Unassign</button>
+						<button data-testid="pin-action" class="rounded-xl border border-slate-200 px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-50" onclick={togglePinnedConversation}>
 							{selectedContact?.is_pinned ? 'Unpin' : 'Pin'}
 						</button>
-						<button data-testid="hide-action" class="rounded-2xl border border-gray-200 px-4 py-2 text-sm text-gray-700" onclick={toggleHiddenConversation}>
+						<button data-testid="hide-action" class="rounded-xl border border-slate-200 px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-50" onclick={toggleHiddenConversation}>
 							{selectedContact?.is_hidden ? 'Unhide' : 'Hide'}
-						</button>
-						<button data-testid="close-action" class="rounded-2xl border border-gray-200 px-4 py-2 text-sm text-gray-700" onclick={toggleConversationState}>
-							{selectedContact?.status === 'closed' ? 'Reopen' : 'Close'}
 						</button>
 					</div>
 				</div>
 
-				<div class="flex min-h-[56vh] flex-col justify-between">
-					<div class="flex-1 overflow-y-auto px-5 py-5" style={chatBackgroundStyle()}>
+				<div class="flex min-h-0 flex-1 flex-col justify-between">
+					<div class="min-h-0 flex-1 overflow-y-auto px-5 py-6" style={`${chatBackgroundStyle()} background-color: #f8fafc;`}>
 						<div class="space-y-4">
 							{#each workspace.selected.messages as message}
 								<div class={`flex ${message.direction === 'outbound' ? 'justify-end' : 'justify-start'}`}>
-									<div class={`max-w-[78%] rounded-[1.75rem] px-4 py-3 shadow-sm ${message.direction === 'outbound' ? 'bg-blue-600 text-white' : 'bg-white text-gray-800 border border-gray-200'}`}>
-										<div class="mb-2 flex items-center justify-between gap-4 text-[11px] opacity-80">
+									<div class={`max-w-[78%] rounded-[22px] px-4 py-3 shadow-sm ${message.direction === 'outbound' ? 'bg-[#5b3fd3] text-white' : 'border border-slate-200 bg-white text-slate-800'}`}>
+										<div class="mb-2 flex items-center justify-between gap-4 text-[11px] opacity-75">
 											<span>{message.type === 'media' ? 'Attachment' : 'Message'}</span>
 											<span>{formatDateTime(message.created_at)}</span>
 										</div>
 
 										{#if message.type === 'media'}
-											<div class={`rounded-2xl border px-3 py-3 ${message.direction === 'outbound' ? 'border-blue-300/40 bg-white/10' : 'border-gray-200 bg-gray-50'}`}>
+											<div class={`rounded-2xl border px-3 py-3 ${message.direction === 'outbound' ? 'border-white/15 bg-white/10' : 'border-slate-200 bg-slate-50'}`}>
 												{#if message.media_url && (message.media_url.startsWith('data:image/') || message.media_url.startsWith('http'))}
 													<img class="mb-3 max-h-56 w-full rounded-xl object-cover" src={message.media_url} alt={message.file_name || 'Attachment preview'} />
 												{/if}
 												<p class="font-medium">{message.file_name}</p>
-												<p class={`text-xs ${message.direction === 'outbound' ? 'text-blue-50' : 'text-gray-500'}`}>{message.file_size_label || 'Attachment preview'}</p>
+												<p class={`text-xs ${message.direction === 'outbound' ? 'text-white/80' : 'text-slate-500'}`}>{message.file_size_label || 'Attachment preview'}</p>
 											</div>
 										{/if}
 
@@ -576,13 +676,13 @@
 											<p class="mt-2 whitespace-pre-wrap text-sm leading-6">{message.body}</p>
 										{/if}
 
-										<div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
-											<span class={`rounded-full px-2.5 py-1 ${message.direction === 'outbound' ? 'bg-white/15' : 'bg-gray-100 text-gray-600'}`}>{message.status}</span>
+										<div class="mt-3 flex flex-wrap items-center gap-1.5 text-[11px]">
+											<span class={`rounded-full px-2 py-0.5 ${message.direction === 'outbound' ? 'bg-white/15' : 'bg-slate-100 text-slate-600'}`}>{message.status}</span>
 											{#if message.typed_for_ms}
-												<span class={`rounded-full px-2.5 py-1 ${message.direction === 'outbound' ? 'bg-white/15' : 'bg-gray-100 text-gray-600'}`}>Typing {message.typed_for_ms}ms</span>
+												<span class={`rounded-full px-2 py-0.5 ${message.direction === 'outbound' ? 'bg-white/15' : 'bg-slate-100 text-slate-600'}`}>Typing {message.typed_for_ms}ms</span>
 											{/if}
 											{#if message.reaction}
-												<span class={`rounded-full px-2.5 py-1 ${message.direction === 'outbound' ? 'bg-white/15' : 'bg-gray-100 text-gray-600'}`}>{message.reaction}</span>
+												<span class={`rounded-full px-2 py-0.5 ${message.direction === 'outbound' ? 'bg-white/15' : 'bg-slate-100 text-slate-600'}`}>{message.reaction}</span>
 											{/if}
 										</div>
 
@@ -590,18 +690,18 @@
 											<p class="mt-2 text-xs font-medium text-amber-200">{message.failure_reason}</p>
 										{/if}
 
-										<div class="mt-3 flex flex-wrap gap-2">
+										<div class="mt-3 flex flex-nowrap items-center gap-1.5 overflow-x-auto pb-0.5">
 											{#if workspace.settings.chat.show_print_buttons}
-												<button class={`rounded-full border px-3 py-1.5 text-xs ${message.direction === 'outbound' ? 'border-white/30 text-white' : 'border-gray-200 text-gray-600'}`} onclick={() => printMessage(message)}>Print</button>
+												<button class={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] ${message.direction === 'outbound' ? 'border-white/30 text-white' : 'border-slate-200 text-slate-600'}`} onclick={() => printMessage(message)}>Print</button>
 											{/if}
 											{#if workspace.settings.chat.show_download_buttons && message.type === 'media'}
-												<button class={`rounded-full border px-3 py-1.5 text-xs ${message.direction === 'outbound' ? 'border-white/30 text-white' : 'border-gray-200 text-gray-600'}`} onclick={() => downloadMessage(message)}>Download</button>
+												<button class={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] ${message.direction === 'outbound' ? 'border-white/30 text-white' : 'border-slate-200 text-slate-600'}`} onclick={() => downloadMessage(message)}>Download</button>
 											{/if}
 											{#if message.can_retry && message.status === 'failed'}
-												<button data-testid={`retry-${message.id}`} class={`rounded-full border px-3 py-1.5 text-xs ${message.direction === 'outbound' ? 'border-white/30 text-white' : 'border-gray-200 text-gray-600'}`} onclick={() => runAction(`/api/chats/${currentContactId}/messages/${message.id}/retry`, undefined, 'Retry requested.')}>Retry</button>
+												<button data-testid={`retry-${message.id}`} class={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] ${message.direction === 'outbound' ? 'border-white/30 text-white' : 'border-slate-200 text-slate-600'}`} onclick={() => runAction(`/api/chats/${currentContactId}/messages/${message.id}/retry`, undefined, 'Retry requested.')}>Retry</button>
 											{/if}
 											{#if message.can_revoke && message.direction === 'outbound' && message.status !== 'revoked'}
-												<button data-testid={`revoke-${message.id}`} class={`rounded-full border px-3 py-1.5 text-xs ${message.direction === 'outbound' ? 'border-white/30 text-white' : 'border-gray-200 text-gray-600'}`} onclick={() => runAction(`/api/chats/${currentContactId}/messages/${message.id}/revoke`, undefined, 'Message revoked.')}>Revoke</button>
+												<button data-testid={`revoke-${message.id}`} class={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] ${message.direction === 'outbound' ? 'border-white/30 text-white' : 'border-slate-200 text-slate-600'}`} onclick={() => runAction(`/api/chats/${currentContactId}/messages/${message.id}/revoke`, undefined, 'Message revoked.')}>Revoke</button>
 											{/if}
 										</div>
 									</div>
@@ -610,33 +710,33 @@
 						</div>
 					</div>
 
-					<div class="border-t border-gray-100 px-5 py-4">
+					<div class="border-t border-slate-200 bg-white px-5 py-4">
 						<div class="mb-3 flex flex-wrap items-center gap-2">
-							<button data-testid="composer-text" class={`rounded-full px-3 py-1.5 text-sm ${composerMode === 'text' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'}`} onclick={() => composerMode = 'text'}>Text</button>
-							<button data-testid="composer-media" class={`rounded-full px-3 py-1.5 text-sm ${composerMode === 'media' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'}`} onclick={() => composerMode = 'media'}>Attachment</button>
-							<button data-testid="quick-replies-toggle" class="rounded-full border border-gray-200 px-3 py-1.5 text-sm text-gray-600" onclick={() => showQuickReplies = !showQuickReplies}>Quick Replies</button>
+							<button data-testid="composer-text" class={`rounded-xl px-3 py-1.5 text-sm font-medium ${composerMode === 'text' ? 'bg-sky-50 text-sky-700' : 'bg-slate-100 text-slate-600'}`} onclick={() => composerMode = 'text'}>Reply</button>
+							<button data-testid="composer-media" class={`rounded-xl px-3 py-1.5 text-sm font-medium ${composerMode === 'media' ? 'bg-sky-50 text-sky-700' : 'bg-slate-100 text-slate-600'}`} onclick={() => composerMode = 'media'}>Attachment</button>
+							<button data-testid="quick-replies-toggle" class="rounded-xl border border-slate-200 px-3 py-1.5 text-sm text-slate-600" onclick={() => showQuickReplies = !showQuickReplies}>Quick Replies</button>
 						</div>
 
 						{#if showQuickReplies}
-							<div class="mb-3 grid gap-2 rounded-[1.5rem] border border-gray-200 bg-gray-50 p-3 md:grid-cols-3">
+							<div class="mb-3 grid gap-2 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-3 md:grid-cols-3">
 								{#each workspace.quick_replies as quickReply}
-									<button class="rounded-2xl border border-gray-200 bg-white px-3 py-3 text-left" onclick={() => pickQuickReply(quickReply.body)}>
-										<p class="text-xs font-semibold uppercase tracking-wide text-blue-600">{quickReply.shortcut}</p>
-										<p class="mt-1 text-sm font-medium text-gray-900">{quickReply.title}</p>
-										<p class="mt-1 text-sm text-gray-500 line-clamp-2">{quickReply.body}</p>
+									<button class="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-left" onclick={() => pickQuickReply(quickReply.body)}>
+										<p class="text-xs font-semibold uppercase tracking-wide text-sky-600">{quickReply.shortcut}</p>
+										<p class="mt-1 text-sm font-medium text-slate-900">{quickReply.title}</p>
+										<p class="mt-1 text-sm text-slate-500 line-clamp-2">{quickReply.body}</p>
 									</button>
 								{/each}
 							</div>
 						{/if}
 
 						{#if composerMode === 'text'}
-							<textarea data-testid="composer-textarea" bind:value={composerText} class="min-h-[120px] w-full rounded-[1.75rem] border border-gray-200 px-4 py-4 text-sm outline-none focus:border-blue-400" placeholder="Write a reply. Text sends use typing simulation based on message length."></textarea>
+							<textarea data-testid="composer-textarea" bind:value={composerText} class="min-h-[120px] w-full rounded-[22px] border border-slate-200 px-4 py-4 text-sm outline-none focus:border-sky-400" placeholder="Type a reply..."></textarea>
 						{:else}
 							<div class="space-y-3">
 								<input bind:this={attachmentInput} data-testid="attachment-file-input" class="hidden" type="file" onchange={handleAttachmentChange} />
 								<div
 									data-testid="attachment-dropzone"
-									class={`rounded-[1.75rem] border-2 border-dashed px-4 py-5 text-sm transition ${isDragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-gray-50'}`}
+									class={`rounded-[22px] border-2 border-dashed px-4 py-5 text-sm transition ${isDragOver ? 'border-sky-400 bg-sky-50' : 'border-slate-200 bg-slate-50'}`}
 									role="button"
 									tabindex="0"
 									onclick={() => attachmentInput?.click()}
@@ -646,18 +746,18 @@
 									ondragover={(event) => event.preventDefault()}
 									ondrop={handleAttachmentDrop}
 								>
-									<p class="font-medium text-gray-900">Drop a file here or click to choose one</p>
-									<p class="mt-1 text-gray-500">Media sends immediately without typing simulation, matching the confirmed workflow.</p>
+									<p class="font-medium text-slate-900">Drop a file here or click to choose one</p>
+									<p class="mt-1 text-slate-500">Media messages are sent without typing simulation.</p>
 								</div>
 
 								{#if attachmentName}
-									<div class="rounded-[1.5rem] border border-gray-200 bg-white px-4 py-4">
+									<div class="rounded-[1.5rem] border border-slate-200 bg-white px-4 py-4">
 										<div class="flex items-start justify-between gap-3">
 											<div class="min-w-0">
-												<p data-testid="attachment-preview-name" class="truncate text-sm font-medium text-gray-900">{attachmentName}</p>
-												<p class="mt-1 text-xs text-gray-500">{attachmentFileSizeLabel}</p>
+												<p data-testid="attachment-preview-name" class="truncate text-sm font-medium text-slate-900">{attachmentName}</p>
+												<p class="mt-1 text-xs text-slate-500">{attachmentFileSizeLabel}</p>
 											</div>
-											<button class="rounded-full border border-gray-200 px-3 py-1.5 text-xs text-gray-600" onclick={clearAttachment}>Remove</button>
+											<button class="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-600" onclick={clearAttachment}>Remove</button>
 										</div>
 										{#if attachmentUrl && attachmentPreviewMime.startsWith('image/')}
 											<img class="mt-3 max-h-56 w-full rounded-xl object-cover" src={attachmentUrl} alt={attachmentName} />
@@ -665,60 +765,89 @@
 									</div>
 								{/if}
 
-								<textarea data-testid="composer-caption" bind:value={composerText} class="min-h-[96px] w-full rounded-[1.75rem] border border-gray-200 px-4 py-4 text-sm outline-none focus:border-blue-400" placeholder="Optional caption for the attachment..."></textarea>
+								<textarea data-testid="composer-caption" bind:value={composerText} class="min-h-[96px] w-full rounded-[22px] border border-slate-200 px-4 py-4 text-sm outline-none focus:border-sky-400" placeholder="Optional caption for the attachment..."></textarea>
 							</div>
 						{/if}
 
 						<div class="mt-4 flex items-center justify-between gap-3">
-							<p class="text-xs text-gray-500">
+							<p class="text-xs text-slate-500">
 								{#if composerMode === 'text'}
-									Text messages simulate provider typing.
+									Text replies follow the current typing simulation flow.
 								{:else}
-									Media bypasses the typing path and can be retried independently.
+									Media can still be retried independently after send.
 								{/if}
 							</p>
-							<button data-testid="send-message" disabled={saving} class="rounded-full bg-gray-900 px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50" onclick={sendMessage}>Send</button>
+							<button data-testid="send-message" disabled={saving} class="rounded-xl bg-[#f8b833] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#e6a61f] disabled:opacity-50" onclick={sendMessage}>Send</button>
 						</div>
 					</div>
 				</div>
 			{:else}
-				<div class="flex min-h-[70vh] items-center justify-center text-gray-500">Select a conversation from the inbox.</div>
+				<div class="flex min-h-[70vh] items-center justify-center text-slate-500">Select a conversation from the inbox.</div>
 			{/if}
 		</section>
 
-		<aside class="col-span-12 lg:col-span-3 space-y-4">
-			{#if workspace?.selected && showNotes}
-				<section class="rounded-[2rem] border border-gray-200 bg-white p-4 shadow-sm">
-					<div class="mb-3 flex items-center justify-between">
-						<h3 class="text-lg font-semibold text-gray-900">Notes</h3>
-						<span class="text-xs text-gray-400">{workspace.selected.notes.length}</span>
+		<aside class="hidden h-full min-h-0 flex-col gap-3 xl:flex">
+			{#if workspace?.selected}
+				<section class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
+					<div class="border-b border-slate-200 px-5 py-5">
+						<div class="flex items-start justify-between gap-3">
+							<div class="flex items-center gap-3">
+								{#if workspace.selected.contact.avatar}
+									<img class="h-14 w-14 rounded-full object-cover" src={workspace.selected.contact.avatar} alt={workspace.selected.contact.name} />
+								{:else}
+									<div class="flex h-14 w-14 items-center justify-center rounded-full bg-sky-100 text-lg font-semibold text-sky-700">
+										{contactInitials(workspace.selected.contact.name)}
+									</div>
+								{/if}
+								<div>
+									<h3 class="text-lg font-semibold text-slate-900">{contactTitle(workspace.selected.contact)}</h3>
+									<p class="mt-1 text-sm text-slate-500">{workspace.selected.contact.phone_display || workspace.selected.contact.phone_number}</p>
+									<p class="mt-1 text-sm text-slate-400">{workspace.selected.contact.instance_source_label}</p>
+								</div>
+							</div>
+							<button class="rounded-full border border-slate-200 px-2.5 py-1.5 text-slate-400 transition hover:text-slate-700" onclick={() => showInfo = !showInfo}>›</button>
+						</div>
+						<div class="mt-4 flex items-center gap-2">
+							<button data-testid="notes-toggle" class={`rounded-xl px-3 py-2 text-sm font-medium ${showNotes ? 'bg-sky-50 text-sky-700' : 'bg-slate-100 text-slate-600'}`} onclick={() => showNotes = !showNotes}>Notes</button>
+							<button data-testid="info-toggle" class={`rounded-xl px-3 py-2 text-sm font-medium ${showInfo ? 'bg-sky-50 text-sky-700' : 'bg-slate-100 text-slate-600'}`} onclick={() => showInfo = !showInfo}>Info</button>
+							<button data-testid="timeline-toggle" class={`rounded-xl px-3 py-2 text-sm font-medium ${showTimeline ? 'bg-sky-50 text-sky-700' : 'bg-slate-100 text-slate-600'}`} onclick={() => showTimeline = !showTimeline}>Timeline</button>
+						</div>
 					</div>
-					<div class="space-y-3">
+				</section>
+			{/if}
+
+			{#if workspace?.selected && showNotes}
+				<section class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
+					<button class="flex w-full items-center justify-between border-b border-slate-200 px-5 py-4 text-left" onclick={() => showNotes = !showNotes}>
+						<h3 class="text-base font-semibold text-slate-900">Conversation Notes</h3>
+						<span class="text-xs text-slate-400">{workspace.selected.notes.length}</span>
+					</button>
+					<div class="space-y-3 p-4">
 						{#each workspace.selected.notes as note}
-							<div class="rounded-[1.5rem] bg-gray-50 px-4 py-3">
-								<p class="text-sm text-gray-800">{note.body}</p>
-								<p class="mt-2 text-xs text-gray-500">{note.user_name} · {formatDateTime(note.created_at)}</p>
+							<div class="rounded-[20px] bg-slate-50 px-4 py-3">
+								<p class="text-sm text-slate-800">{note.body}</p>
+								<p class="mt-2 text-xs text-slate-500">{note.user_name} · {formatDateTime(note.created_at)}</p>
 							</div>
 						{/each}
+						<textarea bind:value={noteDraft} class="min-h-[100px] w-full rounded-[20px] border border-slate-200 px-4 py-3 text-sm outline-none focus:border-sky-400" placeholder="Add an internal note..."></textarea>
+						<button data-testid="add-note" class="w-full rounded-xl bg-sky-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-sky-700" onclick={addNote}>Add Note</button>
 					</div>
-					<textarea bind:value={noteDraft} class="mt-4 min-h-[100px] w-full rounded-[1.5rem] border border-gray-200 px-4 py-3 text-sm outline-none focus:border-blue-400" placeholder="Add an internal note..."></textarea>
-					<button data-testid="add-note" class="mt-3 w-full rounded-full bg-blue-600 px-4 py-2.5 text-sm font-medium text-white" onclick={addNote}>Add Note</button>
 				</section>
 			{/if}
 
 			{#if workspace?.selected && showInfo}
-				<section class="rounded-[2rem] border border-gray-200 bg-white p-4 shadow-sm">
-					<div class="mb-3 flex items-center justify-between">
-						<h3 class="text-lg font-semibold text-gray-900">Contact Info</h3>
-						<span class="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-500">{workspace.selected.contact.instance_source_label}</span>
-					</div>
-					<div class="space-y-3 text-sm text-gray-600">
+				<section class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
+					<button class="flex w-full items-center justify-between border-b border-slate-200 px-5 py-4 text-left" onclick={() => showInfo = !showInfo}>
+						<h3 class="text-base font-semibold text-slate-900">Conversation Information</h3>
+						<span class="text-slate-400">+</span>
+					</button>
+					<div class="space-y-3 p-4 text-sm text-slate-600">
 						<div>
-							<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Phone</p>
+							<p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Phone</p>
 							<p class="mt-1">{workspace.selected.contact.phone_display || workspace.selected.contact.phone_number}</p>
 						</div>
 						<div>
-							<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Tags</p>
+							<p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Tags</p>
 							<div class="mt-2 flex flex-wrap gap-2">
 								{#each workspace.selected.contact.tags as tag}
 									<span class="rounded-full bg-emerald-50 px-3 py-1 text-xs text-emerald-700">{tag}</span>
@@ -726,41 +855,38 @@
 							</div>
 						</div>
 						<div>
-							<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Collaborators</p>
+							<p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Collaborators</p>
 							<div class="mt-2 space-y-2">
 								{#each workspace.selected.collaborators as collaborator}
-									<div class="rounded-[1.25rem] bg-gray-50 px-3 py-2">
-										<p class="font-medium text-gray-800">{collaborator.user_name}</p>
-										<p class="text-xs text-gray-500">{collaborator.status}</p>
+									<div class="rounded-[1.25rem] bg-slate-50 px-3 py-2">
+										<p class="font-medium text-slate-800">{collaborator.user_name}</p>
+										<p class="text-xs text-slate-500">{collaborator.status}</p>
 									</div>
 								{/each}
 							</div>
 						</div>
-						<div class="rounded-[1.5rem] border border-dashed border-gray-200 px-3 py-3 text-xs text-gray-500">
-							Configure panel display in the chatbot flow settings. The extra panel area is preserved here as a confirmed dependency from the audited design docs.
-						</div>
-						<select bind:value={collaboratorUserId} class="w-full rounded-[1.5rem] border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400">
+						<select bind:value={collaboratorUserId} class="w-full rounded-[1.5rem] border border-slate-200 px-3 py-2 text-sm outline-none focus:border-sky-400">
 							<option value="">Invite collaborator</option>
 							{#each workspace.users as user}
 								<option value={user.id}>{user.name}</option>
 							{/each}
 						</select>
-						<button data-testid="invite-collaborator" class="w-full rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700" onclick={inviteCollaborator}>Invite Collaborator</button>
+						<button data-testid="invite-collaborator" class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50" onclick={inviteCollaborator}>Invite Collaborator</button>
 					</div>
 				</section>
 			{/if}
 
 			{#if workspace?.selected && showTimeline}
-				<section class="rounded-[2rem] border border-gray-200 bg-white p-4 shadow-sm">
-					<div class="mb-3 flex items-center justify-between">
-						<h3 class="text-lg font-semibold text-gray-900">Timeline</h3>
-						<span class="text-xs text-gray-400">{workspace.selected.events.length}</span>
-					</div>
-					<div class="space-y-3">
+				<section class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
+					<button class="flex w-full items-center justify-between border-b border-slate-200 px-5 py-4 text-left" onclick={() => showTimeline = !showTimeline}>
+						<h3 class="text-base font-semibold text-slate-900">Previous Conversations</h3>
+						<span class="text-xs text-slate-400">{workspace.selected.events.length}</span>
+					</button>
+					<div class="space-y-3 p-4">
 						{#each workspace.selected.events as event}
-							<div class="rounded-[1.5rem] bg-gray-50 px-4 py-3">
-								<p class="font-medium text-gray-800">{event.summary}</p>
-								<p class="mt-1 text-xs text-gray-500">{event.actor_name} · {formatDateTime(event.occurred_at)}</p>
+							<div class="rounded-[1.5rem] bg-slate-50 px-4 py-3">
+								<p class="font-medium text-slate-800">{event.summary}</p>
+								<p class="mt-1 text-xs text-slate-500">{event.actor_name} · {formatDateTime(event.occurred_at)}</p>
 							</div>
 						{/each}
 					</div>

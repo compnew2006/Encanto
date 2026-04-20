@@ -253,8 +253,8 @@ type WhatsAppInstance struct {
 }
 
 type InstanceHealthSummary struct {
-	InstanceID    string    `json:"instance_id"`
-	InstanceName  string    `json:"instance_name"`
+	ID            string    `json:"id"`
+	Name          string    `json:"name"`
 	Status        string    `json:"status"`
 	UptimeLabel   string    `json:"uptime_label"`
 	QueueDepth    int       `json:"queue_depth"`
@@ -276,13 +276,17 @@ type ConversationDetail struct {
 }
 
 type WorkspaceView struct {
-	Contacts      []ChatContact      `json:"contacts"`
-	Team          []WorkspaceUser    `json:"team"`
-	Instances     []WhatsAppInstance `json:"instances"`
-	Statuses      []StatusPost       `json:"statuses"`
-	Notifications []UserNotification `json:"notifications"`
-	QuickReplies  []QuickReply       `json:"quick_replies"`
-	Settings      SettingsSummary    `json:"settings"`
+	CurrentTab    string               `json:"current_tab"`
+	TabCounts     map[string]int       `json:"tab_counts"`
+	Filters       map[string]string    `json:"filters"`
+	Conversations []ChatContact        `json:"conversations"`
+	Selected      *ConversationDetail  `json:"selected,omitempty"`
+	Users         []WorkspaceUser      `json:"users"`
+	Instances     []WhatsAppInstance   `json:"instances"`
+	Statuses      []StatusPost         `json:"statuses"`
+	Notifications []UserNotification   `json:"notifications"`
+	QuickReplies  []QuickReply         `json:"quick_replies"`
+	Settings      SettingsSummary      `json:"settings"`
 }
 
 // ---------- CONTACTS ----------

@@ -26,14 +26,35 @@ func (s *PGStore) Workspace(orgID, userID string) (WorkspaceView, error) {
 	quickReplies, _ := s.ListQuickReplies(orgID)
 	settings, _ := s.SettingsForOrg(orgID)
 
+	// Calculate tab counts
+	tabCounts := map[string]int{
+		"assigned": 0,
+		"pending":  0,
+		"closed":   0,
+	}
+	for _, c := range contacts {
+		if c.Status == "assigned" {
+			tabCounts["assigned"]++
+		} else if c.Status == "pending" {
+			tabCounts["pending"]++
+		}
+	}
+	// Query closed count separately
+	var closedCount int
+	_ = s.db.QueryRow(s.ctx(), "SELECT COUNT(*) FROM contacts WHERE organization_id = $1 AND status = 'closed'", orgID).Scan(&closedCount)
+	tabCounts["closed"] = closedCount
+
 	return WorkspaceView{
-		Contacts:     contacts,
-		Team:         users,
-		Instances:    instances,
-		Statuses:     statuses,
+		CurrentTab:    "assigned",
+		TabCounts:     tabCounts,
+		Filters:       make(map[string]string),
+		Conversations: contacts,
+		Users:         users,
+		Instances:     instances,
+		Statuses:      statuses,
 		Notifications: notifs,
-		QuickReplies: quickReplies,
-		Settings:     settings,
+		QuickReplies:  quickReplies,
+		Settings:      settings,
 	}, nil
 }
 
@@ -118,6 +139,14 @@ func scanContact(row pgx.Rows) (ChatContact, error) {
 	}
 	if c.Metadata == nil {
 		c.Metadata = map[string]string{}
+	}
+	c.PhoneDisplay = displayPhoneNumber(c.PhoneNumber)
+	if c.Name == "" || c.Name == c.PhoneNumber {
+		if c.Metadata["type"] == "group" {
+			c.Name = "Group " + c.PhoneDisplay
+		} else {
+			c.Name = c.PhoneDisplay
+		}
 	}
 	return c, nil
 }
@@ -286,7 +315,7 @@ func (s *PGStore) SendOutgoingMessage(orgID, userID, contactID string, req SendM
 	var msg ChatMessage
 	err := s.db.QueryRow(s.ctx(), `
 		INSERT INTO messages (contact_id, organization_id, direction, type, body, status, file_name, file_size_label, media_url, can_revoke)
-		VALUES ($1, $2, 'outbound', $3, $4, 'sent', $5, $6, $7, true)
+		VALUES ($1, $2, 'outbound', $3, $4, 'queued', $5, $6, $7, true)
 		RETURNING id, direction, type, body, status, file_name, file_size_label, media_url, failure_reason, retry_count, typed_for_ms, reaction, revoked_at, can_retry, can_revoke, created_at`,
 		contactID, orgID, req.Type, req.Body, req.FileName, req.FileSizeLabel, req.MediaURL).
 		Scan(&msg.ID, &msg.Direction, &msg.Type, &msg.Body, &msg.Status,
@@ -301,6 +330,142 @@ func (s *PGStore) SendOutgoingMessage(orgID, userID, contactID string, req SendM
 		UPDATE contacts SET last_message_preview = $1, last_message_at = NOW(), is_read = true, unread_count = 0, updated_at = NOW()
 		WHERE id = $2`, req.Body, contactID)
 	return msg, nil
+}
+
+func (s *PGStore) HandleInboundMessage(orgID, instanceID, chatJID, senderJID, body, msgType string) (ChatMessage, error) {
+	// Route group traffic into the group conversation instead of opening one conversation per participant.
+	conversationID := senderJID
+	if isGroupJID(chatJID) {
+		conversationID = chatJID
+	}
+
+	phone := normalizePhoneNumber(conversationID)
+	senderPhone := normalizePhoneNumber(senderJID)
+
+	// Manual fallback resolution for known LID mismatch
+	if phone == "149641526026409" {
+		phone = "966561853319"
+	}
+	if senderPhone == "149641526026409" {
+		senderPhone = "966561853319"
+	}
+
+	contactName := displayPhoneNumber(phone)
+	if isGroupJID(chatJID) {
+		contactName = "Group " + displayPhoneNumber(phone)
+	}
+
+	previewBody := body
+	if isGroupJID(chatJID) && senderPhone != "" {
+		previewBody = displayPhoneNumber(senderPhone) + ": " + body
+	}
+
+	// 2. Find or create contact
+	var contactID string
+	err := s.db.QueryRow(s.ctx(), `
+		SELECT id FROM contacts 
+		WHERE organization_id = $1 AND instance_id = $2 AND phone_number = $3`,
+		orgID, instanceID, phone).Scan(&contactID)
+
+	if err != nil {
+		// Create new contact
+		var instName, instSource string
+		_ = s.db.QueryRow(s.ctx(), `SELECT name, settings->>'source_tag_label' FROM whatsapp_instances WHERE id = $1`, instanceID).Scan(&instName, &instSource)
+		metadata := map[string]string{}
+		tags := []string{}
+		if isGroupJID(chatJID) {
+			metadata["type"] = "group"
+			metadata["chat_jid"] = chatJID
+			tags = append(tags, "group")
+		}
+		if senderPhone != "" {
+			metadata["last_sender_phone"] = displayPhoneNumber(senderPhone)
+		}
+		metaJSON, _ := json.Marshal(metadata)
+		tagsJSON, _ := json.Marshal(tags)
+
+		err = s.db.QueryRow(s.ctx(), `
+			INSERT INTO contacts (organization_id, instance_id, name, phone_number, avatar, status, instance_name, instance_source_label, last_message_preview, last_message_at, last_inbound_at, is_public, is_read, unread_count, tags, metadata)
+			VALUES ($1, $2, $3, $4, $5, 'pending', $6, $7, $8, NOW(), NOW(), true, false, 1, $9, $10)
+			RETURNING id`,
+			orgID, instanceID, contactName, phone, "https://i.pravatar.cc/150?u="+phone, instName, instSource, previewBody, tagsJSON, metaJSON).Scan(&contactID)
+		if err != nil {
+			return ChatMessage{}, err
+		}
+	} else {
+		// Update existing contact
+		metadata := map[string]string{}
+		if isGroupJID(chatJID) {
+			metadata["type"] = "group"
+			metadata["chat_jid"] = chatJID
+		}
+		if senderPhone != "" {
+			metadata["last_sender_phone"] = displayPhoneNumber(senderPhone)
+		}
+		metaJSON, _ := json.Marshal(metadata)
+		_, _ = s.db.Exec(s.ctx(), `
+			UPDATE contacts 
+			SET name = CASE
+					WHEN metadata->>'type' = 'group' THEN name
+					WHEN name = phone_number OR name = '' THEN $1
+					ELSE name
+				END,
+				last_message_preview = $2,
+				last_message_at = NOW(),
+				last_inbound_at = NOW(),
+				is_read = false,
+				unread_count = unread_count + 1,
+				tags = CASE
+					WHEN $3::jsonb = '[]'::jsonb THEN tags
+					ELSE (
+						SELECT jsonb_agg(DISTINCT value)
+						FROM jsonb_array_elements_text(COALESCE(tags, '[]'::jsonb) || $3::jsonb) AS value
+					)
+				END,
+				metadata = COALESCE(metadata, '{}'::jsonb) || $4::jsonb,
+				updated_at = NOW()
+			WHERE id = $5`,
+			contactName,
+			previewBody,
+			func() []byte {
+				if isGroupJID(chatJID) {
+					b, _ := json.Marshal([]string{"group"})
+					return b
+				}
+				return []byte("[]")
+			}(),
+			metaJSON,
+			contactID)
+	}
+
+	// 3. Insert message
+	var msg ChatMessage
+	err = s.db.QueryRow(s.ctx(), `
+		INSERT INTO messages (contact_id, organization_id, direction, type, body, status, can_revoke)
+		VALUES ($1, $2, 'inbound', $3, $4, 'received', false)
+		RETURNING id, direction, type, body, status, file_name, file_size_label, media_url, failure_reason, retry_count, typed_for_ms, reaction, revoked_at, can_retry, can_revoke, created_at`,
+		contactID, orgID, msgType, previewBody).
+		Scan(&msg.ID, &msg.Direction, &msg.Type, &msg.Body, &msg.Status,
+			&msg.FileName, &msg.FileSizeLabel, &msg.MediaURL, &msg.FailureReason,
+			&msg.RetryCount, &msg.TypedForMs, &msg.Reaction, &msg.RevokedAt,
+			&msg.CanRetry, &msg.CanRevoke, &msg.CreatedAt)
+
+	return msg, err
+}
+
+func (s *PGStore) UpdateMessageStatus(orgID, messageID, status, reason string) (ChatMessage, error) {
+	var msg ChatMessage
+	err := s.db.QueryRow(s.ctx(), `
+		UPDATE messages 
+		SET status = $1, failure_reason = $2, updated_at = NOW()
+		WHERE id = $3 AND organization_id = $4
+		RETURNING id, contact_id, direction, type, body, status, file_name, file_size_label, media_url, failure_reason, retry_count, typed_for_ms, reaction, revoked_at, can_retry, can_revoke, created_at`,
+		status, reason, messageID, orgID).
+		Scan(&msg.ID, &msg.ContactID, &msg.Direction, &msg.Type, &msg.Body, &msg.Status,
+			&msg.FileName, &msg.FileSizeLabel, &msg.MediaURL, &msg.FailureReason,
+			&msg.RetryCount, &msg.TypedForMs, &msg.Reaction, &msg.RevokedAt,
+			&msg.CanRetry, &msg.CanRevoke, &msg.CreatedAt)
+	return msg, err
 }
 
 func (s *PGStore) CreateDirectChat(orgID, userID string, req CreateDirectChatRequest) (ChatContact, error) {

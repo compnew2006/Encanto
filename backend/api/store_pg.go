@@ -6,9 +6,12 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"time"
 
+	"go.mau.fi/whatsmeow/store/sqlstore"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/bcrypt"
@@ -16,12 +19,25 @@ import (
 
 // PGStore is the PostgreSQL-backed implementation of all data access.
 type PGStore struct {
-	db *pgxpool.Pool
+	db          *pgxpool.Pool
+	waContainer *sqlstore.Container
 }
 
 // NewPGStore creates a PGStore and seeds the default org+user if empty.
 func NewPGStore(db *pgxpool.Pool) *PGStore {
-	s := &PGStore{db: db}
+	dsn := os.Getenv("DATABASE_URL")
+	if dsn == "" {
+		dsn = "postgres://postgres@localhost:5432/encanto"
+	}
+	container, err := sqlstore.New(context.Background(), "pgx", dsn, nil)
+	if err != nil {
+		log.Printf("ERROR: failed to initialize whatsmeow store: %v", err)
+	}
+
+	s := &PGStore{
+		db:          db,
+		waContainer: container,
+	}
 	if err := s.seed(); err != nil {
 		log.Printf("WARNING: seed failed: %v", err)
 	}
@@ -362,11 +378,21 @@ func (s *PGStore) RunCleanup(orgID, actorID string) (BackgroundJob, error) {
 // ---------- INSTANCES ----------
 
 func (s *PGStore) ListInstances(orgID string) ([]WhatsAppInstance, error) {
-	rows, err := s.db.Query(s.ctx(), `
-		SELECT id, name, phone_number, jid, status, pairing_state, qr_code, slot_blocked,
+	query := `
+		SELECT id, organization_id, name, phone_number, jid, status, pairing_state, qr_code, slot_blocked,
 			settings, call_policy, auto_campaign, rating_settings, assignment_reset,
+			health_status, health_uptime_label, health_queue_depth, health_sent_today,
+			health_received_today, health_failed_today, health_error_rate, health_observed_at,
 			created_at, updated_at
-		FROM whatsapp_instances WHERE organization_id = $1 ORDER BY name`, orgID)
+		FROM whatsapp_instances`
+	
+	var rows pgx.Rows
+	var err error
+	if orgID == "" {
+		rows, err = s.db.Query(s.ctx(), query+" ORDER BY name")
+	} else {
+		rows, err = s.db.Query(s.ctx(), query+" WHERE organization_id = $1 ORDER BY name", orgID)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -395,9 +421,12 @@ func scanInstance(row interface {
 	var inst WhatsAppInstance
 	var settingsB, callPolicyB, autoCampaignB, ratingB, assignResetB []byte
 	err := row.Scan(
-		&inst.ID, &inst.Name, &inst.PhoneNumber, &inst.JID, &inst.Status,
+		&inst.ID, &inst.OrganizationID, &inst.Name, &inst.PhoneNumber, &inst.JID, &inst.Status,
 		&inst.PairingState, &inst.QRCode, &inst.SlotBlocked,
 		&settingsB, &callPolicyB, &autoCampaignB, &ratingB, &assignResetB,
+		&inst.Health.Status, &inst.Health.UptimeLabel, &inst.Health.QueueDepth,
+		&inst.Health.SentToday, &inst.Health.ReceivedToday, &inst.Health.FailedToday,
+		&inst.Health.ErrorRate, &inst.Health.ObservedAt,
 		&inst.CreatedAt, &inst.UpdatedAt,
 	)
 	if err != nil {
@@ -424,7 +453,7 @@ func (s *PGStore) ListInstanceHealth(orgID string) ([]InstanceHealthSummary, err
 	var result []InstanceHealthSummary
 	for rows.Next() {
 		var h InstanceHealthSummary
-		_ = rows.Scan(&h.InstanceID, &h.InstanceName, &h.Status, &h.UptimeLabel,
+		_ = rows.Scan(&h.ID, &h.Name, &h.Status, &h.UptimeLabel,
 			&h.QueueDepth, &h.SentToday, &h.ReceivedToday, &h.FailedToday,
 			&h.ErrorRate, &h.ObservedAt)
 		result = append(result, h)
@@ -465,8 +494,10 @@ func (s *PGStore) CreateInstance(orgID, actorID string, req CreateInstanceReques
 
 func (s *PGStore) getInstanceByID(id string) (WhatsAppInstance, error) {
 	row := s.db.QueryRow(s.ctx(), `
-		SELECT id, name, phone_number, jid, status, pairing_state, qr_code, slot_blocked,
+		SELECT id, organization_id, name, phone_number, jid, status, pairing_state, qr_code, slot_blocked,
 			settings, call_policy, auto_campaign, rating_settings, assignment_reset,
+			health_status, health_uptime_label, health_queue_depth, health_sent_today,
+			health_received_today, health_failed_today, health_error_rate, health_observed_at,
 			created_at, updated_at
 		FROM whatsapp_instances WHERE id = $1`, id)
 	return scanInstance(row)
@@ -486,14 +517,11 @@ func (s *PGStore) UpdateInstanceName(orgID, actorID, instanceID, name string) (W
 }
 
 func (s *PGStore) ConnectInstance(orgID, actorID, instanceID string) (WhatsAppInstance, error) {
-	// Generate a placeholder QR code token (in production this would call whatsmeow)
-	qrToken := fmt.Sprintf("ENCANTO-QR-%s-%d", instanceID[:8], time.Now().Unix())
-
 	_, err := s.db.Exec(s.ctx(), `
 		UPDATE whatsapp_instances
-		SET status = 'connecting', pairing_state = 'qr_ready', qr_code = $1,
+		SET status = 'connecting', pairing_state = 'qr_ready', qr_code = '',
 			health_status = 'connecting', updated_at = NOW()
-		WHERE id = $2 AND organization_id = $3`, qrToken, instanceID, orgID)
+		WHERE id = $1 AND organization_id = $2`, instanceID, orgID)
 	if err != nil {
 		return WhatsAppInstance{}, err
 	}
@@ -528,21 +556,19 @@ func (s *PGStore) RecoverInstance(orgID, actorID, instanceID string) (WhatsAppIn
 	return s.getInstanceByID(instanceID)
 }
 
-func (s *PGStore) UpdateInstanceSettings(orgID, actorID, instanceID string, req InstanceSettingsRequest) (WhatsAppInstance, error) {
-	b, _ := json.Marshal(req.Settings)
-	rb, _ := json.Marshal(req.RatingSettings)
-	ab, _ := json.Marshal(req.AssignmentReset)
+func (s *PGStore) UpdateInstanceSettings(orgID, actorID, instanceID string, req InstanceSettings) (WhatsAppInstance, error) {
+	b, _ := json.Marshal(req)
 	_, err := s.db.Exec(s.ctx(), `
-		UPDATE whatsapp_instances SET settings = $1, rating_settings = $2, assignment_reset = $3, updated_at = NOW()
-		WHERE id = $4 AND organization_id = $5`, b, rb, ab, instanceID, orgID)
+		UPDATE whatsapp_instances SET settings = $1, updated_at = NOW()
+		WHERE id = $2 AND organization_id = $3`, b, instanceID, orgID)
 	if err != nil {
 		return WhatsAppInstance{}, err
 	}
 	return s.getInstanceByID(instanceID)
 }
 
-func (s *PGStore) UpdateInstanceCallPolicy(orgID, actorID, instanceID string, req CallPolicyRequest) (WhatsAppInstance, error) {
-	b, _ := json.Marshal(req.CallPolicy)
+func (s *PGStore) UpdateInstanceCallPolicy(orgID, actorID, instanceID string, req InstanceCallPolicy) (WhatsAppInstance, error) {
+	b, _ := json.Marshal(req)
 	_, err := s.db.Exec(s.ctx(), `
 		UPDATE whatsapp_instances SET call_policy = $1, updated_at = NOW()
 		WHERE id = $2 AND organization_id = $3`, b, instanceID, orgID)
@@ -552,8 +578,8 @@ func (s *PGStore) UpdateInstanceCallPolicy(orgID, actorID, instanceID string, re
 	return s.getInstanceByID(instanceID)
 }
 
-func (s *PGStore) UpdateInstanceAutoCampaign(orgID, actorID, instanceID string, req AutoCampaignRequest) (WhatsAppInstance, error) {
-	b, _ := json.Marshal(req.AutoCampaign)
+func (s *PGStore) UpdateInstanceAutoCampaign(orgID, actorID, instanceID string, req InstanceAutoCampaign) (WhatsAppInstance, error) {
+	b, _ := json.Marshal(req)
 	_, err := s.db.Exec(s.ctx(), `
 		UPDATE whatsapp_instances SET auto_campaign = $1, updated_at = NOW()
 		WHERE id = $2 AND organization_id = $3`, b, instanceID, orgID)
@@ -714,4 +740,25 @@ func (s *PGStore) recordAudit(orgID, actorID, actorName, action, entityType, ent
 		INSERT INTO audit_logs (organization_id, actor_user_id, actor_name, action, entity_type, entity_id, summary, metadata)
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
 		orgID, actorID, actorName, action, entityType, entityID, summary, b)
+}
+func (s *PGStore) updateInstanceQRCode(orgID, instanceID, qrCode string) error {
+	_, err := s.db.Exec(s.ctx(), `
+		UPDATE whatsapp_instances SET qr_code = $1, pairing_state = 'qr_ready', updated_at = NOW()
+		WHERE id = $2 AND organization_id = $3`, qrCode, instanceID, orgID)
+	return err
+}
+
+func (s *PGStore) updateInstanceStatus(orgID, instanceID, status, pairingState string) error {
+	_, err := s.db.Exec(s.ctx(), `
+		UPDATE whatsapp_instances SET status = $1, pairing_state = $2, updated_at = NOW()
+		WHERE id = $3 AND organization_id = $4`, status, pairingState, instanceID, orgID)
+	return err
+}
+
+func (s *PGStore) updateInstanceConnectionSuccess(orgID, instanceID, jid string) error {
+	_, err := s.db.Exec(s.ctx(), `
+		UPDATE whatsapp_instances 
+		SET status = 'connected', pairing_state = 'paired', jid = $1, qr_code = '', updated_at = NOW()
+		WHERE id = $2 AND organization_id = $3`, jid, instanceID, orgID)
+	return err
 }

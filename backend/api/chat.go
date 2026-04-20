@@ -49,17 +49,11 @@ func (s *Server) GetWorkspace(w http.ResponseWriter, r *http.Request) {
 	if contactID != "" {
 		detail, err := s.store.GetConversation(currentOrgID(r), claims.UserID, contactID)
 		if err == nil {
-			writeJSON(w, http.StatusOK, map[string]any{
-				"workspace":    snapshot,
-				"conversation": detail,
-			})
-			return
+			snapshot.Selected = &detail
 		}
 	}
 
-	writeJSON(w, http.StatusOK, map[string]any{
-		"workspace": snapshot,
-	})
+	writeJSON(w, http.StatusOK, snapshot)
 }
 
 func (s *Server) CreateDirectChat(w http.ResponseWriter, r *http.Request) {
@@ -104,14 +98,26 @@ func (s *Server) SendMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	message, err := s.store.SendOutgoingMessage(currentOrgID(r), claims.UserID, chi.URLParam(r, "contactID"), req)
+	orgID := currentOrgID(r)
+	contactID := chi.URLParam(r, "contactID")
+
+	contact, err := s.store.getContactByID(contactID, orgID, claims.UserID)
+	if err != nil {
+		errorJSON(w, http.StatusNotFound, "contact not found")
+		return
+	}
+
+	message, err := s.store.SendOutgoingMessage(orgID, claims.UserID, contactID, req)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	s.hub.Publish(currentOrgID(r), "new_message", map[string]any{
-		"contact_id": chi.URLParam(r, "contactID"),
+	// Trigger async send via WhatsApp
+	go s.WhatsApp.SendMessage(orgID, contact.InstanceID, contact.PhoneNumber, message.ID, req.Body)
+
+	s.hub.Publish(orgID, "new_message", map[string]any{
+		"contact_id": contactID,
 		"message":    message,
 	})
 	writeJSON(w, http.StatusCreated, map[string]any{"message": message})
