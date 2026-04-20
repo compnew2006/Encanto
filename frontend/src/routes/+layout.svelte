@@ -106,6 +106,8 @@
 
 			<nav class="hidden md:flex items-center gap-2 text-sm">
 				<a href="/chat" class="rounded-full border border-gray-200 px-3 py-1.5 text-gray-600 hover:border-blue-300 hover:text-blue-700 transition-colors">Inbox</a>
+				<a href="/analytics/agents" class="rounded-full border border-gray-200 px-3 py-1.5 text-gray-600 hover:border-blue-300 hover:text-blue-700 transition-colors">Analytics</a>
+				<a href="/campaigns" class="rounded-full border border-gray-200 px-3 py-1.5 text-gray-600 hover:border-blue-300 hover:text-blue-700 transition-colors">Campaigns</a>
 				<a href="/profile" class="rounded-full border border-gray-200 px-3 py-1.5 text-gray-600 hover:border-blue-300 hover:text-blue-700 transition-colors">Profile</a>
 				<a href="/settings" class="rounded-full border border-gray-200 px-3 py-1.5 text-gray-600 hover:border-blue-300 hover:text-blue-700 transition-colors">Settings</a>
 				<a href="/settings/instances" class="rounded-full border border-gray-200 px-3 py-1.5 text-gray-600 hover:border-blue-300 hover:text-blue-700 transition-colors">Accounts</a>

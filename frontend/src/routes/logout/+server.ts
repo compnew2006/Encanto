@@ -1,10 +1,18 @@
-import { redirect, type RequestHandler } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+import { resolveApiBaseForHost } from '$lib/api-base';
 
-import { backendFetch } from '$lib/server/backend';
+export const POST: RequestHandler = async ({ cookies, url }) => {
+	// Erase cookie
+	cookies.delete('session_token', { path: '/' });
+	cookies.delete('org_context', { path: '/' });
 
-export const POST: RequestHandler = async (event) => {
-	await backendFetch(event, '/api/auth/logout', { method: 'POST' });
-	event.cookies.delete('encanto_access', { path: '/' });
-	event.cookies.delete('encanto_refresh', { path: '/' });
+	// Optional: Call backend to invalidate token if stateful sessions are used
+	try {
+		await fetch(`${resolveApiBaseForHost(url.hostname, url.protocol)}/api/auth/logout`, { method: 'POST' });
+	} catch {
+		// Ignore self error on logout
+	}
+
 	throw redirect(303, '/login');
 };

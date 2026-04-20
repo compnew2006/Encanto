@@ -1,8 +1,6 @@
-import { env } from '$env/dynamic/public';
+import { resolveApiBase } from '$lib/api-base';
 
-const DEFAULT_API_BASE = 'http://127.0.0.1:8080';
-
-export const API_BASE = (env.PUBLIC_API_BASE || DEFAULT_API_BASE).replace(/\/$/, '');
+export const API_BASE = resolveApiBase();
 
 type ApiInit = Omit<RequestInit, 'body'> & {
 	body?: BodyInit | object | null;
@@ -39,6 +37,45 @@ export async function apiFetch<T>(path: string, init: ApiInit = {}): Promise<T> 
 	}
 
 	return data as T;
+}
+
+export async function apiFetchText(path: string, init: ApiInit = {}): Promise<string> {
+	const headers = new Headers(init.headers);
+	const hasJSONBody =
+		init.body !== undefined &&
+		init.body !== null &&
+		typeof init.body === 'object' &&
+		!(init.body instanceof FormData) &&
+		!(init.body instanceof URLSearchParams) &&
+		!(init.body instanceof Blob) &&
+		!(init.body instanceof ArrayBuffer);
+
+	if (hasJSONBody && !headers.has('Content-Type')) {
+		headers.set('Content-Type', 'application/json');
+	}
+
+	const response = await fetch(`${API_BASE}${path}`, {
+		...init,
+		credentials: 'include',
+		headers,
+		body: hasJSONBody ? JSON.stringify(init.body) : (init.body as BodyInit | null | undefined)
+	});
+
+	const text = await response.text();
+	if (!response.ok) {
+		let message = response.statusText || 'Request failed';
+		if (text) {
+			try {
+				const data = JSON.parse(text);
+				message = data?.error ?? message;
+			} catch {
+				message = text;
+			}
+		}
+		throw new Error(message);
+	}
+
+	return text;
 }
 
 export type WorkspaceUser = {
@@ -300,6 +337,225 @@ export type InstanceHealthSummary = {
 	failed_today: number;
 	error_rate: string;
 	observed_at: string;
+};
+
+export type ContactsView = {
+	contacts: ChatContact[];
+	instances: WhatsAppInstance[];
+	search: string;
+	instance_id: string;
+};
+
+export type ContactImportPreviewRow = {
+	name: string;
+	phone_number: string;
+	instance: string;
+	action: string;
+};
+
+export type BackgroundJob = {
+	id: string;
+	kind: string;
+	entity_type: string;
+	entity_id: string;
+	status: string;
+	summary: string;
+	failure_reason?: string;
+	started_at: string;
+	finished_at?: string;
+};
+
+export type ContactImportResult = {
+	created: number;
+	updated: number;
+	skipped: number;
+	duplicate_phones: string[];
+	preview: ContactImportPreviewRow[];
+	job: BackgroundJob;
+};
+
+export type ClosedConversationRow = {
+	id: string;
+	contact_name: string;
+	phone_display: string;
+	instance_id: string;
+	instance_name: string;
+	assigned_user_name: string;
+	closed_by: string;
+	closed_at: string;
+};
+
+export type ClosedChatPage = {
+	items: ClosedConversationRow[];
+	page: number;
+	page_size: number;
+	total: number;
+	has_next: boolean;
+	has_previous: boolean;
+	agent_id: string;
+	instance_id: string;
+};
+
+export type LicenseQuota = {
+	resource: string;
+	label: string;
+	current: number;
+	limit: number;
+	over_quota: boolean;
+};
+
+export type LicenseBootstrapView = {
+	status: string;
+	tier: string;
+	kind: string;
+	hwid: string;
+	short_id: string;
+	last_key_hint: string;
+	message: string;
+	activate_url: string;
+	cleanup_url: string;
+	activated_at?: string;
+	expires_at?: string;
+	restricted_cleanup: boolean;
+	quotas: LicenseQuota[];
+};
+
+export type AnalyticsMetricCard = {
+	id: string;
+	label: string;
+	value: string;
+	trend: string;
+	description: string;
+};
+
+export type AnalyticsMetricEvidence = {
+	label: string;
+	value: string;
+	source: string;
+};
+
+export type AgentAnalyticsSummaryResponse = {
+	cards: AnalyticsMetricCard[];
+	validation: AnalyticsMetricEvidence[];
+	generated: string;
+};
+
+export type AnalyticsPoint = {
+	label: string;
+	value: number;
+};
+
+export type AgentComparisonRow = {
+	agent_id: string;
+	agent_name: string;
+	active_conversations: number;
+	closed_conversations: number;
+	transfers: number;
+	average_queue_minutes: number;
+	average_resolution_minutes: number;
+	average_rating: number;
+};
+
+export type CustomerRating = {
+	id: string;
+	contact_id: string;
+	contact_name: string;
+	phone_number: string;
+	agent_id: string;
+	agent_name: string;
+	rating: number;
+	comment: string;
+	submitted_at: string;
+};
+
+export type CampaignFilters = {
+	search?: string;
+	instance_id?: string;
+	status?: string;
+	tag?: string;
+	include_closed?: boolean;
+};
+
+export type CampaignSchedule = {
+	mode: string;
+	every_days: number;
+	time_of_day: string;
+};
+
+export type Campaign = {
+	id: string;
+	name: string;
+	status: string;
+	source: string;
+	linked_instance_id: string;
+	content: string;
+	filters: CampaignFilters;
+	schedule: CampaignSchedule;
+	last_run_summary: string;
+	created_at: string;
+	updated_at: string;
+};
+
+export type CampaignRun = {
+	id: string;
+	campaign_id: string;
+	trigger: string;
+	status: string;
+	job_id: string;
+	started_at: string;
+	finished_at?: string;
+	recipient_total: number;
+	delivered: number;
+	failed: number;
+};
+
+export type CampaignRecipient = {
+	id: string;
+	run_id: string;
+	contact_id: string;
+	contact_name: string;
+	phone_number: string;
+	status: string;
+	failure_reason?: string;
+	message_preview: string;
+	delivered_at?: string;
+};
+
+export type CampaignRecord = {
+	campaign: Campaign;
+	runs: CampaignRun[];
+	recipients: Record<string, CampaignRecipient[]>;
+};
+
+export type WebhookEndpoint = {
+	id: string;
+	name: string;
+	target_url: string;
+	active: boolean;
+};
+
+export type WebhookDelivery = {
+	id: string;
+	webhook_id: string;
+	event_id: string;
+	status: string;
+	attempt: number;
+	last_attempt_at: string;
+	next_retry_at?: string;
+	response_code: number;
+	response_body: string;
+};
+
+export type AuditLogEntry = {
+	id: string;
+	actor_user_id: string;
+	actor_name: string;
+	action: string;
+	entity_type: string;
+	entity_id: string;
+	summary: string;
+	metadata: Record<string, string>;
+	occurred_at: string;
 };
 
 export function formatDateTime(value?: string | null) {

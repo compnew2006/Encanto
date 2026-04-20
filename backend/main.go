@@ -12,9 +12,23 @@ import (
 )
 
 func main() {
-	r := chi.NewRouter()
-	server := api.NewServer()
+	// Connect to PostgreSQL
+	db, err := api.OpenDB()
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v\nSet DATABASE_URL env var or ensure postgres is running on localhost:5432/encanto", err)
+	}
+	defer db.Close()
+	log.Println("✅ Connected to PostgreSQL")
 
+	store := api.NewPGStore(db)
+	server := api.NewServer(store)
+
+	// Load existing WhatsApp sessions
+	if err := server.WhatsApp.LoadSessions(); err != nil {
+		log.Printf("WARNING: failed to load WhatsApp sessions: %v", err)
+	}
+
+	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(cors.Handler(cors.Options{
@@ -40,10 +54,9 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	
-	log.Printf("Server listening on port %s", port)
-	err := http.ListenAndServe(":"+port, r)
-	if err != nil {
+
+	log.Printf("🚀 Server listening on port %s", port)
+	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
 }

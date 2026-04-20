@@ -9,18 +9,19 @@ import (
 )
 
 type Server struct {
-	store *Store
-	hub   *RealtimeHub
+	store    *PGStore
+	hub      *RealtimeHub
+	WhatsApp *WhatsAppManager
 }
 
-func NewServer() *Server {
-	store := NewStore()
+func NewServer(store *PGStore) *Server {
 	hub := NewRealtimeHub()
-
-	return &Server{
+	s := &Server{
 		store: store,
 		hub:   hub,
 	}
+	s.WhatsApp = NewWhatsAppManager(s)
+	return s
 }
 
 func (s *Server) Router() *chi.Mux {
@@ -38,6 +39,8 @@ func (s *Server) Router() *chi.Mux {
 
 		r.Get("/chats", s.GetWorkspace)
 		r.Get("/chats/{contactID}", s.GetWorkspace)
+		r.Get("/chats/closed", s.ListClosedChats)
+		r.Post("/chats/direct", s.CreateDirectChat)
 		r.Post("/chats/{contactID}/messages", s.SendMessage)
 		r.Post("/chats/{contactID}/messages/{messageID}/retry", s.RetryMessage)
 		r.Post("/chats/{contactID}/messages/{messageID}/revoke", s.RevokeMessage)
@@ -47,8 +50,16 @@ func (s *Server) Router() *chi.Mux {
 		r.Post("/chats/{contactID}/hide", s.ToggleHide)
 		r.Post("/chats/{contactID}/close", s.CloseChat)
 		r.Post("/chats/{contactID}/reopen", s.ReopenChat)
+		r.Put("/chats/{contactID}/reopen", s.ReopenChat)
 		r.Post("/chats/{contactID}/notes", s.AddNote)
 		r.Post("/chats/{contactID}/collaborators", s.AddCollaborator)
+
+		r.Get("/contacts", s.ListContacts)
+		r.Post("/contacts", s.CreateContact)
+		r.Get("/contacts/export", s.ExportContacts)
+		r.Post("/contacts/import", s.ImportContacts)
+		r.Put("/contacts/{contactID}", s.UpdateContact)
+		r.Delete("/contacts/{contactID}", s.DeleteContact)
 
 		r.Get("/notifications", s.ListNotifications)
 		r.Post("/notifications/read-all", s.MarkAllNotificationsRead)
@@ -61,17 +72,41 @@ func (s *Server) Router() *chi.Mux {
 		r.Get("/settings/summary", s.GetSettingsSummary)
 		r.Get("/settings/general", s.GetGeneralSettings)
 		r.Put("/settings/general", s.UpdateGeneralSettings)
+		r.Get("/settings/limits", s.GetSettingsLimits)
 		r.Get("/settings/appearance", s.GetAppearanceSettings)
 		r.Put("/settings/appearance", s.UpdateAppearanceSettings)
 		r.Get("/settings/chat", s.GetChatSettings)
 		r.Put("/settings/chat", s.UpdateChatSettings)
 		r.Get("/settings/notifications", s.GetNotificationSettings)
+		r.Put("/settings/uploads-cleanup", s.UpdateCleanupSettings)
 		r.Put("/settings/notifications", s.UpdateNotificationSettings)
 		r.Post("/settings/uploads-cleanup/run", s.RunCleanup)
+
+		r.Get("/license/bootstrap", s.GetLicenseBootstrap)
+		r.Post("/license/activate", s.ActivateLicense)
+
+		r.Get("/analytics/agents/summary", s.GetAgentAnalyticsSummary)
+		r.Get("/analytics/agents/transfers", s.GetAgentTransferTrends)
+		r.Get("/analytics/agents/sources", s.GetAgentSourceBreakdown)
+		r.Get("/analytics/agents/comparison", s.GetAgentComparison)
+		r.Get("/analytics/agents/ratings", s.GetAgentRatings)
+		r.Get("/analytics/agents/export", s.ExportAgentAnalytics)
+
+		r.Get("/campaigns", s.ListCampaigns)
+		r.Post("/campaigns", s.CreateCampaign)
+		r.Get("/campaigns/{campaignID}", s.GetCampaign)
+		r.Put("/campaigns/{campaignID}", s.UpdateCampaign)
+		r.Delete("/campaigns/{campaignID}", s.DeleteCampaign)
+		r.Post("/campaigns/{campaignID}/launch", s.LaunchCampaign)
+		r.Post("/campaigns/{campaignID}/pause", s.PauseCampaign)
+		r.Post("/campaigns/{campaignID}/resume", s.ResumeCampaign)
+		r.Get("/campaigns/{campaignID}/runs", s.ListCampaignRuns)
+		r.Get("/campaigns/{campaignID}/recipients", s.ListCampaignRecipients)
 
 		r.Get("/instances", s.ListInstances)
 		r.Get("/instances/health", s.ListInstanceHealth)
 		r.Post("/instances", s.CreateInstance)
+		r.Delete("/instances/{instanceID}", s.DeleteInstance)
 		r.Put("/instances/{instanceID}/name", s.UpdateInstanceName)
 		r.Post("/instances/{instanceID}/connect", s.ConnectInstance)
 		r.Post("/instances/{instanceID}/disconnect", s.DisconnectInstance)
@@ -79,6 +114,13 @@ func (s *Server) Router() *chi.Mux {
 		r.Put("/instances/{instanceID}/settings", s.UpdateInstanceSettings)
 		r.Put("/instances/{instanceID}/call-auto-reject", s.UpdateInstanceCallPolicy)
 		r.Put("/instances/{instanceID}/auto-campaign", s.UpdateInstanceAutoCampaign)
+
+		r.Get("/jobs", s.ListJobs)
+		r.Get("/jobs/{jobID}", s.GetJob)
+		r.Get("/webhooks", s.ListWebhooks)
+		r.Get("/webhooks/{webhookID}/deliveries", s.ListWebhookDeliveries)
+		r.Post("/webhooks/{webhookID}/deliveries/{deliveryID}/retry", s.RetryWebhookDelivery)
+		r.Get("/audit-logs", s.ListAuditLogs)
 	})
 
 	return r

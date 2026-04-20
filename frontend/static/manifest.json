@@ -1,0 +1,15 @@
+{
+  "short_name": "Encanto",
+  "name": "Encanto Messaging Platform",
+  "icons": [
+    {
+      "src": "encanto_icon_192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#9333ea",
+  "background_color": "#ffffff"
+}

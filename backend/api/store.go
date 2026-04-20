@@ -1,3 +1,5 @@
+//go:build ignore
+
 package api
 
 import (
@@ -5,6 +7,7 @@ import (
 	"fmt"
 	"slices"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -122,18 +125,18 @@ type StatusPost struct {
 }
 
 type GeneralSettings struct {
-	OrganizationName string `json:"organization_name"`
-	Slug             string `json:"slug"`
-	Timezone         string `json:"timezone"`
-	DateFormat       string `json:"date_format"`
-	Locale           string `json:"locale"`
-	MaskPhoneNumbers bool   `json:"mask_phone_numbers"`
-	TenantStatus     string `json:"tenant_status"`
-	ActiveMembers    int    `json:"active_members"`
-	MaxMembers       int    `json:"max_members"`
-	UsedInstances    int    `json:"used_instances"`
-	MaxInstances     int    `json:"max_instances"`
-	StorageUsedLabel string `json:"storage_used_label"`
+	OrganizationName  string `json:"organization_name"`
+	Slug              string `json:"slug"`
+	Timezone          string `json:"timezone"`
+	DateFormat        string `json:"date_format"`
+	Locale            string `json:"locale"`
+	MaskPhoneNumbers  bool   `json:"mask_phone_numbers"`
+	TenantStatus      string `json:"tenant_status"`
+	ActiveMembers     int    `json:"active_members"`
+	MaxMembers        int    `json:"max_members"`
+	UsedInstances     int    `json:"used_instances"`
+	MaxInstances      int    `json:"max_instances"`
+	StorageUsedLabel  string `json:"storage_used_label"`
 	StorageLimitLabel string `json:"storage_limit_label"`
 }
 
@@ -176,11 +179,11 @@ type SettingsSummary struct {
 }
 
 type InstanceSettings struct {
-	AutoSyncHistory            bool   `json:"auto_sync_history"`
-	AutoDownloadIncomingMedia  bool   `json:"auto_download_incoming_media"`
-	SourceTagLabel             string `json:"source_tag_label"`
-	SourceTagDisplayMode       string `json:"source_tag_display_mode"`
-	SourceTagColor             string `json:"source_tag_color"`
+	AutoSyncHistory           bool   `json:"auto_sync_history"`
+	AutoDownloadIncomingMedia bool   `json:"auto_download_incoming_media"`
+	SourceTagLabel            string `json:"source_tag_label"`
+	SourceTagDisplayMode      string `json:"source_tag_display_mode"`
+	SourceTagColor            string `json:"source_tag_color"`
 }
 
 type InstanceHealth struct {
@@ -228,21 +231,21 @@ type InstanceAssignmentReset struct {
 }
 
 type WhatsAppInstance struct {
-	ID               string                  `json:"id"`
-	OrganizationID   string                  `json:"organization_id"`
-	Name             string                  `json:"name"`
-	PhoneNumber      string                  `json:"phone_number"`
-	JID              string                  `json:"jid"`
-	Status           string                  `json:"status"`
-	PairingState     string                  `json:"pairing_state"`
-	QRCode           string                  `json:"qr_code,omitempty"`
-	SlotBlocked      bool                    `json:"slot_blocked"`
-	Settings         InstanceSettings        `json:"settings"`
-	Health           InstanceHealth          `json:"health"`
-	CallPolicy       InstanceCallPolicy      `json:"call_policy"`
-	AutoCampaign     InstanceAutoCampaign    `json:"auto_campaign"`
-	RatingSettings   InstanceRatingSettings  `json:"rating_settings"`
-	AssignmentReset  InstanceAssignmentReset `json:"assignment_reset"`
+	ID              string                  `json:"id"`
+	OrganizationID  string                  `json:"organization_id"`
+	Name            string                  `json:"name"`
+	PhoneNumber     string                  `json:"phone_number"`
+	JID             string                  `json:"jid"`
+	Status          string                  `json:"status"`
+	PairingState    string                  `json:"pairing_state"`
+	QRCode          string                  `json:"qr_code,omitempty"`
+	SlotBlocked     bool                    `json:"slot_blocked"`
+	Settings        InstanceSettings        `json:"settings"`
+	Health          InstanceHealth          `json:"health"`
+	CallPolicy      InstanceCallPolicy      `json:"call_policy"`
+	AutoCampaign    InstanceAutoCampaign    `json:"auto_campaign"`
+	RatingSettings  InstanceRatingSettings  `json:"rating_settings"`
+	AssignmentReset InstanceAssignmentReset `json:"assignment_reset"`
 }
 
 type CleanupJob struct {
@@ -261,17 +264,17 @@ type ConversationDetail struct {
 }
 
 type WorkspaceSnapshot struct {
-	CurrentTab    string             `json:"current_tab"`
-	TabCounts     map[string]int     `json:"tab_counts"`
-	Filters       map[string]string  `json:"filters"`
-	Conversations []ChatContact      `json:"conversations"`
+	CurrentTab    string              `json:"current_tab"`
+	TabCounts     map[string]int      `json:"tab_counts"`
+	Filters       map[string]string   `json:"filters"`
+	Conversations []ChatContact       `json:"conversations"`
 	Selected      *ConversationDetail `json:"selected,omitempty"`
-	Notifications []UserNotification `json:"notifications"`
-	Statuses      []StatusPost       `json:"statuses"`
-	QuickReplies  []QuickReply       `json:"quick_replies"`
-	Instances     []WhatsAppInstance `json:"instances"`
-	Users         []WorkspaceUser    `json:"users"`
-	Settings      SettingsSummary    `json:"settings"`
+	Notifications []UserNotification  `json:"notifications"`
+	Statuses      []StatusPost        `json:"statuses"`
+	QuickReplies  []QuickReply        `json:"quick_replies"`
+	Instances     []WhatsAppInstance  `json:"instances"`
+	Users         []WorkspaceUser     `json:"users"`
+	Settings      SettingsSummary     `json:"settings"`
 }
 
 type ProfileView struct {
@@ -308,6 +311,14 @@ type OrgData struct {
 	Instances         map[string]*WhatsAppInstance
 	QuickReplies      []QuickReply
 	Users             map[string]*WorkspaceUser
+	License           LicenseRecord
+	Campaigns         map[string]*CampaignRecord
+	Jobs              []BackgroundJob
+	Webhooks          map[string]*WebhookEndpoint
+	Deliveries        []WebhookDelivery
+	Outbox            []OutboxEvent
+	Audit             []AuditLogEntry
+	Ratings           []CustomerRating
 }
 
 type Store struct {
@@ -471,7 +482,7 @@ func seedPrimaryOrg(now time.Time) *OrgData {
 			{ID: "msg-2", ContactID: "contact-1", Direction: "outbound", Type: "text", Body: "Absolutely. I will send it now.", Status: "sent", TypedForMS: 1180, CreatedAt: now.Add(-33 * time.Minute), CanRevoke: true},
 			{ID: "msg-3", ContactID: "contact-1", Direction: "inbound", Type: "text", Body: "Can you send the proposal PDF?", Status: "received", CreatedAt: now.Add(-12 * time.Minute)},
 		},
-		Notes: []ConversationNote{{ID: "note-1", UserID: "2", UserName: "Maha Support", Body: "Customer is asking specifically about the annual package.", CreatedAt: now.Add(-20 * time.Minute)}},
+		Notes:         []ConversationNote{{ID: "note-1", UserID: "2", UserName: "Maha Support", Body: "Customer is asking specifically about the annual package.", CreatedAt: now.Add(-20 * time.Minute)}},
 		Collaborators: []Collaborator{{ID: "col-1", UserID: "3", UserName: "Omar Care", Status: "accepted", InvitedAt: now.Add(-28 * time.Minute)}},
 		Events: []TimelineEvent{
 			{ID: "event-1", EventType: "assigned", ActorUserID: "1", ActorName: "Admin Encanto", Summary: "Assigned to Maha Support", OccurredAt: now.Add(-40 * time.Minute), Metadata: map[string]string{"to_user_id": "2"}},
@@ -536,7 +547,7 @@ func seedPrimaryOrg(now time.Time) *OrgData {
 			Metadata:            map[string]string{"type": "group"},
 		},
 		Messages: []ChatMessage{{ID: "msg-6", ContactID: "contact-3", Direction: "inbound", Type: "text", Body: "Thanks, we will confirm internally.", Status: "received", CreatedAt: now.Add(-4 * time.Hour)}},
-		Events: []TimelineEvent{{ID: "event-4", EventType: "closed", ActorUserID: "3", ActorName: "Omar Care", Summary: "Closed the conversation after resolution", OccurredAt: now.Add(-4 * time.Hour), Metadata: map[string]string{}}},
+		Events:   []TimelineEvent{{ID: "event-4", EventType: "closed", ActorUserID: "3", ActorName: "Omar Care", Summary: "Closed the conversation after resolution", OccurredAt: now.Add(-4 * time.Hour), Metadata: map[string]string{}}},
 		UserStates: map[string]*ContactUserState{
 			"1": {LastReadMessageID: "msg-6", LastOpenedAt: now.Add(-4 * time.Hour), LastSeenAt: now.Add(-4 * time.Hour)},
 		},
@@ -544,18 +555,18 @@ func seedPrimaryOrg(now time.Time) *OrgData {
 
 	return &OrgData{
 		General: GeneralSettings{
-			OrganizationName: "Global Corp",
-			Slug:             "global-corp",
-			Timezone:         "Africa/Cairo",
-			DateFormat:       "DD MMM YYYY",
-			Locale:           "en",
-			MaskPhoneNumbers: false,
-			TenantStatus:     "active",
-			ActiveMembers:    3,
-			MaxMembers:       5,
-			UsedInstances:    2,
-			MaxInstances:     3,
-			StorageUsedLabel: "1.8 GiB",
+			OrganizationName:  "Global Corp",
+			Slug:              "global-corp",
+			Timezone:          "Africa/Cairo",
+			DateFormat:        "DD MMM YYYY",
+			Locale:            "en",
+			MaskPhoneNumbers:  false,
+			TenantStatus:      "active",
+			ActiveMembers:     3,
+			MaxMembers:        5,
+			UsedInstances:     2,
+			MaxInstances:      3,
+			StorageUsedLabel:  "1.8 GiB",
 			StorageLimitLabel: "5 GiB",
 		},
 		Appearance: AppearanceSettings{ColorMode: "light", ThemePreset: "ocean-breeze"},
@@ -602,7 +613,15 @@ func seedPrimaryOrg(now time.Time) *OrgData {
 			{ID: "qr-2", Shortcut: "/thanks", Title: "Thank you", Body: "Thank you for the update. I am checking this now."},
 			{ID: "qr-3", Shortcut: "/reconnect", Title: "Reconnect note", Body: "We are reconnecting the sending account and will retry shortly."},
 		},
-		Users: users,
+		Users:      users,
+		License:    seedLicenseRecord(now, "org-1", "Global Corp", 12, 4, 3),
+		Campaigns:  seedPrimaryCampaigns(now),
+		Jobs:       seedPrimaryJobs(now),
+		Webhooks:   seedDefaultWebhooks(),
+		Deliveries: seedPrimaryDeliveries(now),
+		Outbox:     seedPrimaryOutbox(now),
+		Audit:      seedPrimaryAudit(now),
+		Ratings:    seedPrimaryRatings(now),
 	}
 }
 
@@ -658,24 +677,24 @@ func seedSecondaryOrg(now time.Time) *OrgData {
 			Tags:                []string{"walk-in"},
 			Metadata:            map[string]string{"city": "Giza"},
 		},
-		Messages: []ChatMessage{{ID: "msg-7", ContactID: "contact-4", Direction: "inbound", Type: "text", Body: "Are you open today?", Status: "received", CreatedAt: now.Add(-22 * time.Minute)}},
+		Messages:   []ChatMessage{{ID: "msg-7", ContactID: "contact-4", Direction: "inbound", Type: "text", Body: "Are you open today?", Status: "received", CreatedAt: now.Add(-22 * time.Minute)}},
 		UserStates: map[string]*ContactUserState{"1": {}},
 	}
 
 	return &OrgData{
 		General: GeneralSettings{
-			OrganizationName: "Local Store",
-			Slug:             "local-store",
-			Timezone:         "Africa/Cairo",
-			DateFormat:       "DD/MM/YYYY",
-			Locale:           "ar",
-			MaskPhoneNumbers: true,
-			TenantStatus:     "active",
-			ActiveMembers:    1,
-			MaxMembers:       5,
-			UsedInstances:    1,
-			MaxInstances:     2,
-			StorageUsedLabel: "640 MB",
+			OrganizationName:  "Local Store",
+			Slug:              "local-store",
+			Timezone:          "Africa/Cairo",
+			DateFormat:        "DD/MM/YYYY",
+			Locale:            "ar",
+			MaskPhoneNumbers:  true,
+			TenantStatus:      "active",
+			ActiveMembers:     1,
+			MaxMembers:        5,
+			UsedInstances:     1,
+			MaxInstances:      2,
+			StorageUsedLabel:  "640 MB",
 			StorageLimitLabel: "5 GiB",
 		},
 		Appearance: AppearanceSettings{ColorMode: "light", ThemePreset: "amber-minimal"},
@@ -700,12 +719,20 @@ func seedSecondaryOrg(now time.Time) *OrgData {
 			Timezone:      "Africa/Cairo",
 			LastJobStatus: "never-run",
 		},
-		Contacts: map[string]*ConversationRecord{record.Contact.ID: record},
+		Contacts:  map[string]*ConversationRecord{record.Contact.ID: record},
 		Instances: map[string]*WhatsAppInstance{inst.ID: inst},
 		QuickReplies: []QuickReply{
 			{ID: "qr-4", Shortcut: "/hours", Title: "Working hours", Body: "We are open from 10 AM to 10 PM every day."},
 		},
-		Users: users,
+		Users:      users,
+		License:    seedLicenseRecord(now, "org-2", "Local Store", 6, 2, 2),
+		Campaigns:  seedSecondaryCampaigns(now),
+		Jobs:       []BackgroundJob{},
+		Webhooks:   seedDefaultWebhooks(),
+		Deliveries: []WebhookDelivery{},
+		Outbox:     []OutboxEvent{},
+		Audit:      []AuditLogEntry{},
+		Ratings:    seedSecondaryRatings(now),
 	}
 }
 
@@ -912,10 +939,10 @@ func (s *Store) Workspace(orgID, userID, contactID, tab, search, instanceID, tag
 
 		selected = &ConversationDetail{
 			Contact:       s.decoratedContact(org, record, userID),
-			Messages:      slices.Clone(record.Messages),
-			Notes:         slices.Clone(record.Notes),
-			Collaborators: slices.Clone(record.Collaborators),
-			Events:        slices.Clone(record.Events),
+			Messages:      append([]ChatMessage{}, record.Messages...),
+			Notes:         append([]ConversationNote{}, record.Notes...),
+			Collaborators: append([]Collaborator{}, record.Collaborators...),
+			Events:        append([]TimelineEvent{}, record.Events...),
 		}
 	}
 
@@ -1016,6 +1043,20 @@ func previewForMessage(message ChatMessage) string {
 	return body
 }
 
+func normalizePhoneNumber(phone string) string {
+	var builder strings.Builder
+	for i, r := range strings.TrimSpace(phone) {
+		if r >= '0' && r <= '9' {
+			builder.WriteRune(r)
+			continue
+		}
+		if r == '+' && i == 0 {
+			builder.WriteRune(r)
+		}
+	}
+	return builder.String()
+}
+
 func (s *Store) actorName(org *OrgData, userID string) string {
 	if user, ok := org.Users[userID]; ok {
 		return user.Name
@@ -1041,16 +1082,17 @@ func (s *Store) SendOutgoingMessage(orgID, userID, contactID string, req SendMes
 	}
 
 	message := ChatMessage{
-		ID:        s.next("msg"),
-		ContactID: contactID,
-		Direction: "outbound",
-		Type:      req.Type,
-		Body:      strings.TrimSpace(req.Body),
-		FileName:  strings.TrimSpace(req.FileName),
-		MediaURL:  strings.TrimSpace(req.MediaURL),
-		CreatedAt: time.Now(),
-		CanRetry:  true,
-		CanRevoke: true,
+		ID:            s.next("msg"),
+		ContactID:     contactID,
+		Direction:     "outbound",
+		Type:          req.Type,
+		Body:          strings.TrimSpace(req.Body),
+		FileName:      strings.TrimSpace(req.FileName),
+		FileSizeLabel: strings.TrimSpace(req.FileSizeLabel),
+		MediaURL:      strings.TrimSpace(req.MediaURL),
+		CreatedAt:     time.Now(),
+		CanRetry:      true,
+		CanRevoke:     true,
 	}
 	if message.Type == "" {
 		message.Type = "text"
@@ -1086,8 +1128,135 @@ func (s *Store) SendOutgoingMessage(orgID, userID, contactID string, req SendMes
 		OccurredAt:  message.CreatedAt,
 		Metadata:    map[string]string{"message_id": message.ID, "status": message.Status},
 	})
+	s.recordAuditUnlocked(org, userID, s.actorName(org, userID), "messages.send", "message", message.ID, "Queued an outbound message.", map[string]string{
+		"contact_id": contactID,
+		"status":     message.Status,
+		"type":       message.Type,
+	})
+	s.recordOutboxUnlocked(org, "messages.outbound", "message", message.ID, map[string]string{
+		"contact_id": contactID,
+		"status":     message.Status,
+		"type":       message.Type,
+	}, message.Status == "failed")
 
 	return message, nil
+}
+
+func (s *Store) CreateDirectChat(orgID, userID string, req StartDirectChatRequest) (ChatContact, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	org, ok := s.orgs[orgID]
+	if !ok {
+		return ChatContact{}, errors.New("organization not found")
+	}
+
+	phone := normalizePhoneNumber(req.PhoneNumber)
+	if phone == "" {
+		return ChatContact{}, errors.New("phone number is required")
+	}
+
+	instanceID := strings.TrimSpace(req.InstanceID)
+	if instanceID == "" {
+		for _, instance := range org.Instances {
+			instanceID = instance.ID
+			break
+		}
+	}
+
+	instance, ok := org.Instances[instanceID]
+	if !ok {
+		return ChatContact{}, errors.New("instance not found")
+	}
+
+	for _, record := range org.Contacts {
+		if normalizePhoneNumber(record.Contact.PhoneNumber) != phone || record.Contact.InstanceID != instanceID {
+			continue
+		}
+		state := s.ensureUserState(record, userID)
+		state.IsHidden = false
+		record.Contact.Status = "assigned"
+		record.Contact.AssignedUserID = userID
+		record.Contact.AssignedUserName = s.actorName(org, userID)
+		record.Contact.LastMessageAt = time.Now()
+		s.recordAuditUnlocked(org, userID, s.actorName(org, userID), "chat.direct.resume", "contact", record.Contact.ID, "Re-used an existing direct chat.", map[string]string{
+			"instance_id": instanceID,
+		})
+		s.recordOutboxUnlocked(org, "chat.direct.resumed", "contact", record.Contact.ID, map[string]string{
+			"instance_id": instanceID,
+		}, false)
+		return s.decoratedContact(org, record, userID), nil
+	}
+
+	now := time.Now()
+	name := strings.TrimSpace(req.ProfileName)
+	if name == "" {
+		name = phone
+	}
+
+	contactID := s.next("contact")
+	record := &ConversationRecord{
+		Contact: ChatContact{
+			ID:                  contactID,
+			OrganizationID:      orgID,
+			Name:                name,
+			PhoneNumber:         phone,
+			Avatar:              "https://i.pravatar.cc/150?u=" + contactID,
+			Status:              "assigned",
+			AssignedUserID:      userID,
+			AssignedUserName:    s.actorName(org, userID),
+			InstanceID:          instance.ID,
+			InstanceName:        instance.Name,
+			InstanceSourceLabel: instance.Settings.SourceTagLabel,
+			LastMessagePreview:  "Direct chat ready for the first outbound message.",
+			LastMessageAt:       now,
+			IsPublic:            true,
+			IsRead:              true,
+			Tags:                []string{"direct"},
+			Metadata:            map[string]string{"created_via": "direct_chat"},
+		},
+		Messages:      []ChatMessage{},
+		Notes:         []ConversationNote{},
+		Collaborators: []Collaborator{},
+		Events: []TimelineEvent{
+			{
+				ID:          s.next("event"),
+				EventType:   "direct_chat_created",
+				ActorUserID: userID,
+				ActorName:   s.actorName(org, userID),
+				Summary:     "Started a direct chat",
+				OccurredAt:  now,
+				Metadata: map[string]string{
+					"instance_id": instance.ID,
+				},
+			},
+		},
+		UserStates: map[string]*ContactUserState{
+			userID: {
+				LastOpenedAt: now,
+				LastSeenAt:   now,
+			},
+		},
+	}
+
+	org.Contacts[contactID] = record
+	s.addOrgNotification(org, UserNotification{
+		ID:               s.next("notif"),
+		Title:            "Direct chat started",
+		Body:             fmt.Sprintf("A new direct chat with %s was created on %s.", name, instance.Name),
+		Severity:         "info",
+		RelatedContactID: contactID,
+		RelatedPath:      "/chat/" + contactID,
+		CreatedAt:        now,
+	})
+	s.recordAuditUnlocked(org, userID, s.actorName(org, userID), "chat.direct.create", "contact", contactID, "Started a direct chat.", map[string]string{
+		"instance_id": instance.ID,
+	})
+	s.recordOutboxUnlocked(org, "chat.direct.created", "contact", contactID, map[string]string{
+		"instance_id": instance.ID,
+	}, false)
+
+	return s.decoratedContact(org, record, userID), nil
 }
 
 func (s *Store) RetryMessage(orgID, userID, contactID, messageID string) (ChatMessage, error) {
@@ -1383,6 +1552,10 @@ func (s *Store) Close(orgID, actorID, contactID string) (ChatContact, error) {
 		OccurredAt:  now,
 		Metadata:    map[string]string{},
 	})
+	s.recordAuditUnlocked(org, actorID, s.actorName(org, actorID), "chat.close", "contact", contactID, "Closed a conversation.", nil)
+	s.recordOutboxUnlocked(org, "chat.closed", "contact", contactID, map[string]string{
+		"closed_at": now.Format(time.RFC3339),
+	}, false)
 
 	return s.decoratedContact(org, record, actorID), nil
 }
@@ -1400,6 +1573,7 @@ func (s *Store) Reopen(orgID, actorID, contactID string) (ChatContact, error) {
 		return ChatContact{}, errors.New("conversation not found")
 	}
 
+	now := time.Now()
 	record.Contact.Status = "pending"
 	record.Contact.ClosedAt = nil
 	s.addConversationEvent(record, TimelineEvent{
@@ -1408,9 +1582,13 @@ func (s *Store) Reopen(orgID, actorID, contactID string) (ChatContact, error) {
 		ActorUserID: actorID,
 		ActorName:   s.actorName(org, actorID),
 		Summary:     "Reopened the conversation",
-		OccurredAt:  time.Now(),
+		OccurredAt:  now,
 		Metadata:    map[string]string{},
 	})
+	s.recordAuditUnlocked(org, actorID, s.actorName(org, actorID), "chat.reopen", "contact", contactID, "Reopened a conversation.", nil)
+	s.recordOutboxUnlocked(org, "chat.reopened", "contact", contactID, map[string]string{
+		"reopened_at": now.Format(time.RFC3339),
+	}, false)
 
 	return s.decoratedContact(org, record, actorID), nil
 }
@@ -1515,12 +1693,16 @@ func (s *Store) UpdateGeneral(orgID string, req GeneralSettings) (GeneralSetting
 	if !ok {
 		return GeneralSettings{}, errors.New("organization not found")
 	}
+	previousTimezone := org.General.Timezone
 	org.General.OrganizationName = strings.TrimSpace(req.OrganizationName)
 	org.General.Slug = strings.TrimSpace(req.Slug)
 	org.General.Timezone = req.Timezone
 	org.General.DateFormat = req.DateFormat
 	org.General.Locale = req.Locale
 	org.General.MaskPhoneNumbers = req.MaskPhoneNumbers
+	if org.Cleanup.Timezone == "" || org.Cleanup.Timezone == previousTimezone {
+		org.Cleanup.Timezone = req.Timezone
+	}
 	return org.General, nil
 }
 
@@ -1560,6 +1742,51 @@ func (s *Store) UpdateNotificationsSettings(orgID string, req NotificationSettin
 	return org.Notifications, nil
 }
 
+func (s *Store) UpdateCleanupSettings(orgID, actorID string, req CleanupSettings) (CleanupSettings, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	org, ok := s.orgs[orgID]
+	if !ok {
+		return CleanupSettings{}, errors.New("organization not found")
+	}
+
+	if req.RetentionDays < 0 {
+		return CleanupSettings{}, errors.New("retention days must be 0 or greater")
+	}
+	if req.RunHour < 0 || req.RunHour > 23 {
+		return CleanupSettings{}, errors.New("cleanup hour must be between 0 and 23")
+	}
+
+	org.Cleanup.RetentionDays = req.RetentionDays
+	org.Cleanup.RunHour = req.RunHour
+	if strings.TrimSpace(req.Timezone) != "" {
+		org.Cleanup.Timezone = strings.TrimSpace(req.Timezone)
+	} else if strings.TrimSpace(org.Cleanup.Timezone) == "" {
+		org.Cleanup.Timezone = org.General.Timezone
+	}
+
+	s.addOrgNotification(org, UserNotification{
+		ID:          s.next("notif"),
+		Title:       "Cleanup schedule updated",
+		Body:        fmt.Sprintf("Uploads cleanup now runs daily at %02d:00 with %d-day retention.", org.Cleanup.RunHour, org.Cleanup.RetentionDays),
+		Severity:    "info",
+		RelatedPath: "/settings",
+		CreatedAt:   time.Now(),
+	})
+	s.recordAuditUnlocked(org, actorID, s.actorName(org, actorID), "settings.cleanup.update", "cleanup", orgID, "Updated the uploads cleanup schedule.", map[string]string{
+		"retention_days": strconv.Itoa(org.Cleanup.RetentionDays),
+		"run_hour":       strconv.Itoa(org.Cleanup.RunHour),
+		"timezone":       org.Cleanup.Timezone,
+	})
+	s.recordOutboxUnlocked(org, "settings.cleanup.updated", "cleanup", orgID, map[string]string{
+		"retention_days": strconv.Itoa(org.Cleanup.RetentionDays),
+		"run_hour":       strconv.Itoa(org.Cleanup.RunHour),
+	}, false)
+
+	return org.Cleanup, nil
+}
+
 func (s *Store) RunCleanup(orgID, actorID string) (CleanupJob, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -1571,18 +1798,27 @@ func (s *Store) RunCleanup(orgID, actorID string) (CleanupJob, error) {
 
 	start := time.Now()
 	finish := start.Add(2 * time.Second)
+	job := s.recordJobUnlocked(org, "uploads_cleanup", "cleanup", orgID, "Running uploads cleanup.")
 	org.Cleanup.LastRunAt = &finish
 	org.Cleanup.LastJobStatus = "completed"
 	s.addOrgNotification(org, UserNotification{
-		ID:        s.next("notif"),
-		Title:     "Uploads cleanup finished",
-		Body:      "Cleanup completed successfully and archived expired uploads.",
-		Severity:  "success",
+		ID:          s.next("notif"),
+		Title:       "Uploads cleanup finished",
+		Body:        "Cleanup completed successfully and archived expired uploads.",
+		Severity:    "success",
 		RelatedPath: "/settings",
-		CreatedAt: finish,
+		CreatedAt:   finish,
 	})
+	s.finishJobUnlocked(org, job.ID, "completed", "")
+	s.recordAuditUnlocked(org, actorID, s.actorName(org, actorID), "settings.cleanup.run", "cleanup", orgID, "Ran uploads cleanup manually.", map[string]string{
+		"job_id": job.ID,
+	})
+	s.recordOutboxUnlocked(org, "settings.cleanup.completed", "cleanup", orgID, map[string]string{
+		"job_id": job.ID,
+		"status": "completed",
+	}, false)
 
-	return CleanupJob{ID: s.next("job"), Status: "completed", StartedAt: start, FinishedAt: finish}, nil
+	return CleanupJob{ID: job.ID, Status: "completed", StartedAt: start, FinishedAt: finish}, nil
 }
 
 func (s *Store) ListInstances(orgID string) ([]WhatsAppInstance, error) {
@@ -1630,7 +1866,7 @@ func (s *Store) ListInstanceHealth(orgID string) ([]InstanceHealthSummary, error
 	return summaries, nil
 }
 
-func (s *Store) CreateInstance(orgID string, req CreateInstanceRequest) (WhatsAppInstance, error) {
+func (s *Store) CreateInstance(orgID, actorID string, req CreateInstanceRequest) (WhatsAppInstance, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -1667,17 +1903,23 @@ func (s *Store) CreateInstance(orgID string, req CreateInstanceRequest) (WhatsAp
 			ReplyMode:    "reject_without_message",
 			ScheduleMode: "always_on",
 		},
-		AutoCampaign: InstanceAutoCampaign{CampaignStatus: "draft"},
-		RatingSettings: InstanceRatingSettings{FollowUpWindowMinutes: 15},
+		AutoCampaign:    InstanceAutoCampaign{CampaignStatus: "draft"},
+		RatingSettings:  InstanceRatingSettings{FollowUpWindowMinutes: 15},
 		AssignmentReset: InstanceAssignmentReset{ScheduleMode: "midnight", Timezone: org.General.Timezone},
 	}
 
 	org.Instances[instance.ID] = &instance
 	org.General.UsedInstances = len(org.Instances)
+	s.recordAuditUnlocked(org, actorID, s.actorName(org, actorID), "instances.create", "instance", instance.ID, "Created a WhatsApp account.", map[string]string{
+		"name": instance.Name,
+	})
+	s.recordOutboxUnlocked(org, "instances.created", "instance", instance.ID, map[string]string{
+		"name": instance.Name,
+	}, false)
 	return instance, nil
 }
 
-func (s *Store) UpdateInstanceName(orgID, instanceID, name string) (WhatsAppInstance, error) {
+func (s *Store) UpdateInstanceName(orgID, actorID, instanceID, name string) (WhatsAppInstance, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -1690,6 +1932,12 @@ func (s *Store) UpdateInstanceName(orgID, instanceID, name string) (WhatsAppInst
 		return WhatsAppInstance{}, errors.New("instance not found")
 	}
 	instance.Name = strings.TrimSpace(name)
+	s.recordAuditUnlocked(org, actorID, s.actorName(org, actorID), "instances.rename", "instance", instanceID, "Updated the account name.", map[string]string{
+		"name": instance.Name,
+	})
+	s.recordOutboxUnlocked(org, "instances.renamed", "instance", instanceID, map[string]string{
+		"name": instance.Name,
+	}, false)
 	return *instance, nil
 }
 
@@ -1715,13 +1963,19 @@ func (s *Store) ConnectInstance(orgID, actorID, instanceID string) (WhatsAppInst
 	instance.Health.UptimeLabel = "1m"
 
 	s.addOrgNotification(org, UserNotification{
-		ID:        s.next("notif"),
-		Title:     "Instance connected",
-		Body:      fmt.Sprintf("%s is connected and ready to send.", instance.Name),
-		Severity:  "success",
+		ID:          s.next("notif"),
+		Title:       "Instance connected",
+		Body:        fmt.Sprintf("%s is connected and ready to send.", instance.Name),
+		Severity:    "success",
 		RelatedPath: "/settings/instances",
-		CreatedAt: time.Now(),
+		CreatedAt:   time.Now(),
 	})
+	s.recordAuditUnlocked(org, actorID, s.actorName(org, actorID), "instances.connect", "instance", instanceID, "Connected a WhatsApp account.", map[string]string{
+		"name": instance.Name,
+	})
+	s.recordOutboxUnlocked(org, "instances.connected", "instance", instanceID, map[string]string{
+		"name": instance.Name,
+	}, false)
 
 	var inbound *ChatMessage
 	for _, record := range org.Contacts {
@@ -1749,7 +2003,7 @@ func (s *Store) ConnectInstance(orgID, actorID, instanceID string) (WhatsAppInst
 	return *instance, inbound, nil
 }
 
-func (s *Store) DisconnectInstance(orgID, instanceID string) (WhatsAppInstance, error) {
+func (s *Store) DisconnectInstance(orgID, actorID, instanceID string) (WhatsAppInstance, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -1768,10 +2022,16 @@ func (s *Store) DisconnectInstance(orgID, instanceID string) (WhatsAppInstance, 
 	instance.Health.Status = "disconnected"
 	instance.Health.ObservedAt = time.Now()
 	instance.Health.UptimeLabel = "0m"
+	s.recordAuditUnlocked(org, actorID, s.actorName(org, actorID), "instances.disconnect", "instance", instanceID, "Disconnected a WhatsApp account.", map[string]string{
+		"name": instance.Name,
+	})
+	s.recordOutboxUnlocked(org, "instances.disconnected", "instance", instanceID, map[string]string{
+		"name": instance.Name,
+	}, false)
 	return *instance, nil
 }
 
-func (s *Store) RecoverInstance(orgID, instanceID string) (WhatsAppInstance, error) {
+func (s *Store) RecoverInstance(orgID, actorID, instanceID string) (WhatsAppInstance, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -1788,10 +2048,16 @@ func (s *Store) RecoverInstance(orgID, instanceID string) (WhatsAppInstance, err
 	instance.PairingState = "reconnecting"
 	instance.Health.Status = "recovering"
 	instance.Health.ObservedAt = time.Now()
+	s.recordAuditUnlocked(org, actorID, s.actorName(org, actorID), "instances.recover", "instance", instanceID, "Started account recovery.", map[string]string{
+		"name": instance.Name,
+	})
+	s.recordOutboxUnlocked(org, "instances.recovery_started", "instance", instanceID, map[string]string{
+		"name": instance.Name,
+	}, false)
 	return *instance, nil
 }
 
-func (s *Store) UpdateInstanceSettings(orgID, instanceID string, req InstanceSettings) (WhatsAppInstance, error) {
+func (s *Store) UpdateInstanceSettings(orgID, actorID, instanceID string, req InstanceSettings) (WhatsAppInstance, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -1804,10 +2070,16 @@ func (s *Store) UpdateInstanceSettings(orgID, instanceID string, req InstanceSet
 		return WhatsAppInstance{}, errors.New("instance not found")
 	}
 	instance.Settings = req
+	s.recordAuditUnlocked(org, actorID, s.actorName(org, actorID), "instances.settings.update", "instance", instanceID, "Updated instance settings.", map[string]string{
+		"source_tag_label": instance.Settings.SourceTagLabel,
+	})
+	s.recordOutboxUnlocked(org, "instances.settings.updated", "instance", instanceID, map[string]string{
+		"source_tag_label": instance.Settings.SourceTagLabel,
+	}, false)
 	return *instance, nil
 }
 
-func (s *Store) UpdateInstanceCallPolicy(orgID, instanceID string, req InstanceCallPolicy) (WhatsAppInstance, error) {
+func (s *Store) UpdateInstanceCallPolicy(orgID, actorID, instanceID string, req InstanceCallPolicy) (WhatsAppInstance, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -1820,10 +2092,16 @@ func (s *Store) UpdateInstanceCallPolicy(orgID, instanceID string, req InstanceC
 		return WhatsAppInstance{}, errors.New("instance not found")
 	}
 	instance.CallPolicy = req
+	s.recordAuditUnlocked(org, actorID, s.actorName(org, actorID), "instances.call_policy.update", "instance", instanceID, "Updated the call auto-reject policy.", map[string]string{
+		"reply_mode": instance.CallPolicy.ReplyMode,
+	})
+	s.recordOutboxUnlocked(org, "instances.call_policy.updated", "instance", instanceID, map[string]string{
+		"reply_mode": instance.CallPolicy.ReplyMode,
+	}, false)
 	return *instance, nil
 }
 
-func (s *Store) UpdateInstanceAutoCampaign(orgID, instanceID string, req InstanceAutoCampaign) (WhatsAppInstance, error) {
+func (s *Store) UpdateInstanceAutoCampaign(orgID, actorID, instanceID string, req InstanceAutoCampaign) (WhatsAppInstance, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -1836,5 +2114,12 @@ func (s *Store) UpdateInstanceAutoCampaign(orgID, instanceID string, req Instanc
 		return WhatsAppInstance{}, errors.New("instance not found")
 	}
 	instance.AutoCampaign = req
+	s.syncAutoCampaignUnlocked(org, instanceID)
+	s.recordAuditUnlocked(org, actorID, s.actorName(org, actorID), "instances.auto_campaign.update", "instance", instanceID, "Updated linked account automation.", map[string]string{
+		"enabled": strconv.FormatBool(instance.AutoCampaign.Enabled),
+	})
+	s.recordOutboxUnlocked(org, "instances.auto_campaign.updated", "instance", instanceID, map[string]string{
+		"enabled": strconv.FormatBool(instance.AutoCampaign.Enabled),
+	}, false)
 	return *instance, nil
 }

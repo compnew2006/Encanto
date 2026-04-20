@@ -9,10 +9,16 @@
 	let error = $state('');
 	let success = $state('');
 	let activeTab = $state<SettingsTab>('general');
+	let isAdmin = $state(false);
 
 	onMount(async () => {
 		try {
-			settings = await apiFetch<SettingsSummary>('/api/settings/summary');
+			const [settingsResponse, meResponse] = await Promise.all([
+				apiFetch<SettingsSummary>('/api/settings/summary'),
+				apiFetch<{ user: { role: string } }>('/api/me')
+			]);
+			settings = settingsResponse;
+			isAdmin = meResponse.user.role === 'admin';
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to load settings.';
 		} finally {
@@ -44,6 +50,11 @@
 		}
 	}
 
+	async function saveCleanupSettings() {
+		if (!settings) return;
+		await save('/api/settings/uploads-cleanup', settings.cleanup, 'Cleanup schedule saved.');
+	}
+
 	async function saveGeneralSettings() {
 		if (!settings) return;
 		await save('/api/settings/general', settings.general, 'General settings saved.');
@@ -73,6 +84,29 @@
 			<p class="mt-2 text-sm text-gray-500">General, appearance, chat, and notification settings that persist and alter the product surface.</p>
 		</div>
 		<a href="/settings/instances" class="rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:border-blue-300 hover:text-blue-700">Open Account Operations</a>
+	</div>
+
+	<div class="mb-6 grid gap-3 md:grid-cols-4">
+		<a href="/settings/contacts" class="rounded-[1.75rem] border border-gray-200 bg-white px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300">
+			<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Milestone 11</p>
+			<h2 class="mt-2 text-base font-semibold text-gray-900">Contacts</h2>
+			<p class="mt-2 text-sm text-gray-500">Search, create, edit, export, and import the shared contacts directory.</p>
+		</a>
+		<a href="/settings/closed-chats" class="rounded-[1.75rem] border border-gray-200 bg-white px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300">
+			<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Milestone 11</p>
+			<h2 class="mt-2 text-base font-semibold text-gray-900">Closed Chats</h2>
+			<p class="mt-2 text-sm text-gray-500">Review closed conversations, filter them, and reopen a chat directly into the inbox.</p>
+		</a>
+		<a href="/settings/license" class="rounded-[1.75rem] border border-gray-200 bg-white px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300">
+			<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Milestone 12</p>
+			<h2 class="mt-2 text-base font-semibold text-gray-900">License</h2>
+			<p class="mt-2 text-sm text-gray-500">Inspect HWID, quotas, cleanup restrictions, and activate offline license keys.</p>
+		</a>
+		<a href="/settings/audit" class="rounded-[1.75rem] border border-gray-200 bg-white px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300">
+			<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Milestone 15</p>
+			<h2 class="mt-2 text-base font-semibold text-gray-900">Audit & Reliability</h2>
+			<p class="mt-2 text-sm text-gray-500">Inspect job runs, webhook delivery retries, and the administrative audit log.</p>
+		</a>
 	</div>
 
 	{#if error}
@@ -233,25 +267,49 @@
 					<div class="flex flex-wrap items-center justify-between gap-3">
 						<div>
 							<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Uploads Cleanup</p>
-							<p class="mt-1 text-sm text-gray-600">Run cleanup manually or review the scheduled configuration.</p>
+							<p class="mt-1 text-sm text-gray-600">Run cleanup manually or tune the daily retention schedule.</p>
 						</div>
-						<button data-testid="run-cleanup" class="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700" onclick={runCleanup}>Run Cleanup Now</button>
+						{#if isAdmin}
+							<button data-testid="run-cleanup" class="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700" onclick={runCleanup}>Run Cleanup Now</button>
+						{/if}
 					</div>
-					<div class="mt-4 grid gap-3 md:grid-cols-3 text-sm text-gray-600">
-						<div class="rounded-[1.5rem] bg-white px-4 py-3">
-							<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Retention</p>
-							<p class="mt-1">{settings.cleanup.retention_days} days</p>
-						</div>
-						<div class="rounded-[1.5rem] bg-white px-4 py-3">
-							<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Schedule</p>
-							<p class="mt-1">{settings.cleanup.run_hour}:00 {settings.cleanup.timezone}</p>
-						</div>
-						<div class="rounded-[1.5rem] bg-white px-4 py-3">
+					<div class="mt-4 grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+						<label class="rounded-[1.5rem] bg-white px-4 py-3">
+							<span class="text-xs font-semibold uppercase tracking-wide text-gray-400">Retention Days</span>
+							<input
+								data-testid="cleanup-retention-days"
+								bind:value={settings.cleanup.retention_days}
+								type="number"
+								min="0"
+								class="mt-2 w-full rounded-[1rem] border border-gray-200 px-3 py-2 text-sm text-gray-700 outline-none focus:border-blue-400"
+							/>
+							<p class="mt-2 text-xs text-gray-500">Set `0` to stop automatic deletion.</p>
+						</label>
+						<label class="rounded-[1.5rem] bg-white px-4 py-3">
+							<span class="text-xs font-semibold uppercase tracking-wide text-gray-400">Daily Cleanup Hour</span>
+							<input
+								data-testid="cleanup-run-hour"
+								bind:value={settings.cleanup.run_hour}
+								type="number"
+								min="0"
+								max="23"
+								class="mt-2 w-full rounded-[1rem] border border-gray-200 px-3 py-2 text-sm text-gray-700 outline-none focus:border-blue-400"
+							/>
+							<p class="mt-2 text-xs text-gray-500">Runs using the organization timezone from General settings.</p>
+						</label>
+						<div class="rounded-[1.5rem] bg-white px-4 py-3 text-sm text-gray-600">
 							<p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Last Run</p>
-							<p class="mt-1">{formatDateTime(settings.cleanup.last_run_at)}</p>
-							<p class="text-xs text-gray-400">{settings.cleanup.last_job_status}</p>
+							<p class="mt-2">{formatDateTime(settings.cleanup.last_run_at)}</p>
+							<p class="mt-1 text-xs text-gray-400">{settings.cleanup.last_job_status}</p>
+							<p class="mt-4 text-xs font-semibold uppercase tracking-wide text-gray-400">Timezone</p>
+							<p class="mt-2">{settings.cleanup.timezone}</p>
 						</div>
 					</div>
+					{#if isAdmin}
+						<button data-testid="save-cleanup-settings" class="mt-4 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-medium text-white" onclick={saveCleanupSettings}>Save Cleanup Schedule</button>
+					{:else}
+						<p class="mt-4 text-sm text-amber-700">Cleanup schedule controls are restricted to admins in the current organization.</p>
+					{/if}
 				</div>
 			</section>
 		</div>

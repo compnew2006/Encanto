@@ -1,11 +1,10 @@
 import { fail, redirect, isRedirect } from '@sveltejs/kit';
-import { env } from '$env/dynamic/public';
+import { resolveApiBaseForHost } from '$lib/api-base';
 import type { Actions } from './$types';
 
-const API_BASE = (env.PUBLIC_API_BASE || 'http://127.0.0.1:8080').replace(/\/$/, '');
-
 export const actions = {
-	default: async ({ request, cookies }) => {
+	default: async ({ request, cookies, url }) => {
+		const API_BASE = resolveApiBaseForHost(url.hostname, url.protocol);
 		const data = await request.formData();
 		const email = data.get('email');
 		const password = data.get('password');

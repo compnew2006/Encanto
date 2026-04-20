@@ -1,32 +1,16 @@
 package api
 
 import (
+	"context"
 	"net/http"
-	"time"
 
 	"github.com/go-chi/chi/v5"
+	"go.mau.fi/whatsmeow/store"
+	"go.mau.fi/whatsmeow/types"
 )
-
-type CreateInstanceRequest struct {
-	Name        string `json:"name"`
-	PhoneNumber string `json:"phone_number"`
-}
 
 type UpdateInstanceNameRequest struct {
 	Name string `json:"name"`
-}
-
-type InstanceHealthSummary struct {
-	ID            string    `json:"id"`
-	Name          string    `json:"name"`
-	Status        string    `json:"status"`
-	UptimeLabel   string    `json:"uptime_label"`
-	QueueDepth    int       `json:"queue_depth"`
-	SentToday     int       `json:"sent_today"`
-	ReceivedToday int       `json:"received_today"`
-	FailedToday   int       `json:"failed_today"`
-	ErrorRate     string    `json:"error_rate"`
-	ObservedAt    time.Time `json:"observed_at"`
 }
 
 func (s *Server) ListInstances(w http.ResponseWriter, r *http.Request) {
@@ -53,12 +37,21 @@ func (s *Server) CreateInstance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+	if !s.requireLicensedWrite(w, r, "instances") {
+		return
+	}
+
 	var req CreateInstanceRequest
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return
 	}
-	instance, err := s.store.CreateInstance(currentOrgID(r), req)
+	instance, err := s.store.CreateInstance(currentOrgID(r), claims.UserID, req)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
@@ -72,12 +65,18 @@ func (s *Server) UpdateInstanceName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
 	var req UpdateInstanceNameRequest
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return
 	}
-	instance, err := s.store.UpdateInstanceName(currentOrgID(r), chi.URLParam(r, "instanceID"), req.Name)
+	instance, err := s.store.UpdateInstanceName(currentOrgID(r), claims.UserID, chi.URLParam(r, "instanceID"), req.Name)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
@@ -91,37 +90,72 @@ func (s *Server) ConnectInstance(w http.ResponseWriter, r *http.Request) {
 		errorJSON(w, http.StatusUnauthorized, err.Error())
 		return
 	}
-	if !s.isAdmin(currentOrgID(r)) {
+	orgID := currentOrgID(r)
+	if !s.isAdmin(orgID) {
 		errorJSON(w, http.StatusForbidden, "admin privileges required")
 		return
 	}
 
-	instance, inbound, err := s.store.ConnectInstance(currentOrgID(r), claims.UserID, chi.URLParam(r, "instanceID"))
+	instanceID := chi.URLParam(r, "instanceID")
+	inst, err := s.store.getInstanceByID(instanceID)
+	if err != nil {
+		errorJSON(w, http.StatusNotFound, "instance not found")
+		return
+	}
+
+	// 1. Get or create deviceStore
+	var device *store.Device
+	if inst.JID != "" {
+		jid, err := types.ParseJID(inst.JID)
+		if err == nil {
+			device, _ = s.store.waContainer.GetDevice(context.Background(), jid)
+		}
+	}
+	if device == nil {
+		device = s.store.waContainer.NewDevice()
+	}
+
+	// 2. Start the instance via manager
+	err = s.WhatsApp.StartInstance(orgID, instanceID, device)
+	if err != nil {
+		errorJSON(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// 3. Mark as connecting in DB
+	updated, err := s.store.ConnectInstance(orgID, claims.UserID, instanceID)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	s.hub.Publish(currentOrgID(r), "instance_connected", map[string]any{"instance": instance})
-	if inbound != nil {
-		s.hub.Publish(currentOrgID(r), "new_message", map[string]any{"contact_id": inbound.ContactID, "message": inbound})
-	}
-	writeJSON(w, http.StatusOK, map[string]any{"instance": instance, "inbound_message": inbound})
+	writeJSON(w, http.StatusOK, map[string]any{"instance": updated})
 }
 
 func (s *Server) DisconnectInstance(w http.ResponseWriter, r *http.Request) {
-	if !s.isAdmin(currentOrgID(r)) {
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+	orgID := currentOrgID(r)
+	if !s.isAdmin(orgID) {
 		errorJSON(w, http.StatusForbidden, "admin privileges required")
 		return
 	}
 
-	instance, err := s.store.DisconnectInstance(currentOrgID(r), chi.URLParam(r, "instanceID"))
+	instanceID := chi.URLParam(r, "instanceID")
+
+	// 1. Stop via manager
+	s.WhatsApp.StopInstance(instanceID)
+
+	// 2. Mark as disconnected in DB
+	instance, err := s.store.DisconnectInstance(orgID, claims.UserID, instanceID)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	s.hub.Publish(currentOrgID(r), "instance_disconnected", map[string]any{"instance": instance})
 	writeJSON(w, http.StatusOK, map[string]any{"instance": instance})
 }
 
@@ -131,7 +165,13 @@ func (s *Server) RecoverInstance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	instance, err := s.store.RecoverInstance(currentOrgID(r), chi.URLParam(r, "instanceID"))
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	instance, err := s.store.RecoverInstance(currentOrgID(r), claims.UserID, chi.URLParam(r, "instanceID"))
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
@@ -147,12 +187,18 @@ func (s *Server) UpdateInstanceSettings(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
 	var req InstanceSettings
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return
 	}
-	instance, err := s.store.UpdateInstanceSettings(currentOrgID(r), chi.URLParam(r, "instanceID"), req)
+	instance, err := s.store.UpdateInstanceSettings(currentOrgID(r), claims.UserID, chi.URLParam(r, "instanceID"), req)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
@@ -166,12 +212,18 @@ func (s *Server) UpdateInstanceCallPolicy(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
 	var req InstanceCallPolicy
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return
 	}
-	instance, err := s.store.UpdateInstanceCallPolicy(currentOrgID(r), chi.URLParam(r, "instanceID"), req)
+	instance, err := s.store.UpdateInstanceCallPolicy(currentOrgID(r), claims.UserID, chi.URLParam(r, "instanceID"), req)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
@@ -185,12 +237,18 @@ func (s *Server) UpdateInstanceAutoCampaign(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	claims, err := currentClaims(r)
+	if err != nil {
+		errorJSON(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
 	var req InstanceAutoCampaign
 	if err := decodeJSON(r, &req); err != nil {
 		errorJSON(w, http.StatusBadRequest, "invalid request payload")
 		return
 	}
-	instance, err := s.store.UpdateInstanceAutoCampaign(currentOrgID(r), chi.URLParam(r, "instanceID"), req)
+	instance, err := s.store.UpdateInstanceAutoCampaign(currentOrgID(r), claims.UserID, chi.URLParam(r, "instanceID"), req)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, err.Error())
 		return
