@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -10,8 +11,8 @@ import (
 	"go.mau.fi/whatsmeow/store"
 	"go.mau.fi/whatsmeow/types"
 	"go.mau.fi/whatsmeow/types/events"
-	"google.golang.org/protobuf/proto"
 	"go.mau.fi/whatsmeow/proto/waE2E"
+	"google.golang.org/protobuf/proto"
 )
 
 type WhatsAppManager struct {
@@ -191,14 +192,12 @@ func (m *WhatsAppManager) resolveGroupName(client *whatsmeow.Client, chatJID typ
 	return strings.TrimSpace(info.Name)
 }
 
-func (m *WhatsAppManager) SendMessage(orgID, instanceID, phone, messageID, body string) {
+func (m *WhatsAppManager) sendText(instanceID, phone, body string) error {
 	client, ok := m.GetClient(instanceID)
 	if !ok {
-		_, _ = m.server.store.UpdateMessageStatus(orgID, messageID, "failed", "WhatsApp instance not found or not running")
-		return
+		return errors.New("WhatsApp instance not found or not running")
 	}
 
-	// Resolve JID. Usually phone @s.whatsapp.net, but could be @lid
 	server := types.DefaultUserServer
 	if len(phone) > 10 && !strings.Contains(phone, "@") && (phone[0:3] == "149" || len(phone) > 12) {
 		// Heuristic or check if it was previously identified as LID
@@ -210,6 +209,15 @@ func (m *WhatsAppManager) SendMessage(orgID, instanceID, phone, messageID, body 
 	_, err := client.SendMessage(context.Background(), targetJID, &waE2E.Message{
 		Conversation: proto.String(body),
 	})
+	return err
+}
+
+func (m *WhatsAppManager) SendCampaignMessage(instanceID, phone, body string) error {
+	return m.sendText(instanceID, phone, body)
+}
+
+func (m *WhatsAppManager) SendMessage(orgID, instanceID, phone, messageID, body string) {
+	err := m.sendText(instanceID, phone, body)
 
 	status := "sent"
 	reason := ""

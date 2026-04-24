@@ -1,88 +1,94 @@
-//go:build ignore
-
 package api
 
-import "testing"
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"errors"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
 
-func TestCreateDirectChatCreatesAssignedConversation(t *testing.T) {
-	store := NewStore()
-
-	contact, err := store.CreateDirectChat("org-1", "1", StartDirectChatRequest{
-		PhoneNumber: "+201566677788",
-		ProfileName: "QA Direct",
-		InstanceID:  "inst-1",
-	})
-	if err != nil {
-		t.Fatalf("CreateDirectChat returned error: %v", err)
+func TestNewServerInitializesComponents(t *testing.T) {
+	server := NewServer(nil)
+	if server == nil {
+		t.Fatal("expected server")
 	}
-
-	if contact.Name != "QA Direct" {
-		t.Fatalf("expected contact name to persist, got %q", contact.Name)
+	if server.hub == nil {
+		t.Fatal("expected realtime hub to be initialized")
 	}
-	if contact.Status != "assigned" {
-		t.Fatalf("expected new direct chat to be assigned, got %q", contact.Status)
-	}
-	if contact.AssignedUserID != "1" {
-		t.Fatalf("expected creator to own the chat, got %q", contact.AssignedUserID)
-	}
-
-	snapshot, err := store.Workspace("org-1", "1", contact.ID, "assigned", "", "", "")
-	if err != nil {
-		t.Fatalf("Workspace returned error: %v", err)
-	}
-	if snapshot.Selected == nil || snapshot.Selected.Contact.ID != contact.ID {
-		t.Fatalf("expected created chat to be selectable from workspace")
+	if server.WhatsApp == nil {
+		t.Fatal("expected WhatsApp manager to be initialized")
 	}
 }
 
-func TestUpdateCleanupSettingsValidatesAndPersists(t *testing.T) {
-	store := NewStore()
+func TestWriteJSONEncodesPayload(t *testing.T) {
+	recorder := httptest.NewRecorder()
 
-	if _, err := store.UpdateCleanupSettings("org-1", "1", CleanupSettings{RetentionDays: -1, RunHour: 3, Timezone: "Africa/Cairo"}); err == nil {
-		t.Fatalf("expected negative retention to fail validation")
-	}
-	if _, err := store.UpdateCleanupSettings("org-1", "1", CleanupSettings{RetentionDays: 7, RunHour: 25, Timezone: "Africa/Cairo"}); err == nil {
-		t.Fatalf("expected invalid cleanup hour to fail validation")
-	}
+	writeJSON(recorder, http.StatusCreated, map[string]string{"status": "ok"})
 
-	settings, err := store.UpdateCleanupSettings("org-1", "1", CleanupSettings{
-		RetentionDays: 21,
-		RunHour:       6,
-		Timezone:      "Africa/Cairo",
-	})
-	if err != nil {
-		t.Fatalf("UpdateCleanupSettings returned error: %v", err)
+	if recorder.Code != http.StatusCreated {
+		t.Fatalf("expected status %d, got %d", http.StatusCreated, recorder.Code)
+	}
+	if got := recorder.Header().Get("Content-Type"); got != "application/json" {
+		t.Fatalf("expected JSON content type, got %q", got)
 	}
 
-	if settings.RetentionDays != 21 || settings.RunHour != 6 {
-		t.Fatalf("expected cleanup schedule to persist, got %+v", settings)
+	var payload map[string]string
+	if err := json.NewDecoder(bytes.NewReader(recorder.Body.Bytes())).Decode(&payload); err != nil {
+		t.Fatalf("failed to decode response body: %v", err)
 	}
-	if got := store.orgs["org-1"].NotificationsFeed[0].Title; got != "Cleanup schedule updated" {
-		t.Fatalf("expected schedule update notification, got %q", got)
+	if payload["status"] != "ok" {
+		t.Fatalf("expected payload to round-trip, got %+v", payload)
 	}
 }
 
-func TestSendOutgoingMessagePreservesMediaMetadata(t *testing.T) {
-	store := NewStore()
+func TestDecodeJSONRejectsUnknownFields(t *testing.T) {
+	type payload struct {
+		Name string `json:"name"`
+	}
 
-	message, err := store.SendOutgoingMessage("org-1", "1", "contact-1", SendMessageRequest{
-		Type:          "media",
-		Body:          "Attached quote draft",
-		FileName:      "quote.txt",
-		FileSizeLabel: "22 B",
-		MediaURL:      "data:text/plain;base64,ZHJhZnQgcXVvdGU=",
-	})
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBufferString(`{"name":"encanto","extra":true}`))
+	var got payload
+	if err := decodeJSON(req, &got); err == nil {
+		t.Fatal("expected decodeJSON to reject unknown fields")
+	}
+}
+
+func TestCurrentOrgIDUsesCookieWhenPresent(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+
+	if got := currentOrgID(req); got != "org-1" {
+		t.Fatalf("expected default org-1, got %q", got)
+	}
+
+	req.AddCookie(&http.Cookie{Name: "org_context", Value: "org-2"})
+	if got := currentOrgID(req); got != "org-2" {
+		t.Fatalf("expected cookie org ID, got %q", got)
+	}
+}
+
+func TestCurrentClaims(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+
+	if _, err := currentClaims(req); err == nil {
+		t.Fatal("expected missing claims to fail")
+	}
+
+	claims := &Claims{}
+	req = req.WithContext(context.WithValue(req.Context(), "user", claims))
+
+	got, err := currentClaims(req)
 	if err != nil {
-		t.Fatalf("SendOutgoingMessage returned error: %v", err)
+		t.Fatalf("currentClaims returned error: %v", err)
+	}
+	if got != claims {
+		t.Fatal("expected currentClaims to return the stored claims pointer")
 	}
 
-	if message.FileName != "quote.txt" {
-		t.Fatalf("expected media filename to persist, got %q", message.FileName)
-	}
-	if message.FileSizeLabel != "22 B" {
-		t.Fatalf("expected media file size label to persist, got %q", message.FileSizeLabel)
-	}
-	if message.TypedForMS != 0 {
-		t.Fatalf("expected media sends to bypass typing simulation, got %dms", message.TypedForMS)
+	req = req.WithContext(context.WithValue(req.Context(), "user", errors.New("not claims")))
+	if _, err := currentClaims(req); err == nil {
+		t.Fatal("expected wrong context type to fail")
 	}
 }

@@ -23,6 +23,10 @@ type PGStore struct {
 	waContainer *sqlstore.Container
 }
 
+func (s *PGStore) DB() *pgxpool.Pool {
+	return s.db
+}
+
 // NewPGStore creates a PGStore and seeds the default org+user if empty.
 func NewPGStore(db *pgxpool.Pool) *PGStore {
 	dsn := os.Getenv("DATABASE_URL")

@@ -14,6 +14,7 @@ type Config struct {
 	AccessTokenSecret string
 	AccessTokenTTL    time.Duration
 	RefreshTokenTTL   time.Duration
+	WorkerPollInterval time.Duration
 	AutoMigrate       bool
 	AutoSeed          bool
 	AccessCookieName  string
@@ -31,18 +32,24 @@ func Load() (Config, error) {
 		return Config{}, err
 	}
 
+	workerPollInterval, err := parseDuration("WORKER_POLL_INTERVAL", "10s")
+	if err != nil {
+		return Config{}, err
+	}
+
 	cfg := Config{
-		Port:              envOrDefault("PORT", "58080"),
-		FrontendOrigin:    envOrDefault("FRONTEND_ORIGIN", "http://127.0.0.1:5173"),
-		DatabaseURL:       envOrDefault("DATABASE_URL", "postgres://postgres:postgres@127.0.0.1:55432/encanto?sslmode=disable"),
-		RedisURL:          envOrDefault("REDIS_URL", "redis://127.0.0.1:56379/0"),
-		AccessTokenSecret: envOrDefault("ACCESS_TOKEN_SECRET", "encanto-dev-access-secret"),
-		AccessTokenTTL:    accessTTL,
-		RefreshTokenTTL:   refreshTTL,
-		AutoMigrate:       envBool("AUTO_MIGRATE", true),
-		AutoSeed:          envBool("AUTO_SEED", true),
-		AccessCookieName:  "encanto_access",
-		RefreshCookieName: "encanto_refresh",
+		Port:               envOrDefault("PORT", "58080"),
+		FrontendOrigin:     envOrDefault("FRONTEND_ORIGIN", "http://127.0.0.1:5173"),
+		DatabaseURL:        envOrDefault("DATABASE_URL", "postgres://postgres:postgres@127.0.0.1:55432/encanto?sslmode=disable"),
+		RedisURL:           envOrDefault("REDIS_URL", "redis://127.0.0.1:56379/0"),
+		AccessTokenSecret:  envOrDefault("ACCESS_TOKEN_SECRET", "encanto-dev-access-secret"),
+		AccessTokenTTL:     accessTTL,
+		RefreshTokenTTL:    refreshTTL,
+		WorkerPollInterval: workerPollInterval,
+		AutoMigrate:        envBool("AUTO_MIGRATE", true),
+		AutoSeed:           envBool("AUTO_SEED", true),
+		AccessCookieName:   "encanto_access",
+		RefreshCookieName:  "encanto_refresh",
 	}
 
 	if cfg.AccessTokenSecret == "" {
