@@ -1,5 +1,3 @@
-//go:build bootstrap
-
 package api
 
 import (
